@@ -26,7 +26,7 @@ function validateEntry(id, type) {
                 break;
             case 'text':
             default:
-                validEntry = (/^[a-zA-Z0-9 \,\.&]+$/.test($(Id).val()));
+                validEntry = (/^[a-zA-Z0-9 \-\,\.&]+$/.test($(Id).val()));
         }
     }
 
