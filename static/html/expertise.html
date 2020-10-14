@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Bytesupply!</title>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link rel="stylesheet" href="/static/css/bytesupply.css" />
+        <script src="/static/js/bytesupply.js"></script>
+    </head>
+
+    <body style="background-color:#ffffff">
+        <div class="container">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="/"><h1 class="navbar-logo">BYTESUPPLY</h1></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                About
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/bytesupply">Company</a>
+                                <a class="dropdown-item" href="/staff">Staff</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/history">History</a>
+                                </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="/expertise">Expertise</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/contactus">Contact Us</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Policies
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/terms">Terms & Conditions</a>
+                                <a class="dropdown-item" href="/privacy">Privacy Policy</a>
+                            </div>
+                        </li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
+
+            <div class="row" style="border-bottom:1px solid black">
+                <div class="offset-9 col-3 text-right font-weight-light" style="font-size:80%;padding-top:4px">
+                    <span id="doy"></span><span id="tod" style="margin-left:5px"></span>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:15px">
+                <div class="col-3 text-center" style="font-size:80%;padding-top:15px">
+                    <img src="/static/img/expertise.png" class="rounded float-left" alt="Yves Hoebeke" width="250" height="165">
+                </div>
+                <div class="col-9 text-left">
+                    <span class="first-word">Here</span> are some of the applications we developed and implemented; and technologies that we used in our application solutions.
+                    We are specialized in Server Side software engineering created mostly in the Go language.
+                </div>
+            </div>
+    
+            <div class="row" style="margin-top:40px;">
+                <div class="col text-left">
+                    <table class="table table=striped table-hover">
+                        <tbody>
+                            <tr>
+                                <td rowspan="8">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-app-indicator" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M5.5 2A3.5 3.5 0 0 0 2 5.5v5A3.5 3.5 0 0 0 5.5 14h5a3.5 3.5 0 0 0 3.5-3.5V8a.5.5 0 0 1 1 0v2.5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 1 10.5v-5A4.5 4.5 0 0 1 5.5 1H8a.5.5 0 0 1 0 1H5.5z"/>
+                                    <path d="M16 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                  </svg>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Inventory Control - Order Entry - Point of Sales.</td>
+                            </tr>
+                            <tr>
+                                <td>Accounts Payable - Receivable.</td>
+                            </tr>
+                            <tr>
+                                <td>Medical billing.</td>
+                            </tr>
+                            <tr>
+                                <td>Clinical Document Improvement (CDI).</td>
+                            </tr>
+                            <tr>
+                                <td>Polling and Analysis.</td>
+                            </tr>
+                            <tr>
+                                <td>Aviation - Flight planning.</td>
+                            </tr>
+                            <tr>
+                                <td>Video stream delivery.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col text-left">
+                    <table class="table table=striped table-hover">
+                        <tbody>
+                            <tr>
+                                <td rowspan="7">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-gear" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z"/>
+                                        <path fill-rule="evenodd" d="M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z"/>
+                                    </svg>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Micro Services (AMQP).</td>
+                            </tr>
+                            <tr>
+                                <td>HTTP and gRPC API development and implementations.</td>
+                            </tr>
+                            <tr>
+                                <td>Server Side (Dynamic) Ad Insertion (SSAI).</td>
+                            </tr>
+                            <tr>
+                                <td>Two way authentication.</td>
+                            </tr>
+                            <tr>
+                                <td>Data visualization.</td>
+                            </tr>
+                            <tr>
+                                <td>Blockchain.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:20px;font-size:90%;border-top:1px solid black">
+                <p>&copy; 2020 Bytesupply, LLC - All rights reserved.</p>
+            </div>
+
+        </div>
+
+    </body>
+</html>

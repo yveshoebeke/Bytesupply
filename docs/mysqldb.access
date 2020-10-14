@@ -1,0 +1,6 @@
+username = doadmin
+password = f1cny78efclvx2jy
+host = db-mysql-nyc1-bytesupply-do-user-5896777-0.b.db.ondigitalocean.com
+port = 25060
+database = defaultdb
+sslmode = REQUIRED

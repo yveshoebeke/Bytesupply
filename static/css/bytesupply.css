@@ -1,0 +1,17 @@
+body {
+    /*width: 35em;*/
+    margin: 0 auto;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    background-color: #FFFFFF;
+}
+
+h1.navbar-logo {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color :blue;
+}
+
+span.first-word {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 200%;
+    color: blue;
+}
