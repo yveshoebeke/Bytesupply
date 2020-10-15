@@ -15,3 +15,13 @@ span.first-word {
     font-size: 200%;
     color: blue;
 }
+
+img.logo {
+  margin: 20px;
+}
+
+span#logoExplain {
+  text-decoration-style: none;
+  color: blue;
+  font: size 90%;
+}

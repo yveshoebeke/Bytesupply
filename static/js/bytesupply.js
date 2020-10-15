@@ -6,6 +6,12 @@ $(document).ready(function() {
     }, 1000);
 
     $(".lang-es").hide();
+    
+    $(".logo").mouseenter(function(){
+        $("#logoExplain").text($(this).attr("alt") + " -> " + $(this).attr("title"));
+    }).mouseout(function() {
+        $("#logoExplain").text("");
+    });
 });
 
 function validateEntry(id, type) {
@@ -48,3 +54,4 @@ function setLang(langId) {
 
     $("."+oldLangId).hide(function() {$("."+langId).show()});
 }
+
