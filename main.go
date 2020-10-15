@@ -33,10 +33,7 @@ import (
 )
 
 /* Application constants */
-const (
-//LOGFILENAME = "/go/bin/log/bytesupply.log"
-//PORT = ":80"
-)
+const ()
 
 var (
 	/* Extract env variables */
