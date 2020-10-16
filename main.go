@@ -113,39 +113,46 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 			ValidToSend bool   `json:"validtosend"`
 			Name        string `json:"name"`
 		}
-		validToRecord := true
+
 		r.ParseForm()
 
-		// Validate (name, email and message are mandatory)
-		for varName, varValue := range r.Form {
-			switch varName {
-			case "contactName":
-			case "contactEmail":
-			case "contactMessage":
-				if len(varValue[0]) < 2 {
-					validToRecord = false
+		var validToRecord = false
+
+		if r.Form["validEntry"][0] == "false" {
+			validToRecord = false
+		} else {
+			validToRecord = true
+			// Validate (name, email and message are mandatory)
+			for varName, varValue := range r.Form {
+				switch varName {
+				case "contactName":
+				case "contactEmail":
+				case "contactMessage":
+					if len(varValue[0]) == 0 {
+						validToRecord = false
+					}
+					break
+				default:
+					break
 				}
-				break
-			default:
-				break
+			}
+
+			if validToRecord {
+				// record data -> db table or -> txt file ... here ---> revisit.
+				_, err := app.mfile.WriteString(fmt.Sprintf("Timestamp: %s\n", time.Now().Format(time.RFC3339)))
+				if err != nil {
+					app.log.Printf("Error writing %v: %v", msgFile, err)
+				}
+
+				_, _ = app.mfile.WriteString(fmt.Sprintf("     Name: %s\n", r.Form["contactName"][0]))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("  Company: %s\n", r.Form["contactCompany"][0]))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("    Email: %s\n", r.Form["contactEmail"][0]))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("    Phone: %s\n", r.Form["contactPhone"][0]))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("  Message:\n%s\n", r.Form["contactMessage"][0]))
+				_, _ = app.mfile.WriteString("----------------------------------------------------------------------\n")
 			}
 		}
 
-		// Write message file if valid and continue.
-		if validToRecord == true {
-			// record data -> db table or -> txt file ... here ---> revisit.
-			_, err := app.mfile.WriteString(fmt.Sprintf("Timestamp: %s\n", time.Now().Format(time.RFC3339)))
-			if err != nil {
-				app.log.Printf("Error writing %v: %v", msgFile, err)
-			}
-
-			_, _ = app.mfile.WriteString(fmt.Sprintf("     Name: %s\n", r.Form["contactName"][0]))
-			_, _ = app.mfile.WriteString(fmt.Sprintf("  Company: %s\n", r.Form["contactCompany"][0]))
-			_, _ = app.mfile.WriteString(fmt.Sprintf("    Email: %s\n", r.Form["contactEmail"][0]))
-			_, _ = app.mfile.WriteString(fmt.Sprintf("    Phone: %s\n", r.Form["contactPhone"][0]))
-			_, _ = app.mfile.WriteString(fmt.Sprintf("  Message:\n%s\n", r.Form["contactMessage"][0]))
-			_, _ = app.mfile.WriteString("----------------------------------------------------------------------\n")
-		}
 		msgStatus := MsgStatus{ValidToSend: validToRecord, Name: r.Form["contactName"][0]}
 		tmpl.ExecuteTemplate(w, "contactussent.gotmpl.html", msgStatus)
 	}

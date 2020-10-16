@@ -14,31 +14,51 @@ $(document).ready(function() {
     });
 });
 
-function validateEntry(id, type) {
+function validateMessageEntry(id) {
     Id = "#" + id;
     errId = Id + "Help";
-    validEntry = true;
+    validEntry = false;
     $(errId).removeClass("d-block").addClass("d-none");
 
-    if ($(Id).val().length == 0) {
-        validEntry = false
+    if (($(Id).hasClass("mandatory") && $(Id).val().length == 0) || ($(Id).val().length > 256)) {
+        validEntry = false;
     } else {
+        if (id == "contactMessage") {
+            type = "text";
+        } else {
+            type = $(Id).attr("type");
+        }
+
         switch(type) {
-            case 'usphone':
-                validEntry = (/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/.test($(Id).val()));
-                break;
+            case 'tel':
+                if ($(Id).val().length == 0){
+                    break;
+                } else if ($(Id).val().length > 13){
+                    validEntry = false;
+                    break;
+                } else {
+                    validEntry = (/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/.test($(Id).val()));
+                    break;
+                }
             case 'email':
                 validEntry = (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/.test($(Id).val()));
+                break;
+            case 'url':
+                validEntry = (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm.test($(Id).val()));
                 break;
             case 'text':
             default:
                 validEntry = (/^[a-zA-Z0-9 \-\,\.&]+$/.test($(Id).val()));
+                break;
         }
-    }
-
-    if (!validEntry) {
-        $(errId).removeClass("d-none").addClass("d-block");
-        $(Id).focus();
+ 
+        if (!validEntry) {
+            $("#validEntry").val("false");
+            $(errId).removeClass("d-none").addClass("d-block");
+            $(Id).focus();
+        } else {
+            $("#validEntry").val("true");
+        }
     }
 }
 
