@@ -22,7 +22,9 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 	"text/template"
 	"time"
 
@@ -33,17 +35,82 @@ import (
 )
 
 /* Application constants */
-const ()
+const (
+	SEARCHLIMIT        = "10"
+	GOOGLESEARCHAPIURL = "https://www.googleapis.com/customsearch/v1?key={KEY}&cx=017576662512468239146:omuauf_lfve&num={NUM}&q={SUBJECT}"
+)
 
 var (
 	/* Extract env variables */
-	staticLocation = os.Getenv("BS_STATIC_LOCATION")
-	logFile        = os.Getenv("BS_LOGFILE")
-	msgFile        = os.Getenv("BS_MSGFILE")
-	serverPort     = os.Getenv("BS_SERVER_PORT")
+	staticLocation     = os.Getenv("BS_STATIC_LOCATION")
+	logFile            = os.Getenv("BS_LOGFILE")
+	msgFile            = os.Getenv("BS_MSGFILE")
+	serverPort         = os.Getenv("BS_SERVER_PORT")
+	googleSearchAPIKey = os.Getenv("BS_GOOGLE_SEARCH_API_KEY")
 	/* templating */
 	tmpl = template.Must(template.ParseGlob(staticLocation + "/templ/*"))
 )
+
+//GoogleAPI search result(s)
+type GoogleAPI struct {
+	Kind string `json:"kind"`
+	URL  struct {
+		Type     string
+		Template string
+	}
+	Queries struct {
+		Request []struct {
+			Title          string
+			TotalResults   string
+			SearchTerms    string
+			count          int
+			StartIndex     int
+			InputEncoding  string
+			OutputEncoding string
+			Safe           string
+			Cx             string
+		}
+		NextPage []struct {
+			Title          string
+			TotalResults   string
+			SearchTerms    string
+			count          int
+			StartIndex     int
+			InputEncoding  string
+			OutputEncoding string
+			Safe           string
+			Cx             string
+		}
+	}
+	Context struct {
+		Title  string
+		Facets []struct {
+			Anchor      string
+			Label       string
+			LabelWithOp string
+		}
+	}
+	SearchInformation struct {
+		SearchTime            float32
+		FormattedSearchTime   float32
+		TotalResults          string
+		FormattedTotalResults string
+	}
+	Items []struct {
+		Kind             string
+		Title            string
+		HTMLTitle        string
+		Link             string
+		DisplayLink      string
+		Snippet          string
+		HTMLSnippet      string
+		CacheID          string
+		FormattedURL     string
+		HTMLFormattedURL string
+		Mime             string
+		FileFormat       string
+	}
+}
 
 // User - info */
 type User struct {
@@ -118,7 +185,7 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 
 		var validToRecord = false
 
-		if r.Form["validEntry"][0] == "false" {
+		if r.FormValue("validEntry") == "false" {
 			validToRecord = false
 		} else {
 			validToRecord = true
@@ -144,18 +211,50 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 					app.log.Printf("Error writing %v: %v", msgFile, err)
 				}
 
-				_, _ = app.mfile.WriteString(fmt.Sprintf("     Name: %s\n", r.Form["contactName"][0]))
-				_, _ = app.mfile.WriteString(fmt.Sprintf("  Company: %s\n", r.Form["contactCompany"][0]))
-				_, _ = app.mfile.WriteString(fmt.Sprintf("    Email: %s\n", r.Form["contactEmail"][0]))
-				_, _ = app.mfile.WriteString(fmt.Sprintf("    Phone: %s\n", r.Form["contactPhone"][0]))
-				_, _ = app.mfile.WriteString(fmt.Sprintf("  Message:\n%s\n", r.Form["contactMessage"][0]))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("     Name: %s\n", r.FormValue("contactName")))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("  Company: %s\n", r.FormValue("contactCompany")))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("    Email: %s\n", r.FormValue("contactEmail")))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("    Phone: %s\n", r.FormValue("contactPhone")))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("  Message:\n%s\n", r.FormValue("contactMessage")))
 				_, _ = app.mfile.WriteString("----------------------------------------------------------------------\n")
 			}
 		}
 
-		msgStatus := MsgStatus{ValidToSend: validToRecord, Name: r.Form["contactName"][0]}
+		msgStatus := MsgStatus{ValidToSend: validToRecord, Name: r.FormValue("contactName")}
 		tmpl.ExecuteTemplate(w, "contactussent.gotmpl.html", msgStatus)
 	}
+}
+
+func (app *App) search(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	searchKey := url.QueryEscape(r.FormValue("searchKey"))
+	searchURL := GOOGLESEARCHAPIURL
+	searchURL = strings.Replace(searchURL, "{KEY}", googleSearchAPIKey, 1)
+	searchURL = strings.Replace(searchURL, "{SUBJECT}", searchKey, 1)
+	searchURL = strings.Replace(searchURL, "{NUM}", SEARCHLIMIT, 1)
+
+	resp, err := http.Get(searchURL)
+	if err != nil {
+		app.log.Println("GET err:", err)
+	}
+	app.log.Println("GET", searchURL)
+
+	body, ioerr := ioutil.ReadAll(resp.Body)
+	if ioerr != nil {
+		app.log.Println("IOUTIL err:", ioerr)
+	}
+	defer resp.Body.Close()
+
+	var googleapi GoogleAPI
+	if json.Valid(body) != true {
+		app.log.Println("Invalid json")
+	}
+	umerr := json.Unmarshal(body, &googleapi)
+	if umerr != nil {
+		fmt.Println("Unmarchal error:", umerr)
+	}
+
+	tmpl.ExecuteTemplate(w, "search.gotmpl.html", googleapi)
 }
 
 func (app *App) expertise(w http.ResponseWriter, r *http.Request) {
@@ -308,6 +407,7 @@ func main() {
 	r.HandleFunc("/staff", app.staff).Methods("GET")
 	r.HandleFunc("/history", app.history).Methods("GET")
 	r.HandleFunc("/contactus", app.contactus).Methods("GET", "POST")
+	r.HandleFunc("/search", app.search).Methods("GET", "POST")
 	r.HandleFunc("/expertise", app.expertise).Methods("GET")
 	r.HandleFunc("/terms", app.terms).Methods("GET")
 	r.HandleFunc("/privacy", app.privacy).Methods("GET")

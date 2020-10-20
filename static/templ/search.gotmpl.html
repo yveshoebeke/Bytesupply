@@ -28,7 +28,7 @@
                                 <a class="dropdown-item" href="/bytesupply">Company</a>
                                 <a class="dropdown-item" href="/staff">Staff</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item disabled" href="/history">History</a>
+                                <a class="dropdown-item" href="/history">History</a>
                                 </div>
                         </li>
                         <li class="nav-item">
@@ -46,10 +46,13 @@
                                 <a class="dropdown-item" href="/privacy">Privacy Policy</a>
                             </div>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="/login">Sign-in/Register</a>
+                        </li>
                     </ul>
-                    <form class="form-inline my-2 my-lg-0" action="/search" method="post">
+                    <form class="form-inline my-2 my-lg-0" action="search" method="post">
                         <input class="form-control mr-sm-2" type="search" value="" name="searchKey" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        <button class="btn btn-outline-success my-2 my-sm-0 disabled" type="submit">Search</button>
                     </form>
                 </div>
             </nav>
@@ -61,29 +64,42 @@
             </div>
 
             <div class="row" style="margin-top:15px">
-                <div class="col-3 text-center" style="font-size:80%;padding-top:15px">
-                    <img src="/static/img/VT100.jpg" class="rounded float-left" alt="Alpha Microsystems" width="250" height="200">
-                </div>
-                <div class="col-9 text-left">
-                    <p><span class="first-word">Go</span> back in time to mid-1980's Santa Monica, California.</p>
-                    <p>My colleagues and I were very involved in accounting/inventory control software for a variety of businesses.
-                        At around the same time IBM PC became more prevalant and Apple just revealed the Macintosh.
-                        User memory partitioning on our Alpa Micro mini-frames was usually around 32K RAM each, so as software became more sophisticated, one started to bump into that upper limitation. 
-                        Adding RAM was not only expensive but also limited due to the finite number of bus slots available.
-                        Although a primitive form of memory paging could be implemented, it was painfully slow giving the access speed at the time.
-                        Typical user access was with a "dumb" terminal, such as the VT100 (from Digital Equipment Corporation or DEC) pictured on this page.
-                        So the idea was born to write drivers to replace these terminals with PC and Macintosh equipment and use them as a smart terminal that could use local processing 
-                        capacity to augment the throughput and enhance the usage in several other ways.
-                        After many weeks of Western Digital WD16 and Motorola 68000 assembly programming (Yes! Those were the days) we had good working drivers that could be installed on the Alpa Micro.
-                        We enjoyed a brief period of success, but alas, the mini-frame technology was doomed and replaced by network and other more advanced technologies.</p>
-                    <p>So that was Bytesupply 1.0</p>
+                <div class="col-12 text-center" style="border:1px dotted black; background-color: #C7CFA5; padding:10px;">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                {{ range $index, $request := .Queries.Request }}
+                                <span style="text-decoration: underline">Search Request:</span> <a href="https://en.wikipedia.com/wiki/{{ $request.SearchTerms }}" target="_blank" rel="noopener noreferrer">{{ $request.SearchTerms }}</a>
+                                {{ end }}
+                            </td>
+                            <td>
+                                <span style="text-decoration: underline">Search Time:</span> {{ .SearchInformation.SearchTime }} sec.
+                            </td>
+                            <td>
+                                <span style="text-decoration: underline">Total Results Found:</span> {{ .SearchInformation.FormattedTotalResults }} (Displayed: 10)
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
-    
+        
+            {{ range $index, $item := .Items }}
+            <div class="row" style="margin-top:15px; border-top:2px solid grey">
+                <div class="col-12 text-left" style="background-color:#BCCDCD">
+                    <ul>
+                        <li>{{ $item.Title }}</li>
+                        <li>{{ $item.Snippet }}</li>
+                    </ul>
+                    <p><a href="https://{{ $item.DisplayLink }}" alt="{{ $item.Title }}" target="_blank" rel="noopener noreferrer">{{ $item.DisplayLink }}</a></p>
+                    <p><a href="{{ $item.FormattedURL }}" alt="{{ $item.Title }}" target="_blank" rel="noopener noreferrer">{{ $item.FormattedURL }}</a></p>
+                </div>
+            </div>
+            {{ end }}
             <div class="row" style="margin-top:20px;font-size:90%;border-top:1px solid black">
                 <p>&copy; 2020 Bytesupply, LLC - All rights reserved.</p>
             </div>
 
         </div>
+
     </body>
 </html>
