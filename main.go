@@ -47,8 +47,18 @@ var (
 	msgFile            = os.Getenv("BS_MSGFILE")
 	serverPort         = os.Getenv("BS_SERVER_PORT")
 	googleSearchAPIKey = os.Getenv("BS_GOOGLE_SEARCH_API_KEY")
+
 	/* templating */
-	tmpl = template.Must(template.ParseGlob(staticLocation + "/templ/*"))
+	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templ/*"))
+	funcMap = template.FuncMap{
+		"hasHTTP": func(myUrl string) string {
+			if strings.Contains(myUrl, "://") {
+				return myUrl
+			}
+
+			return "https://" + myUrl
+		},
+	}
 )
 
 //GoogleAPI search result(s)
