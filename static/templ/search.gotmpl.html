@@ -91,7 +91,7 @@
                         <li>{{ $item.Snippet }}</li>
                     </ul>
                     <p><a href="https://{{ $item.DisplayLink }}" alt="{{ $item.Title }}" target="_blank" rel="noopener noreferrer">{{ $item.DisplayLink }}</a></p>
-                    <p><a href="{{ $item.FormattedURL }}" alt="{{ $item.Title }}" target="_blank" rel="noopener noreferrer">{{ $item.FormattedURL }}</a></p>
+                    <p><a href="{{ $item.FormattedURL }}" alt="{{ $item.Title }}" target="_blank" rel="noopener noreferrer">{{ hasHTTP $item.FormattedURL }}</a></p>
                 </div>
             </div>
             {{ end }}
