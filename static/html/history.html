@@ -55,6 +55,9 @@
             </nav>
 
             <div class="row" style="border-bottom:1px solid black">
+                <div class="col-2 text-left">
+                    <img id="lang-es" style="margin-bottom: 0px;cursor:pointer" onclick="setLang($(this).attr('id'))" src="/static/img/lang-es.png" width="20" height="14" />
+                </div>
                 <div class="offset-9 col-3 text-right font-weight-light" style="font-size:80%;padding-top:4px">
                     <span id="doy"></span><span id="tod" style="margin-left:5px"></span>
                 </div>
@@ -64,7 +67,7 @@
                 <div class="col-3 text-center" style="font-size:80%;padding-top:15px">
                     <img src="/static/img/VT100.jpg" class="rounded float-left" alt="Alpha Microsystems" width="250" height="200">
                 </div>
-                <div class="col-9 text-left">
+                <div class="col-9 text-left lang-en">
                     <p><span class="first-word">Go</span> back in time to mid-1980's Santa Monica, California.</p>
                     <p>My colleagues and I were very involved in accounting/inventory control software for a variety of businesses.
                         At around the same time IBM PC became more prevalant and Apple just revealed the Macintosh.
@@ -77,6 +80,20 @@
                         After many weeks of Western Digital WD16 and Motorola 68000 assembly programming (Yes! Those were the days) we had good working drivers that could be installed on the Alpa Micro.
                         We enjoyed a brief period of success, but alas, the mini-frame technology was doomed and replaced by network and other more advanced technologies.</p>
                     <p>So that was Bytesupply 1.0</p>
+                </div>
+                <div class="col-9 text-left lang-es">
+                    <p><span class="first-word">Retroceda</span> en el tiempo hasta mediados de la década de 1980 en Santa Mónica, California.</p>
+                    <p>Mis colegas y yo estábamos muy involucrados en el software de control de inventario / contabilidad para una variedad de negocios.
+                        Aproximadamente al mismo tiempo, IBM PC se hizo más predominante y Apple acaba de revelar el Macintosh.
+                        La partición de la memoria del usuario en nuestros mini-marcos Alpa Micro solía ser de alrededor de 32K RAM cada uno, por lo que a medida que el software se volvió más sofisticado, uno comenzó a tropezar con esa limitación superior.
+                        Agregar RAM no solo era costoso sino que también estaba limitado debido al número finito de ranuras de bus disponibles.
+                        Aunque se podía implementar una forma primitiva de paginación de memoria, era dolorosamente lento para dar la velocidad de acceso en ese momento.
+                        El acceso de usuario típico era con un terminal "tonto", como el VT100 (de Digital Equipment Corporation o DEC) que se muestra en esta página.
+                        Entonces nació la idea de escribir controladores para reemplazar estos terminales con equipos de PC y Macintosh y usarlos como un terminal inteligente que podría usar procesamiento local.
+                        capacidad para aumentar el rendimiento y mejorar el uso de varias otras formas.
+                        Después de muchas semanas de programación de ensamblaje de Western Digital WD16 y Motorola 68000 (¡Sí! Esos eran los días), teníamos buenos controladores que podían instalarse en el Alpa Micro.
+                        Disfrutamos de un breve período de éxito, pero, lamentablemente, la tecnología de mini marcos fue condenada al fracaso y fue reemplazada por redes y otras tecnologías más avanzadas. </p>
+                    <p>Entonces eso fue Bytesupply 1.0</p>
                 </div>
             </div>
     
