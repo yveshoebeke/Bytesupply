@@ -19,6 +19,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"googleapi"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -32,12 +33,6 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/boj/redistore.v1"
-)
-
-/* Application constants */
-const (
-	SEARCHLIMIT        = "10"
-	GOOGLESEARCHAPIURL = "https://www.googleapis.com/customsearch/v1?key={KEY}&cx=017576662512468239146:omuauf_lfve&num={NUM}&q={SUBJECT}"
 )
 
 var (
@@ -60,67 +55,6 @@ var (
 		},
 	}
 )
-
-//GoogleAPI search result(s)
-type GoogleAPI struct {
-	Kind string `json:"kind"`
-	URL  struct {
-		Type     string
-		Template string
-	}
-	Queries struct {
-		Request []struct {
-			Title          string
-			TotalResults   string
-			SearchTerms    string
-			count          int
-			StartIndex     int
-			InputEncoding  string
-			OutputEncoding string
-			Safe           string
-			Cx             string
-		}
-		NextPage []struct {
-			Title          string
-			TotalResults   string
-			SearchTerms    string
-			count          int
-			StartIndex     int
-			InputEncoding  string
-			OutputEncoding string
-			Safe           string
-			Cx             string
-		}
-	}
-	Context struct {
-		Title  string
-		Facets []struct {
-			Anchor      string
-			Label       string
-			LabelWithOp string
-		}
-	}
-	SearchInformation struct {
-		SearchTime            float32
-		FormattedSearchTime   float32
-		TotalResults          string
-		FormattedTotalResults string
-	}
-	Items []struct {
-		Kind             string
-		Title            string
-		HTMLTitle        string
-		Link             string
-		DisplayLink      string
-		Snippet          string
-		HTMLSnippet      string
-		CacheID          string
-		FormattedURL     string
-		HTMLFormattedURL string
-		Mime             string
-		FileFormat       string
-	}
-}
 
 // User - info */
 type User struct {
@@ -238,10 +172,10 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 func (app *App) search(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	searchKey := url.QueryEscape(r.FormValue("searchKey"))
-	searchURL := GOOGLESEARCHAPIURL
-	searchURL = strings.Replace(searchURL, "{KEY}", googleSearchAPIKey, 1)
+	searchURL := googleapi.SearchAPIURL
+	searchURL = strings.Replace(searchURL, "{KEY}", googleapi.SearchAPIKey, 1)
 	searchURL = strings.Replace(searchURL, "{SUBJECT}", searchKey, 1)
-	searchURL = strings.Replace(searchURL, "{NUM}", SEARCHLIMIT, 1)
+	searchURL = strings.Replace(searchURL, "{NUM}", googleapi.SearchLimit, 1)
 
 	resp, err := http.Get(searchURL)
 	if err != nil {
@@ -255,7 +189,7 @@ func (app *App) search(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	var googleapi GoogleAPI
+	var googleapi googleapi.APIResult
 	if json.Valid(body) != true {
 		app.log.Println("Invalid json")
 	}
