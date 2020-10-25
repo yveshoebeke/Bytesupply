@@ -38,11 +38,10 @@ import (
 
 var (
 	/* Extract env variables */
-	staticLocation     = os.Getenv("BS_STATIC_LOCATION")
-	logFile            = os.Getenv("BS_LOGFILE")
-	msgFile            = os.Getenv("BS_MSGFILE")
-	serverPort         = os.Getenv("BS_SERVER_PORT")
-	googleSearchAPIKey = os.Getenv("BS_GOOGLE_SEARCH_API_KEY")
+	staticLocation = os.Getenv("BS_STATIC_LOCATION")
+	logFile        = os.Getenv("BS_LOGFILE")
+	msgFile        = os.Getenv("BS_MSGFILE")
+	serverPort     = os.Getenv("BS_SERVER_PORT")
 
 	/* templating */
 	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templ/*"))
