@@ -19,7 +19,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"googleapi"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -28,6 +27,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"bytesupply.com/googleapi"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
