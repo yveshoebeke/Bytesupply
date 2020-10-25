@@ -173,33 +173,17 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 func (app *App) search(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	searchKey := url.QueryEscape(r.FormValue("searchKey"))
-	searchURL := googleapi.SearchAPIURL
-	searchURL = strings.Replace(searchURL, "{KEY}", googleapi.SearchAPIKey, 1)
-	searchURL = strings.Replace(searchURL, "{SUBJECT}", searchKey, 1)
-	searchURL = strings.Replace(searchURL, "{NUM}", googleapi.SearchLimit, 1)
 
-	resp, err := http.Get(searchURL)
-	if err != nil {
-		app.log.Println("GET err:", err)
+	if len(searchKey) != 0 {
+		searchResults, err := googleapi.GetSearchResults(searchKey)
+		if err != nil {
+			app.log.Println("Google API Err:", err)
+		} else {
+			tmpl.ExecuteTemplate(w, "search.gotmpl.html", searchResults)
+		}
+	} else {
+		http.Redirect(w, r, r.FormValue("referer"), http.StatusSeeOther)
 	}
-	app.log.Println("GET", searchURL)
-
-	body, ioerr := ioutil.ReadAll(resp.Body)
-	if ioerr != nil {
-		app.log.Println("IOUTIL err:", ioerr)
-	}
-	defer resp.Body.Close()
-
-	var googleapi googleapi.APIResult
-	if json.Valid(body) != true {
-		app.log.Println("Invalid json")
-	}
-	umerr := json.Unmarshal(body, &googleapi)
-	if umerr != nil {
-		fmt.Println("Unmarchal error:", umerr)
-	}
-
-	tmpl.ExecuteTemplate(w, "search.gotmpl.html", googleapi)
 }
 
 func (app *App) expertise(w http.ResponseWriter, r *http.Request) {
