@@ -1,14 +1,23 @@
 package googleapi
 
-import "os"
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strings"
+)
+
+const (
+	// SEARCHAPIURL ...
+	SEARCHAPIURL = "https://www.googleapis.com/customsearch/v1?key={KEY}&cx=017576662512468239146:omuauf_lfve&q={SUBJECT}"
+	// SEARCHLIMIT ...
+	SEARCHLIMIT = "10"
+)
 
 var (
-	// SearchAPIURL ...
-	SearchAPIURL = "https://www.googleapis.com/customsearch/v1?key={KEY}&cx=017576662512468239146:omuauf_lfve&q={SUBJECT}"
-	// SearchAPIKey ...
-	SearchAPIKey = os.Getenv("BS_GOOGLE_SEARCH_API_KEY")
-	// SearchLimit ...
-	SearchLimit = "10"
+	searchAPIKey = os.Getenv("BS_GOOGLE_SEARCH_API_KEY")
 )
 
 //APIResult search result(s)
@@ -70,4 +79,34 @@ type APIResult struct {
 		Mime             string
 		FileFormat       string
 	}
+}
+
+// GetSearchResults ...
+func GetSearchResults(searchKey string) (APIResult, error) {
+	var googleapi APIResult
+	searchURL := SEARCHAPIURL
+	searchURL = strings.Replace(searchURL, "{KEY}", searchAPIKey, 1)
+	searchURL = strings.Replace(searchURL, "{SUBJECT}", searchKey, 1)
+	searchURL = strings.Replace(searchURL, "{NUM}", SEARCHLIMIT, 1)
+
+	resp, err := http.Get(searchURL)
+	if err != nil {
+		return googleapi, err
+	}
+	//app.log.Println("GET", searchURL)
+
+	body, ioerr := ioutil.ReadAll(resp.Body)
+	if ioerr != nil {
+		return googleapi, err
+	}
+	defer resp.Body.Close()
+
+	umerr := json.Unmarshal(body, &googleapi)
+	if umerr != nil {
+		fmt.Println("Unmarchal error:", umerr)
+		return googleapi, err
+	}
+
+	return googleapi, nil
+
 }
