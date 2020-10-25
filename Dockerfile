@@ -2,7 +2,7 @@ FROM golang:alpine AS build
 RUN apk --no-cache add gcc g++ make git
 WORKDIR /go/src/app
 COPY . .
-COPY ./googleapi /go/src/googleapi
+COPY ./bytesupply.com /go/src/bytesupply.com
 RUN go get ./...
 RUN GOOS=linux go build -ldflags="-s -w" -o ./bin/bytesupply-app ./main.go
 RUN mkdir ./bin/log
