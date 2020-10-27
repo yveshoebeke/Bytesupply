@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bytesupply.com/sitemap.xml
+ 
