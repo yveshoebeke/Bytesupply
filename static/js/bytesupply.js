@@ -14,7 +14,7 @@ $(document).ready(function() {
     });
 
     $("#contactForm").submit(function() {
-        event.preventDefault();
+        //event.preventDefault();
 
         var name = $("#contactName").val();
         var company = $("#contactCompany").val();
