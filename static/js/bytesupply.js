@@ -12,6 +12,44 @@ $(document).ready(function() {
     }).mouseout(function() {
         $("#logoExplain").text("");
     });
+
+    $("#contactForm").submit(function() {
+        alert("(1)You clicked me!");
+        event.preventDefault();
+
+        var name = $("#contactName").val();
+        var company = $("#contactCompany").val();
+        var phone = $("#contactPhone").val();
+        var email = $("#contactEmail").val();
+        var URL = $("#contactURL").val();
+        var message = $("#contactMessage").val();
+
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LePhd8ZAAAAAATEfk8aVTl4VJXj8R8OKgStdAzI', {action: 'submit'}).then(function(token) {
+                console.log("token: " + token); // Add your logic to submit to your backend server here.
+                $("contactForm").prepend('<input type="hidden" name="g-recaptcha-response" value="' + token + '">');
+
+                $.post("/contactus",{
+                                    validEntry: "false",
+                                    contactName: name,
+                                    contactCompanay: company,
+                                    contactPhone: phone,
+                                    contactEmail: email,
+                                    contactURL: URL,
+                                    contactMessage: message, 
+                                    token: token}, 
+                                    function(result) {
+                                        console.log(result);
+                                        if(result.success) {
+                                                alert('Thanks for posting comment.')
+                                        } else {
+                                                alert('You are spammer ! Get the @$%K out.')
+                                        }
+                                    });
+            });
+        });    
+    });
+
 });
 
 function validateMessageEntry(id) {
@@ -75,3 +113,5 @@ function setLang(langId) {
     $("."+oldLangId).hide(function() {$("."+langId).show()});
 }
 
+/*
+*/

@@ -197,6 +197,10 @@ func (app *App) privacy(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/privacy.html")
 }
 
+func (app *App) test(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, staticLocation+"/html/test.html")
+}
+
 func (app *App) getlog(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<p style=\"color:blue;\"><a href=\"/\">Bytesupply</a></p><p>Access log</p>")
 
@@ -342,6 +346,7 @@ func main() {
 	r.HandleFunc("/getlog", app.getlog).Methods("GET")
 	r.HandleFunc("/getmsg", app.getmsg).Methods("GET")
 	r.HandleFunc("/request", app.request).Methods("POST")
+	r.HandleFunc("/test", app.test).Methods("GET", "POST")
 
 	/* Server setup and start */
 	BytesupplyServer := &http.Server{
