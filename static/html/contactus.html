@@ -74,7 +74,7 @@
                         <p style="margin-bottom:0" class="text-primary font-italic"><sup>(note)</sup>Some forms can be obtained at the bottom of this page.</p>
                     </div>
                     <hr style="height:2px;color:black"/>
-                    <form action="/contactus" method="POST">
+                    <form id="contactForm" action="/contactus" method="POST">
                         <input id="validEntry" type="hidden" name="validEntry" value="false" />
                         <div class="form-group">
                             <label for="contactName">Name<sup class="font-weight-bold text-danger">(*)</sup></label>
@@ -106,7 +106,7 @@
                             <small id="contactMessageHelp" class="d-none form-text text-danger">Enter text, only alphanumeric and '&' ',' '.' allowed.</small>
                             <textarea class="form-control mandatory" id="contactMessage" name="contactMessage" rows="4" onblur="validateMessageEntry($(this).attr('id'))"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Send</button>
+                        <button id="contactSubmit" type="submit" class="btn btn-primary">Send</button>
                         <button type="button" class="btn btn-secondary" onclick="window.location.replace('/')">Cancel</button>
                     </form>
                  </div>
