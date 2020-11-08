@@ -14,7 +14,6 @@ $(document).ready(function() {
     });
 
     $("#contactForm").submit(function() {
-        alert("(1)You clicked me!");
         event.preventDefault();
 
         var name = $("#contactName").val();
