@@ -39,11 +39,13 @@ $(document).ready(function() {
                                     token: token}, 
                                     function(result) {
                                         console.log(result);
+                                        /*
                                         if(result.success) {
                                                 alert('Thanks for posting comment.')
                                         } else {
                                                 alert('You are spammer ! Get the @$%K out.')
                                         }
+                                        */
                                     });
             });
         });    
