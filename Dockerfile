@@ -9,7 +9,6 @@ RUN mkdir ./bin/log
 COPY ./static/ ./bin/static/
 COPY ./sitemap.xml ./bin/sitemap.xml
 COPY ./robots.txt ./bin/robots.txt
-COPY ./static/img/favicon/ ./bin/
 RUN ["chmod", "+x", "/bin"]
 FROM alpine:3.9
 RUN apk --no-cache add ca-certificates
