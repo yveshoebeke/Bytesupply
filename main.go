@@ -161,6 +161,8 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 				_, _ = app.mfile.WriteString(fmt.Sprintf("    Phone: %s\n", r.FormValue("contactPhone")))
 				_, _ = app.mfile.WriteString(fmt.Sprintf("  Message:\n%s\n", r.FormValue("contactMessage")))
 				_, _ = app.mfile.WriteString("----------------------------------------------------------------------\n")
+				_, _ = app.mfile.WriteString(fmt.Sprintf(" Response:\n%s\n", r.FormValue("g-recaptcha-response")))
+				_, _ = app.mfile.WriteString("======================================================================\n")
 			}
 		}
 
