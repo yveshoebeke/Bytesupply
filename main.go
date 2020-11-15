@@ -200,7 +200,9 @@ func (app *App) privacy(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) test(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, staticLocation+"/html/test.html")
+	vars := mux.Vars(r)
+	app.log.Println("Object:", vars["object"])
+	http.ServeFile(w, r, staticLocation+"/html/"+vars["object"]+".html")
 }
 
 func (app *App) getlog(w http.ResponseWriter, r *http.Request) {
@@ -348,7 +350,7 @@ func main() {
 	r.HandleFunc("/getlog", app.getlog).Methods("GET")
 	r.HandleFunc("/getmsg", app.getmsg).Methods("GET")
 	r.HandleFunc("/request", app.request).Methods("POST")
-	r.HandleFunc("/test", app.test).Methods("GET", "POST")
+	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods("GET", "POST")
 
 	/* Server setup and start */
 	BytesupplyServer := &http.Server{
