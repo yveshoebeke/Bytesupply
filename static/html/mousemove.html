@@ -23,14 +23,14 @@
         <link rel="stylesheet" href="/static/css/bytesupply.css" />
         <script src="/static/js/bytesupply.js"></script>
         <style>
+            /*
             .submitPad {
-                width:200px;
-                height:200px;
+                width:60px;
+                height:20px;
                 margin:10px 10px 0px 0px;
                 background-color:yellow;
-                border: 1px solid red;
                 float:right
-            }
+            }*/
         </style>
     </head>
 
@@ -39,6 +39,7 @@
         <p id="coords" style="border:1px solid red;float: left"></p>
         <div id="submitPadCount" class="submitPad"></div>
         <div><p><button id="resetCount" class="btn btn-danger">Reset Count</button></p></div>
+        <div><p><button id="submitPadCount" class="btn btn-primary submitPad">Submit</button></p></div>
         
         <script>
             $("#resetCount").click(function() {
@@ -50,7 +51,16 @@
                 console.log(Array(targetCoordsCount).join("\n"));
             });
 
-            var targetCoordsCount = 100;
+            console.log("left:",$("#submitPadCount").offset().left);
+            console.log("top:",$("#submitPadCount").offset().top);
+            console.log("height:",$("#submitPadCount").height());
+            console.log("width:",$("#submitPadCount").width());
+
+            console.log($("#submitPadCount").offset().left, ", ", $("#submitPadCount").offset().top, " - ", $("#submitPadCount").offset().left + $("#submitPadCount").width(), ", ", $("#submitPadCount").offset().top);
+            console.log($("#submitPadCount").offset().left, ", ", $("#submitPadCount").offset().top + $("#submitPadCount").height(), " - ", $("#submitPadCount").offset().left + $("#submitPadCount").width(), ", ", $("#submitPadCount").offset().top + $("#submitPadCount").height());
+
+            /*
+            var targetCoordsCount = 50;
             $("#submitPadCount").data("count", 0);
             $(".submitPad").mousemove(function(e) {
                 if( $("#submitPadCount").data("count") > targetCoordsCount ) {
@@ -64,6 +74,25 @@
                     $("#submitPadCount").data("count", $("#submitPadCount").data("count") + 1);
                 }
             });
+            */
+
+            //var targetCoordsCount = 50;
+            $("#submitPadCount").data("count", 0);
+            $(".submitPad").unbind();
+            $(".submitPad").mousemove(function(e) {
+                var pageCoords = e.pageX + ", " + e.pageY;
+                $("#coords").text(pageCoords);
+                $("#submitPadCount").data('"' + $("#submitPadCount").data("count") + '"', pageCoords);
+                $("#submitPadCount").data("count", $("#submitPadCount").data("count") + 1);
+            });
+
+            $(".submitPad").click(function() {
+                $(".submitPad").unbind("mousemove");
+                for(var x = 0; x < $("#submitPadCount").data("count"); x++) {
+                    console.log('"' + x + '"', $("#submitPadCount").data('"' + x + '"'));
+                }
+            });
+
         </script>
              
     </body>
