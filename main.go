@@ -1,5 +1,5 @@
 /*
-	Bytesupply.com - Web Server Pages App
+Bytesupply.com - Web Server Pages App
 	=====================================
 
 	Complete documentation and user guides are available here:
@@ -268,6 +268,58 @@ func (app *App) registerUser(r *http.Request) error {
 	return nil
 }
 
+func (app *App) api(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	version := vars["version"]
+	request := vars["request"]
+
+	switch version {
+	default:
+	case "v1":
+		switch request {
+		case "qTurHm":
+			app.qTurHm(w, r)
+		}
+	}
+}
+
+func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
+	type Target struct {
+		Top    int
+		Left   int
+		Width  int
+		Height int
+	}
+
+	type Move struct {
+		Timestamp int
+		X         int
+		Y         int
+	}
+
+	type QTurHm struct {
+		Key         string
+		TimeCreated string
+		URL         string
+		Target      Target
+		Reciever    string
+		SampleCount int
+		Moves       []Move
+	}
+
+	var q QTurHm
+
+	// Try to decode the request body into the struct. If there is an error,
+	// respond to the client with the error message and a 400 status code.
+	err := json.NewDecoder(r.Body).Decode(&q)
+	if err != nil {
+		app.log.Println("API error (qTurHm):", err.Error())
+		return
+	}
+
+	app.log.Printf("Incoming qTurHm:\n%v", q)
+}
+
 /* Middleware */
 func (app *App) inMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -351,6 +403,7 @@ func main() {
 	r.HandleFunc("/getmsg", app.getmsg).Methods("GET")
 	r.HandleFunc("/request", app.request).Methods("POST")
 	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods("GET", "POST")
+	r.HandleFunc("/api/{version:[a-z0-9]+}/{request[a-Z]+}", app.api).Methods("GET", "POST")
 
 	/* Server setup and start */
 	BytesupplyServer := &http.Server{
