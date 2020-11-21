@@ -268,7 +268,7 @@ func (app *App) registerUser(r *http.Request) error {
 	return nil
 }
 
-func (app *App) api(w http.ResponseWriter, r *http.Request) {
+func (app *App) Api(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	version := vars["version"]
 	request := vars["request"]
@@ -407,7 +407,7 @@ func main() {
 	r.HandleFunc("/getmsg", app.getmsg).Methods("GET")
 	r.HandleFunc("/request", app.request).Methods("POST")
 	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods("GET", "POST")
-	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-Z]+}", app.api).Methods("GET", "POST")
+	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.Api).Methods("GET", "POST")
 
 	/* Server setup and start */
 	BytesupplyServer := &http.Server{
