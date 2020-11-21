@@ -1,6 +1,4 @@
-//var url = new URL($('script').last().attr('src')), c = url.searchParams.get("c"), ms=new Array;
-
-c = "qTurHm";
+var url = new URL($('script').last().attr('src')), c = url.searchParams.get("c"), ms=new Array;
 k = "75cab53138db56817e12500dcdb06e6c61500ea6f0085ca54946b87ec1c4d409";
 r = "qTurHm_Result";
 
