@@ -40,7 +40,11 @@ $(function() {
    
         dataJson = JSON.stringify(data);
 
-        $.post("https://bytesupply.com/api/v1/qTurHm", function(dataJson, status){
+        $.post("https://bytesupply.com/api/v1/qTurHm", dataJson)
+        
+        
+        
+        function(dataJson, status){
             console.log("Data: " + dataJson + "\nStatus: " + status);
         });
     });
