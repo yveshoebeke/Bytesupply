@@ -1,4 +1,10 @@
-var url = new URL($('script').last().attr('src')), c = url.searchParams.get("c"), ms=new Array;
+//var url = new URL($('script').last().attr('src')), c = url.searchParams.get("c"), ms=new Array;
+
+c = "qTurHm";
+k = "75cab53138db56817e12500dcdb06e6c61500ea6f0085ca54946b87ec1c4d409";
+r = "qTurHm_Result";
+
+ms = new Array;
 
 function mvd(t,x,y){
     this.t=t;
@@ -14,19 +20,31 @@ $(function() {
         ms.push(m);
     }).click(function(){
         $(c).unbind("mousemove").unbind("click");
-        var r=8;
-        $(c).data("r", r);
-        console.log("Result: "+$(c).data("r"));
-        console.log("Samples: "+ms.length);
-        console.log("t: " + $(c).position().top);
-        console.log("l: " + $(c).position().left);
-        console.log("w: " + $(c).width());
-        console.log("h: " + $(c).height());
-
-        console.log("Stored data:");
         ms.forEach(function(d){
             $("#moves").append("<tr><td>"+d.t+"</td><td>"+d.x+"</td><td>"+d.y+"</td></tr>")
-            console.log(d.t+" -> "+d.x+" - "+d.y);
+        });
+
+        // Create JSON
+        var t = {};
+        t.top = $(c).position().top;
+        t.left = $(c).position().left;
+        t.width = $(c).width();
+        t.height = $(c).height();
+
+        var data = {};
+        data.userkey = k;
+        data.timestamp = Date();
+        data.origURL = window.location.href;
+        data.target = t;
+        data.reciever = r;
+        data.samples = ms.length;
+        data.moves = ms;
+   
+        userJson = JSON.stringify(data);
+        alert(userJson);
+
+        $.post("https://bytesupply.com/api/v1/qTurHm", function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
         });
     });
 });
