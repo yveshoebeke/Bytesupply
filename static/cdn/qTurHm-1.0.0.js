@@ -38,11 +38,10 @@ $(function() {
         data.samples = ms.length;
         data.moves = ms;
    
-        userJson = JSON.stringify(data);
-        alert(userJson);
+        dataJson = JSON.stringify(data);
 
-        $.post("https://bytesupply.com/api/v1/qTurHm", function(data, status){
-            alert("Data: " + data + "\nStatus: " + status);
+        $.post("https://bytesupply.com/api/v1/qTurHm", function(dataJson, status){
+            console.log("Data: " + dataJson + "\nStatus: " + status);
         });
     });
 });

@@ -273,6 +273,8 @@ func (app *App) api(w http.ResponseWriter, r *http.Request) {
 	version := vars["version"]
 	request := vars["request"]
 
+	app.log.Println("@api with version:", version, "and request:", request)
+
 	switch version {
 	default:
 	case "v1":
@@ -316,6 +318,8 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 		app.log.Println("API error (qTurHm):", err.Error())
 		return
 	}
+
+	app.log.Println("@qTurHm with json data:", q)
 
 	app.log.Printf("Incoming qTurHm:\n%v", q)
 }
