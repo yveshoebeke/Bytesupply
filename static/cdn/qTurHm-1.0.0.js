@@ -45,11 +45,18 @@ $(function() {
    
         jsonData = JSON.stringify(data);
 
+        $.post("https://bytesupply.com/api/v1/qTurHm", jsonData, function(data, status){
+            console.log(`${data} and status is ${status}`);
+        });
+
+        /*
         $.ajax({
             url: "https://bytesupply.com/api/v1/qTurHm",
             type: "POST",
-            data: jsonData,
-            dataType: JSON,
+            data: jsonData
+        }).done(function(msg){
+                console.log("done msg:" + msg);
+        });
             success: function(result){
                 console.log("ajax result:",result);
             },
@@ -57,5 +64,6 @@ $(function() {
                 console.log(`Error ${error}`);
             }
         });
+       */
     });
 });
