@@ -2,8 +2,9 @@ var url = new URL($('script').last().attr('src'));
 var c = url.searchParams.get("c"); 
 var k = url.searchParams.get("k");
 var r = url.searchParams.get("r");
-console.log(c,k,r);
-
+console.log(c)
+console.log(k)
+console.log(r)
 //var k = "21101956";
 //var r = "qTurHm_Result";
 ms = new Array;
@@ -46,7 +47,7 @@ $(function() {
 
         $.ajax({
             url: "https://bytesupply.com/api/v1/qTurHm",
-            type: "POST:",
+            type: "POST",
             data: jsonData,
             dataType: JSON,
             success: function(result){
