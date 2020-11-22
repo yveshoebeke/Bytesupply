@@ -294,9 +294,9 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type Move struct {
-		Timestamp int `json:"timestamp"`
-		X         int `json:"x"`
-		Y         int `json:"y"`
+		T int `json:"t"`
+		X int `json:"x"`
+		Y int `json:"y"`
 	}
 
 	type QTurHm struct {
