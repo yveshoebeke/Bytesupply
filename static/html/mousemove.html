@@ -10,28 +10,20 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
         <link rel="stylesheet" href="/static/css/bytesupply.css" />
         <script src="/static/js/bytesupply.js"></script>
-        <style>
-            /*
-            .submitPad {
-                width:60px;
-                height:20px;
-                margin:10px 10px 0px 0px;
-                background-color:yellow;
-                float:right
-            }*/
-        </style>
     </head>
 
     <body style="background-color:#ffffff">
         <h1>Mousemove</h1>
         <p id="coords" style="border:1px solid red;float: left"></p>
         <button id="t" class="btn btn-warning qTurHm">t-button</button>
-        <div>
-            <table id="moves" class="table table-striped">
-                <tr>
-                    <th>time</th><th>X</th><th>Y</th>
-                </tr>
-            </table>
-        </div>
+        <div class="row">
+            <div class="col-5">
+                <table id="moves" class="table table-striped">
+                    <tr>
+                        <th>time</th><th>X</th><th>Y</th>
+                    </tr>
+                </table>
+            </div>
+    </div>
     </body>
 </html>

@@ -287,26 +287,26 @@ func (app *App) Api(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	type Target struct {
-		Top    int
-		Left   int
-		Width  int
-		Height int
+		Top    int `json:"top"`
+		Left   int `json:"left"`
+		Width  int `json:"width"`
+		Height int `json:"height"`
 	}
 
 	type Move struct {
-		Timestamp int
-		X         int
-		Y         int
+		Timestamp int `json:"timestamp"`
+		X         int `json:"x"`
+		Y         int `json:"y"`
 	}
 
 	type QTurHm struct {
-		Key         string
-		TimeCreated string
-		URL         string
-		Target      Target
-		Reciever    string
-		SampleCount int
-		Moves       []Move
+		Key         string `json:"userkey"`
+		TimeCreated time   `json:"timestamp"`
+		URL         string `json:"origURL"`
+		Target      Target `json:"target"`
+		Reciever    string `json:"receiver"`
+		SampleCount int    `json:"samples"`
+		Moves       []Move `json:"moves"`
 	}
 
 	var q QTurHm
@@ -318,8 +318,6 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 		app.log.Println("API error (qTurHm):", err.Error())
 		return
 	}
-
-	app.log.Println("@qTurHm with json data:", q)
 
 	app.log.Printf("Incoming qTurHm:\n%v", q)
 }
