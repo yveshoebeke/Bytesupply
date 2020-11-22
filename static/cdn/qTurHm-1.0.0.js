@@ -31,7 +31,7 @@ $(function() {
         var t = {};
         t.top = $(c).position().top;
         t.left = $(c).position().left;
-        t.width = $(c).width();
+        t.width = ~~$(c).width();
         t.height = $(c).height();
 
         var data = {};
