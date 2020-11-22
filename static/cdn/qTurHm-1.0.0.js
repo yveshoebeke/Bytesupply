@@ -36,7 +36,7 @@ $(function() {
 
         var data = {};
         data.userkey = k;
-        data.timestamp = Date();
+        data.timestamp = Date.now();
         data.origURL = window.location.href;
         data.target = t;
         data.reciever = r;

@@ -294,19 +294,19 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type Move struct {
-		Timestamp time.Time `json:"timestamp"`
-		X         int       `json:"x"`
-		Y         int       `json:"y"`
+		Timestamp int `json:"timestamp"`
+		X         int `json:"x"`
+		Y         int `json:"y"`
 	}
 
 	type QTurHm struct {
-		Key         string    `json:"userkey"`
-		TimeCreated time.Time `json:"timestamp"`
-		URL         string    `json:"origURL"`
-		Target      Target    `json:"target"`
-		Reciever    string    `json:"receiver"`
-		SampleCount int       `json:"samples"`
-		Moves       []Move    `json:"moves"`
+		Key         string `json:"userkey"`
+		TimeCreated int    `json:"timestamp"`
+		URL         string `json:"origURL"`
+		Target      Target `json:"target"`
+		Reciever    string `json:"receiver"`
+		SampleCount int    `json:"samples"`
+		Moves       []Move `json:"moves"`
 	}
 
 	var q QTurHm
