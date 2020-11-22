@@ -38,7 +38,7 @@ $(function() {
         data.timestamp = Date.now();
         data.origURL = window.location.href;
         data.target = t;
-        data.reciever = r;
+        data.receiver = r;
         data.samples = ms.length;
         data.moves = ms;
    
