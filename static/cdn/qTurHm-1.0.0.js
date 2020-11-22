@@ -1,7 +1,11 @@
-var url = new URL($('script').last().attr('src')), c = url.searchParams.get("c"), ms=new Array;
-k = "75cab53138db56817e12500dcdb06e6c61500ea6f0085ca54946b87ec1c4d409";
-r = "qTurHm_Result";
+var url = new URL($('script').last().attr('src')); 
+var c = url.searchParams.get("c"); 
+var k = url.searchParams.get("k");
+var r = url.searchParams.get("r");
+console.log(c,k,r);
 
+//var k = "21101956";
+//var r = "qTurHm_Result";
 ms = new Array;
 
 function mvd(t,x,y){
@@ -38,14 +42,26 @@ $(function() {
         data.samples = ms.length;
         data.moves = ms;
    
-        dataJson = JSON.stringify(data);
+        jsonData = JSON.stringify(data);
 
-        $.post("https://bytesupply.com/api/v1/qTurHm", dataJson)
-        
-        
-        
-        function(dataJson, status){
-            console.log("Data: " + dataJson + "\nStatus: " + status);
+        //$.post("https://bytesupply.com/api/v1/qTurHm", dataJson)
+        //function(dataJson, status){
+        //    console.log("Data: " + dataJson + "\nStatus: " + status);
+        //});
+
+        $.ajax({
+            url: "https://bytesupply.com/api/v1/qTurHm",
+            type: "POST:",
+            data: jsonData,
+            dataType: json,
+            success: function(result){
+                console.log("ajax result:",result);
+            },
+            error: function(error) {
+                console.log(`Error ${error}`);
+            }
         });
+        
+        
     });
 });
