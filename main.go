@@ -268,7 +268,7 @@ func (app *App) registerUser(r *http.Request) error {
 	return nil
 }
 
-func (app *App) Api(w http.ResponseWriter, r *http.Request) {
+func (app *App) api(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	version := vars["version"]
 	request := vars["request"]
@@ -294,25 +294,24 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type Move struct {
-		Timestamp int `json:"timestamp"`
-		X         int `json:"x"`
-		Y         int `json:"y"`
+		Timestamp time.Time `json:"timestamp"`
+		X         int       `json:"x"`
+		Y         int       `json:"y"`
 	}
 
 	type QTurHm struct {
-		Key         string `json:"userkey"`
-		TimeCreated time   `json:"timestamp"`
-		URL         string `json:"origURL"`
-		Target      Target `json:"target"`
-		Reciever    string `json:"receiver"`
-		SampleCount int    `json:"samples"`
-		Moves       []Move `json:"moves"`
+		Key         string    `json:"userkey"`
+		TimeCreated time.Time `json:"timestamp"`
+		URL         string    `json:"origURL"`
+		Target      Target    `json:"target"`
+		Reciever    string    `json:"receiver"`
+		SampleCount int       `json:"samples"`
+		Moves       []Move    `json:"moves"`
 	}
 
 	var q QTurHm
 
-	// Try to decode the request body into the struct. If there is an error,
-	// respond to the client with the error message and a 400 status code.
+	// Try to decode the request body into the struct.
 	err := json.NewDecoder(r.Body).Decode(&q)
 	if err != nil {
 		app.log.Println("API error (qTurHm):", err.Error())
@@ -405,7 +404,7 @@ func main() {
 	r.HandleFunc("/getmsg", app.getmsg).Methods("GET")
 	r.HandleFunc("/request", app.request).Methods("POST")
 	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods("GET", "POST")
-	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.Api).Methods("GET", "POST")
+	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.api).Methods("GET", "POST")
 
 	/* Server setup and start */
 	BytesupplyServer := &http.Server{
