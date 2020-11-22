@@ -17,7 +17,6 @@ function mvd(t,x,y){
 
 $(function() {
     c = "." + c;
-    $(c).data("r", 0);
     $(c).mousemove(function(e){
         m = new mvd(Date.now(),e.pageX,e.pageY);
         ms.push(m);
