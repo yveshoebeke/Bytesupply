@@ -304,7 +304,7 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 		TimeCreated int    `json:"timestamp"`
 		URL         string `json:"origURL"`
 		Target      Target `json:"target"`
-		Reciever    string `json:"receiver"`
+		Receiver    string `json:"receiver"`
 		SampleCount int    `json:"samples"`
 		Moves       []Move `json:"moves"`
 	}
@@ -319,6 +319,8 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.log.Printf("Incoming qTurHm:\n%v", q)
+
+	app.log.Println(q.Moves[1].T)
 }
 
 /* Middleware */
