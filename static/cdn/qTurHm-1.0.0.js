@@ -29,10 +29,10 @@ $(function() {
 
         // Create JSON
         var t = {};
-        t.top = $(c).position().top;
-        t.left = $(c).position().left;
+        t.top = ~~$(c).position().top;
+        t.left = ~~$(c).position().left;
         t.width = ~~$(c).width();
-        t.height = $(c).height();
+        t.height = ~~$(c).height();
 
         var data = {};
         data.userkey = k;
@@ -45,25 +45,8 @@ $(function() {
    
         jsonData = JSON.stringify(data);
 
-        $.post("https://bytesupply.com/api/v1/qTurHm", jsonData, function(data, status){
-            console.log(`${data} and status is ${status}`);
+        $.post("https://bytesupply.com/api/v1/qTurHm", jsonData, function(jsonData, status){
+            console.log(`${jsonData} and status is ${status}`);
         });
-
-        /*
-        $.ajax({
-            url: "https://bytesupply.com/api/v1/qTurHm",
-            type: "POST",
-            data: jsonData
-        }).done(function(msg){
-                console.log("done msg:" + msg);
-        });
-            success: function(result){
-                console.log("ajax result:",result);
-            },
-            error: function(error) {
-                console.log(`Error ${error}`);
-            }
-        });
-       */
     });
 });
