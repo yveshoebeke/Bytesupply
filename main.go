@@ -3,7 +3,7 @@ Bytesupply.com - Web Server Pages App
 	=====================================
 
 	Complete documentation and user guides are available here:
-		https://github.com/AccuityDeliverySystems/ACCDS-2.0/blob/master/README.md
+	https://github.com/AccuityDeliverySystems/ACCDS-2.0/blob/master/README.md
 
 	@author	yves.hoebeke@accds.com - 1011001.1110110.1100101.1110011
 
@@ -243,20 +243,6 @@ func (app *App) getmsg(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *App) request(w http.ResponseWriter, r *http.Request) {
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		app.log.Println("Error parsing Body:", err)
-	}
-	var data Data
-	json.Unmarshal(reqBody, &data)
-	data.Timestamp = time.Now()
-
-	json.NewEncoder(w).Encode(data)
-
-	app.log.Printf("Request command received: %s", data.ReqType)
-}
-
 func (app *App) registerUser(r *http.Request) error {
 	app.user.Username = r.PostFormValue("username")
 	app.user.Password = r.PostFormValue("password")
@@ -281,6 +267,8 @@ func (app *App) api(w http.ResponseWriter, r *http.Request) {
 		switch request {
 		case "qTurHm":
 			app.qTurHm(w, r)
+		case "request":
+			app.request(w, r)
 		}
 	}
 }
@@ -319,8 +307,20 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.log.Printf("%v", q)
+}
 
-	app.log.Println(q.Moves[1].T)
+func (app *App) request(w http.ResponseWriter, r *http.Request) {
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		app.log.Println("Error parsing Body:", err)
+	}
+	var data Data
+	json.Unmarshal(reqBody, &data)
+	data.Timestamp = time.Now()
+
+	json.NewEncoder(w).Encode(data)
+
+	app.log.Printf("Request command received: %s", data.ReqType)
 }
 
 /* Middleware */
@@ -433,7 +433,7 @@ func main() {
 		curl --header "Content-Type: application/json" \
 		--request POST \
 		--data '{"reqtype":"test", "reqcmd":"Here is some requested data"}' \
-		https://bytesupply.com/request
+		https://bytesupply.com/api/v1/request
 
 		****************************************************
 	*/
