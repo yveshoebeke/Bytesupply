@@ -318,7 +318,7 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.log.Printf("Incoming qTurHm:\n%v", q)
+	app.log.Printf("%v", q)
 
 	app.log.Println(q.Moves[1].T)
 }

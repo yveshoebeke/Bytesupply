@@ -21,11 +21,12 @@ var c = u.searchParams.get("c");                    // Move target class (defaul
 var k = u.searchParams.get("k");                    // User key (default: `sha-1 '21101956'`)
 var r = u.searchParams.get("r");                    // Result element id (default: 'qTutrHm_Result')
 // target move element class
-if(c === null) { 
+console.log(k);
+if(c == null) { 
     c = "qTurHm";
 }
 // callback receiver element id default
-if(r === null) { 
+if(r == null) { 
     r = "qTurHm_Result";
 }
 // key default
