@@ -273,7 +273,7 @@ func (app *App) api(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
+func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) int {
 	type Target struct {
 		Top    int `json:"top"`
 		Left   int `json:"left"`
@@ -307,6 +307,9 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.log.Printf("%v", q)
+
+	qTurHmResult := 8
+	return qTurHmResult
 }
 
 func (app *App) request(w http.ResponseWriter, r *http.Request) {

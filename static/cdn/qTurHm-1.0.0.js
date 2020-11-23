@@ -21,7 +21,6 @@ var c = u.searchParams.get("c");                    // Move target class (defaul
 var k = u.searchParams.get("k");                    // User key (default: `sha-1 '21101956'`)
 var r = u.searchParams.get("r");                    // Result element id (default: 'qTutrHm_Result')
 // target move element class
-console.log(k);
 if(c == null) { 
     c = "qTurHm";
 }
@@ -61,6 +60,7 @@ $(function() {
         data.userkey = k;                   // user supplied key
         data.timestamp = Date.now();        // this object's creation date
         data.origURL = window.location.href;// coming from URL
+        data.subject = c;                   // elem class where moves were derived from
         data.target = t;                    // mave target object (see above)
         data.receiver = r;                  // where to push result to for callback
         data.samples = ms.length;           // number of movements captured
