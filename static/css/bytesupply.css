@@ -5,6 +5,10 @@ body {
     background-color: #FFFFFF;
 }
 
+a:hover {
+  color:red;
+}
+
 h1.navbar-logo {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     color :blue;
