@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"text/template"
 	"time"
@@ -288,13 +289,14 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type QTurHm struct {
-		Key         string `json:"userkey"`
-		TimeCreated int    `json:"timestamp"`
-		URL         string `json:"origURL"`
-		Target      Target `json:"target"`
-		Receiver    string `json:"receiver"`
-		SampleCount int    `json:"samples"`
-		Moves       []Move `json:"moves"`
+		Key           string `json:"userkey"`
+		TimeCreated   int    `json:"timestamp"`
+		ResultContent string `json:"resultcontent"`
+		URL           string `json:"origURL"`
+		Target        Target `json:"target"`
+		Receiver      string `json:"receiver"`
+		SampleCount   int    `json:"samples"`
+		Moves         []Move `json:"moves"`
 	}
 
 	var q QTurHm
@@ -307,6 +309,9 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.log.Printf("%v", q)
+	app.log.Printf("Key: %s Time: %d", q.Key, q.TimeCreated)
+	rfn := q.Key + "_" + strconv.Itoa(q.TimeCreated)
+	app.log.Printf("Result File Name: %s should be: %s", rfn, q.ResultReturn)
 }
 
 func (app *App) request(w http.ResponseWriter, r *http.Request) {
