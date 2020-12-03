@@ -314,9 +314,9 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	app.log.Printf("Result File Name: %s should be: %s", rfn, q.ResultContent)
 
 	res := []byte("8")
-	werr := ioutil.WriteFile("/data/qTurHm/"+rfn, res, 0644)
+	werr := ioutil.WriteFile("/go/bin/data/qTurHm/"+rfn, res, 0644)
 	if werr != nil {
-		app.log.Printf("Error writing result file /data/qTurHm/%s: %v", rfn, werr)
+		app.log.Printf("Error writing result file /go/bin/data/qTurHm/%s: %v", rfn, werr)
 	}
 }
 
