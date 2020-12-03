@@ -20,6 +20,7 @@ var u = new URL($('script').last().attr('src'));    // Get this scripts url
 var c = u.searchParams.get("c");                    // Move target class (default: 'qTurHm')
 var k = u.searchParams.get("k");                    // User key (default: `sha-1 '21101956'`)
 var r = u.searchParams.get("r");                    // Result element id (default: 'qTutrHm_Result')
+// set defauts if data parameters are not given
 // target move element class
 if(c == null) { 
     c = "qTurHm";
@@ -53,18 +54,22 @@ $(function() {
         var t = {};                         // Cursor move target element dims
         t.top = ~~$(c).position().top;      // upper limit (min val on y-axis)
         t.left = ~~$(c).position().left;    // left limit (min val on x-axis)
-        t.width = ~~$(c).width();           // width
-        t.height = ~~$(c).height();         // height
+        t.width = ~~$(c).width();           // width (+ left limit = max val on x-axis)
+        t.height = ~~$(c).height();         // height (+ top = max val on y-axis)
+
+        n = Date.now();
+        rc = k + "_" + n.toString();
 
         var data = {};                      // data objet to be JSON-ized
         data.userkey = k;                   // user supplied key
-        data.timestamp = Date.now();        // this object's creation date
-        data.origURL = window.location.href;// coming from URL
+        data.timestamp = n;                 // this object's creation date
+        data.resultcontent = rc;            // id tag for server to attach to result
+        data.origURL = window.location.href;// request coming from this URL
         data.subject = c;                   // elem class where moves were derived from
-        data.target = t;                    // mave target object (see above)
+        data.target = t;                    // move target object (see above)
         data.receiver = r;                  // where to push result to for callback
         data.samples = ms.length;           // number of movements captured
-        data.moves = ms;                    // all movements data
+        data.moves = ms;                    // movement data array
    
         // Create the JSON Object
         jsonData = JSON.stringify(data);
@@ -74,19 +79,5 @@ $(function() {
             console.log("status is " + status);
         });
 
-        /*
-        $.ajax({
-            url: "https://bytesupply.com/api/v1/qTurHm",
-            // The name of the callback parameter, as specified by the YQL service
-            jsonp: "callback",
-            // Tell jQuery we're expecting JSONP
-            dataType: "jsonp",
-            // Tell YQL what we want and that we want JSON
-            data: {jsonData, format:json},
-            success: function( response ) {
-                console.log( response ); // server response
-            }
-        });
-        */
     });
 });

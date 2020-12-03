@@ -6,6 +6,7 @@ COPY ./bytesupply.com /go/src/bytesupply.com
 RUN go get ./...
 RUN GOOS=linux go build -ldflags="-s -w" -o ./bin/bytesupply-app ./main.go
 RUN mkdir ./bin/log
+RUN mkdir ./bin/data/qTurhm/
 COPY ./static/ ./bin/static/
 COPY ./sitemap.xml ./bin/sitemap.xml
 COPY ./robots.txt ./bin/robots.txt
