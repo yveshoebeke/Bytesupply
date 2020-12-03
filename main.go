@@ -311,7 +311,7 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	app.log.Printf("%v", q)
 	app.log.Printf("Key: %s Time: %d", q.Key, q.TimeCreated)
 	rfn := q.Key + "_" + strconv.Itoa(q.TimeCreated)
-	app.log.Printf("Result File Name: %s should be: %s", rfn, q.ResultReturn)
+	app.log.Printf("Result File Name: %s should be: %s", rfn, q.ResultContent)
 }
 
 func (app *App) request(w http.ResponseWriter, r *http.Request) {
