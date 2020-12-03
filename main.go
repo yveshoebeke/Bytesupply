@@ -316,7 +316,7 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	res := []byte("8")
 	werr := ioutil.WriteFile("/data/qTurHm/"+rfn, res, 0644)
 	if werr != nil {
-		app.log.Println("Error writing result file /data/qTurHm/%s: %v", rfn, werr)
+		app.log.Printf("Error writing result file /data/qTurHm/%s: %v", rfn, werr)
 	}
 }
 
