@@ -312,6 +312,12 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 	app.log.Printf("Key: %s Time: %d", q.Key, q.TimeCreated)
 	rfn := q.Key + "_" + strconv.Itoa(q.TimeCreated)
 	app.log.Printf("Result File Name: %s should be: %s", rfn, q.ResultContent)
+
+	res := []byte("8")
+	werr := ioutil.WriteFile("/data/qTurHm/"+rfn, res, 0644)
+	if werr != nil {
+		app.log.Println("Error writing result file /data/qTurHm/%s: %v", rfn, werr)
+	}
 }
 
 func (app *App) request(w http.ResponseWriter, r *http.Request) {
