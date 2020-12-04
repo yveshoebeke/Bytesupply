@@ -93,7 +93,7 @@ $(function() {
             console.log("POST status is " + status);
         });
 
-        console.log($(r).parent().get(0));
+        console.log($(r).parent().get(0).tagname);
         // Get evaluation result back and push it in designated element --> to be revised.
         /*
         $.get(url, function(result) {
@@ -117,7 +117,8 @@ $(function() {
         // Place perception result in appropriate element.
         // Check nature of target object clicked.
         // Add data store to target element with perception value. key = r.slice(1);
-        //$(r).data(r.slice(1), p)
+        $(r).data(r.slice(1), p);
+        console.log($(r).data(r.slice(1)));
         // if <input type ?> get parent <form> and append <input type hidden> with value.
         /*
         if $(r).??? == "INPUT" {
