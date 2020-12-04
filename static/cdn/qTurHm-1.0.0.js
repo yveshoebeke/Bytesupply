@@ -50,7 +50,7 @@ function getCoords(el) {
     var p = $(el).position();
     return {
       top: Math.floor(p.top),
-      left: 80, //Math.floor(p.left),
+      left: Math.floor(p.left),
       bottom: Math.ceil(p.top + $(el).innerHeight()),
       right: Math.ceil(p.left + $(el).innerWidth()),
     };
@@ -140,24 +140,26 @@ $(function() {
         */
        
        // Calculate perception result.
-       // Is last move timestamp greater then "now"? -> 1
-       // Is move data array empty? -> 0
+       // Is move data array empty?
        if(data.samples < 2) {
             p = 0;
        } else if(data.moves[0].t > data.moves[data.samples-1].t) {
             p = 1;
-            // Are last move coords differnet than click coords? -> 2
+            // Are last move coords differnet than click coords?
        } else if(data.moves[data.samples-1].x != data.moves[data.samples-2].x && 
                 data.moves[data.samples-1].y != data.moves[data.samples-2].y) {
             p = 2;
-            // Is last move timestamp less then 2hrs? -> 3
+            // Is last move timestamp less then 2hrs?
         } else if(data.moves[data.samples-1].t + 5200 < Date.now()) {
             p = 6;
         } else {
-            // Are there move coords outside target object dimentions? -> 4
+            // Are there move coords outside target object dimentions?
             p = moveAnalysis(data.moves, data.target);
         }
-       
+        // if mobile device and more than 2 moves degrade perception.
+        if(data.isM && data.moves > 2) {
+            p = Math.ceil(p/2);
+        }
        // Place perception result in appropriate element.
        // Check nature of target object clicked.
        // Add data store to target element with perception value.
@@ -167,6 +169,5 @@ $(function() {
         if($(c).parent().get(0).tagName == "FORM") {
             $(c).parent().append("<input id=\""+r+"\" type=\"hidden\" value=\""+p.toString()+"\" />");
         };
-
     });
 });
