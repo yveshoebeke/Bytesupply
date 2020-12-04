@@ -55,9 +55,11 @@ $(function() {
     $(c).mousemove(function(e){
         m = new mvd(Date.now(),e.pageX,e.pageY);    // harvest time, x, y for each move
         ms.push(m);                                 // ... and push it on the array
-    }).click(function(){
+    }).click(function(e){
+        m = new mvd(Date.now(),e.pageX,e.pageY);    // time, x, y for click event
+        ms.push(m);                                 // ... and push it on the array
         $(c).unbind("mousemove").unbind("click");   // disable click when clicked
-        console.log("mobile device? "+isMobile);
+        console.log("mobile device? "+isM);
         // Create JSON Object
         var t = {};                         // Cursor move target element dims
         t.top = ~~$(c).position().top;      // upper limit (min val on y-axis)
