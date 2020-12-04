@@ -73,7 +73,7 @@ $(function() {
         data.timestamp = n;                 // this object's creation date
         data.resultcontent = rc;            // id tag for server to attach to result
         data.origURL = window.location.href;// request coming from this URL
-        data.mobile = isM                   // is this a mobile device?
+        data.mobile = isM;                  // is this a mobile device?
         data.subject = c;                   // elem class where moves were derived from
         data.target = t;                    // move target object (see above)
         data.receiver = r;                  // where to push result to for callback
