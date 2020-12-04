@@ -47,13 +47,12 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 }
 // get target boundaries
 function getCoords(el) {
-    let box = el.getBoundingClientRect();
-  
+    area = el.getBoundingClientRect();
     return {
-      top: box.top + window.pageYOffset,
-      right: box.right + window.pageXOffset,
-      bottom: box.bottom + window.pageYOffset,
-      left: box.left + window.pageXOffset
+      top: el.top,
+      left: el.left,
+      bottom: el.bottom,
+      right: el.right,
     };
   }
 // Ananlyse x/y vs. boundary behavior
