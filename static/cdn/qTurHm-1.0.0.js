@@ -48,7 +48,7 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 
 function moveAnalysis(mvs, area){
     console.log(area);
-    mvs.each(function(i, v){
+    $.each(mvs, function(i, v){
         console.log(i,v.t,v.x,v.y);
     });
 
