@@ -24,9 +24,9 @@ var p = 5;                                          // Perception result
 // set defauts if data parameters are not given
 // target move element class
 if(c == null) { 
-    c = ".qTurHm";
+    c = "#qTurHm";
 } else {
-    c = "." + c;    // c = class of submit element
+    c = "#" + c;    // c = class of submit element
 }
 // callback receiver element id default
 if(r == null) {
@@ -47,7 +47,7 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 }
 // get target boundaries
 function getCoords(el) {
-    area = el.getBoundingClientRect();
+    area = $(el).getBoundingClientRect();
     return {
       top: el.top,
       left: el.left,
