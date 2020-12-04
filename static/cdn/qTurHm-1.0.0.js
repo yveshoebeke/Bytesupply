@@ -93,7 +93,7 @@ $(function() {
             console.log("POST status is " + status);
         });
 
-        console.log($(r).parent().get(0).tagname);
+        console.log($(r).parent().get(0).tagName);
         // Get evaluation result back and push it in designated element --> to be revised.
         /*
         $.get(url, function(result) {
