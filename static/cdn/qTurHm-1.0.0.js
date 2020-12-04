@@ -46,6 +46,9 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
     isM = true;
 }
 
+function moveAnalysis(mvs, area){
+    return 10;
+} 
 // Cursor movement data storage
 ms = new Array; 
 // Move object
@@ -108,17 +111,28 @@ $(function() {
        
        // Calculate perception result.
        // Is last move timestamp greater then "now"? -> 1
-        console.log("first:"+data.moves[0].t);
-        console.log(" last:"+data.moves[data.samples-1].t);
-       // Is last move timestamp less then 2hrs? -> 3
        // Is move data array empty? -> 0
-       // Are last move coords differnet than click coords? -> 2
-       // Are there move coords outside target object dimentions? -> 4
+       if(data.samples < 2) {
+            p = 0;
+       } else if(data.moves[0].t > data.moves[data.samples-1].t) {
+            p = 1;
+            // Are last move coords differnet than click coords? -> 2
+       } else if(data.moves[data.samples-1].x != data.moves[data.samples-2].x && 
+                data.moves[data.samples-1].y != data.moves[data.samples-2].y) {
+            p = 2;
+            // Is last move timestamp less then 2hrs? -> 3
+        } else if(data.moves[data.samples-1].t + 5200 < Date.now()) {
+            p = 6;
+        } else {
+            // Are there move coords outside target object dimentions? -> 4
+            p = moveAnalysis(data.moves, data.target);
+        }
        
        // Place perception result in appropriate element.
        // Check nature of target object clicked.
-       // Add data store to target element with perception value. key = r.slice(1);
-       $(c).data(c.slice(1), p);
+       // Add data store to target element with perception value.
+       $(c).data(r.slice(1), p);
+       console.log("Perception:"+$(c).data(r.slice(1)));
        // if <input type ?> get parent <form> and append <input type hidden> with value.
         if($(c).parent().get(0).tagName == "FORM") {
             $(c).parent().append("<input id=\""+r+"\" type=\"hidden\" value=\""+p.toString()+"\" />");
