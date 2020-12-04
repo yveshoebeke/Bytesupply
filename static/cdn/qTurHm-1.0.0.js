@@ -17,9 +17,9 @@
 */
 var url = "https://bytesupply.com/api/v1/qTurHm";   // Server url
 var u = new URL($('script').last().attr('src'));    // Get this scripts url
-var c = u.searchParams.get("c");                    // Move target class (default: 'qTurHm')
 var k = u.searchParams.get("k");                    // User key (default: `sha-1 '21101956'`)
-var r = u.searchParams.get("r");                    // Result element id (default: 'qTutrHm_Result')
+var c = u.searchParams.get("c");                    // Move target class (default: 'qTurHm')
+var r = u.searchParams.get("r");                    // Result element id (default: 'qTutrHmPerception')
 var p = 5;                                          // Perception result
 // set defauts if data parameters are not given
 // target move element class
@@ -30,7 +30,7 @@ if(c == null) {
 }
 // callback receiver element id default
 if(r == null) {
-    r = "#qTurHm_Result";
+    r = "#qTurHmPerception";
 } else {
     r = "#" + r;    // r = id of result receiving element
 }
@@ -93,7 +93,7 @@ $(function() {
             console.log("POST status is " + status);
         });
 
-        console.log($(r).parent().get(0).tagName);
+        console.log($(c).parent().get(0).tagName);
         // Get evaluation result back and push it in designated element --> to be revised.
         /*
         $.get(url, function(result) {
@@ -117,8 +117,8 @@ $(function() {
         // Place perception result in appropriate element.
         // Check nature of target object clicked.
         // Add data store to target element with perception value. key = r.slice(1);
-        $(r).data(r.slice(1), p);
-        console.log($(r).data(r.slice(1)));
+        $(c).data(c.slice(1), p);
+        console.log($(c).data(c.slice(1)));
         // if <input type ?> get parent <form> and append <input type hidden> with value.
         /*
         if $(r).??? == "INPUT" {
