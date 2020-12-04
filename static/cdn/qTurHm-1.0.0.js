@@ -93,7 +93,6 @@ $(function() {
             console.log("POST status is " + status);
         });
 
-        console.log($(c).parent().get(0).tagName);
         // Get evaluation result back and push it in designated element --> to be revised.
         /*
         $.get(url, function(result) {
@@ -106,25 +105,24 @@ $(function() {
             }
         });
         */
+       
+       // Calculate perception result.
+       // Is last move timestamp greater then "now"? -> 1
+        console.log("first:"+data.moves[0].t);
+        console.log(" last:"+data.moves[data.samples-1].t);
+       // Is last move timestamp less then 2hrs? -> 3
+       // Is move data array empty? -> 0
+       // Are last move coords differnet than click coords? -> 2
+       // Are there move coords outside target object dimentions? -> 4
+       
+       // Place perception result in appropriate element.
+       // Check nature of target object clicked.
+       // Add data store to target element with perception value. key = r.slice(1);
+       $(c).data(c.slice(1), p);
+       // if <input type ?> get parent <form> and append <input type hidden> with value.
+        if($(c).parent().get(0).tagName == "FORM") {
+            $(c).parent().append("<input id=\""+r+"\" type=\"hidden\" value=\""+p.toString()+"\" />");
+        };
 
-        // Calculate perception result.
-        // Is last move timestamp greater then "now"? -> 1
-        // Is last move timestamp less then 2hrs? -> 3
-        // Is move data array empty? -> 0
-        // Are last move coords differnet than click coords? -> 2
-        // Are there move coords outside target object dimentions? -> 4
-
-        // Place perception result in appropriate element.
-        // Check nature of target object clicked.
-        // Add data store to target element with perception value. key = r.slice(1);
-        $(c).data(c.slice(1), p);
-        console.log($(c).data(c.slice(1)));
-        // if <input type ?> get parent <form> and append <input type hidden> with value.
-        /*
-        if $(r).??? == "INPUT" {
-            if $(r).parent() == FormData
-                append '<input id="'+r.slice(1)+"' type="hidden" name="'+r.slice(1)+'" value="'+p.toString()+'" />'
-        }
-        */     
     });
 });
