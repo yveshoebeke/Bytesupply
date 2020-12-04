@@ -47,6 +47,11 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 }
 
 function moveAnalysis(mvs, area){
+    console.log(area);
+    mvs.each(function(i, v){
+        console.log(i,v.t,v.x,v.y);
+    });
+
     return 10;
 } 
 // Cursor movement data storage
@@ -93,7 +98,7 @@ $(function() {
 
         // Send it to the server
         $.post(url, jsonData, function(jsonData, status){
-            console.log("POST status is " + status);
+            //console.log("POST status is " + status);
         });
 
         // Get evaluation result back and push it in designated element --> to be revised.
@@ -132,7 +137,6 @@ $(function() {
        // Check nature of target object clicked.
        // Add data store to target element with perception value.
        $(c).data(r.slice(1), p);
-       console.log("Perception:"+$(c).data(r.slice(1)));
        // if <input type ?> get parent <form> and append <input type hidden> with value.
         if($(c).parent().get(0).tagName == "FORM") {
             $(c).parent().append("<input id=\""+r+"\" type=\"hidden\" value=\""+p.toString()+"\" />");
