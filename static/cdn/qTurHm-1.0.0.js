@@ -56,13 +56,25 @@ function getCoords(el) {
     };
   }
 // Ananlyse x/y vs. boundary behavior
-function moveAnalysis(mvs, area){
-    console.log(area);
-    $.each(mvs, function(i, v){
+function moveAnalysis(m, a){
+    console.log(a);
+    var o = 0;
+    var t = 0;
+    var p = 0;
+    $.each(m, function(i, v){
         console.log(i,v.t,v.x,v.y);
+        t = i + 1;
+        if(v.x < a.left || v.x > a.right) {
+            o++;
+        }
+        if(v.y < a.top || v.y > a.bottom) {
+            o++;
+        }
     });
 
-    return 10;
+    p = 10 - Math.ceil((o * 10)/t);
+
+    return p;
 } 
 // Cursor movement data storage
 ms = new Array; 
@@ -150,6 +162,7 @@ $(function() {
        // Check nature of target object clicked.
        // Add data store to target element with perception value.
        $(c).data(r.slice(1), p);
+       console.log("Perception: ",$(c).data(r.slice(1)));
        // if <input type ?> get parent <form> and append <input type hidden> with value.
         if($(c).parent().get(0).tagName == "FORM") {
             $(c).parent().append("<input id=\""+r+"\" type=\"hidden\" value=\""+p.toString()+"\" />");
