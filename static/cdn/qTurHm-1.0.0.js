@@ -50,7 +50,7 @@ function getCoords(el) {
     var p = $(el).position();
     return {
       top: Math.floor(p.top),
-      left: Math.floor(p.left),
+      left: 80, //Math.floor(p.left),
       bottom: Math.ceil(p.top + $(el).innerHeight()),
       right: Math.ceil(p.left + $(el).innerWidth()),
     };
