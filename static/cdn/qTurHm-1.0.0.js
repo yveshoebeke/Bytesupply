@@ -7,7 +7,7 @@
     An int result code between 0 and 10 is returned indicating 
     perceived probability of above element was engaged by a humon or robot.
 
-    Result value scale:
+    Perception result value scale:
 
     0-1-2-3-4-5-6-7-8-9-10
     ^                   ^
@@ -15,19 +15,24 @@
 
     (c) 2020 - Bytesupply, LLC
 */
-var url = "https://bytesupply.com/api/v1/qTurHm"; // Server url
+var url = "https://bytesupply.com/api/v1/qTurHm";   // Server url
 var u = new URL($('script').last().attr('src'));    // Get this scripts url
 var c = u.searchParams.get("c");                    // Move target class (default: 'qTurHm')
 var k = u.searchParams.get("k");                    // User key (default: `sha-1 '21101956'`)
 var r = u.searchParams.get("r");                    // Result element id (default: 'qTutrHm_Result')
+var p = 5;                                          // Perception result
 // set defauts if data parameters are not given
 // target move element class
 if(c == null) { 
-    c = "qTurHm";
+    c = ".qTurHm";
+} else {
+    c = "." + c;    // c = class of submit element
 }
 // callback receiver element id default
-if(r == null) { 
-    r = "qTurHm_Result";
+if(r == null) {
+    r = "#qTurHm_Result";
+} else {
+    r = "#" + r;    // r = id of result receiving element
 }
 // key default
 if (k == null){
@@ -51,7 +56,6 @@ function mvd(t,x,y){
 }
 
 $(function() {
-    c = "." + c;    // c = class of submit element
     $(c).mousemove(function(e){
         m = new mvd(Date.now(),e.pageX,e.pageY);    // harvest time, x, y for each move
         ms.push(m);                                 // ... and push it on the array
@@ -59,7 +63,6 @@ $(function() {
         m = new mvd(Date.now(),e.pageX,e.pageY);    // time, x, y for click event
         ms.push(m);                                 // ... and push it on the array
         $(c).unbind("mousemove").unbind("click");   // disable click when clicked
-        console.log("mobile device? "+isM);
         // Create JSON Object
         var t = {};                         // Cursor move target element dims
         t.top = ~~$(c).position().top;      // upper limit (min val on y-axis)
@@ -87,10 +90,11 @@ $(function() {
 
         // Send it to the server
         $.post(url, jsonData, function(jsonData, status){
-            console.log("status is " + status);
+            console.log("POST status is " + status);
         });
 
-        // Get evaluation result back and push it in designated element
+        console.log($(r).parent().get(0));
+        // Get evaluation result back and push it in designated element --> to be revised.
         /*
         $.get(url, function(result) {
             if (result == 'ON') {
@@ -102,5 +106,24 @@ $(function() {
             }
         });
         */
+
+        // Calculate perception result.
+        // Is last move timestamp greater then "now"? -> 1
+        // Is last move timestamp less then 2hrs? -> 3
+        // Is move data array empty? -> 0
+        // Are last move coords differnet than click coords? -> 2
+        // Are there move coords outside target object dimentions? -> 4
+
+        // Place perception result in appropriate element.
+        // Check nature of target object clicked.
+        // Add data store to target element with perception value. key = r.slice(1);
+        //$(r).data(r.slice(1), p)
+        // if <input type ?> get parent <form> and append <input type hidden> with value.
+        /*
+        if $(r).??? == "INPUT" {
+            if $(r).parent() == FormData
+                append '<input id="'+r.slice(1)+"' type="hidden" name="'+r.slice(1)+'" value="'+p.toString()+'" />'
+        }
+        */     
     });
 });
