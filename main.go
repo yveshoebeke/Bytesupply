@@ -275,48 +275,52 @@ func (app *App) api(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
-	type Target struct {
-		Top    int `json:"top"`
-		Left   int `json:"left"`
-		Width  int `json:"width"`
-		Height int `json:"height"`
-	}
+	if r.Method == http.MethodGet {
+		http.ServeFile(w, r, staticLocation+"/html/contactus.html")
+	} else if r.Method == http.MethodPost {
+		type Target struct {
+			Top    int `json:"top"`
+			Left   int `json:"left"`
+			Width  int `json:"width"`
+			Height int `json:"height"`
+		}
 
-	type Move struct {
-		T int `json:"t"`
-		X int `json:"x"`
-		Y int `json:"y"`
-	}
+		type Move struct {
+			T int `json:"t"`
+			X int `json:"x"`
+			Y int `json:"y"`
+		}
 
-	type QTurHm struct {
-		Key           string `json:"userkey"`
-		TimeCreated   int    `json:"timestamp"`
-		ResultContent string `json:"resultcontent"`
-		URL           string `json:"origURL"`
-		Target        Target `json:"target"`
-		Receiver      string `json:"receiver"`
-		SampleCount   int    `json:"samples"`
-		Moves         []Move `json:"moves"`
-	}
+		type QTurHm struct {
+			Key           string `json:"userkey"`
+			TimeCreated   int    `json:"timestamp"`
+			ResultContent string `json:"resultcontent"`
+			URL           string `json:"origURL"`
+			Target        Target `json:"target"`
+			Receiver      string `json:"receiver"`
+			SampleCount   int    `json:"samples"`
+			Moves         []Move `json:"moves"`
+		}
 
-	var q QTurHm
+		var q QTurHm
 
-	// Try to decode the request body into the struct.
-	err := json.NewDecoder(r.Body).Decode(&q)
-	if err != nil {
-		app.log.Println("API error (qTurHm):", err.Error())
-		return
-	}
+		// Try to decode the request body into the struct.
+		err := json.NewDecoder(r.Body).Decode(&q)
+		if err != nil {
+			app.log.Println("API error (qTurHm):", err.Error())
+			return
+		}
 
-	app.log.Printf("%v", q)
-	app.log.Printf("Key: %s Time: %d", q.Key, q.TimeCreated)
-	rfn := q.Key + "_" + strconv.Itoa(q.TimeCreated)
-	app.log.Printf("Result File Name: %s should be: %s", rfn, q.ResultContent)
+		app.log.Printf("%v", q)
+		app.log.Printf("Key: %s Time: %d", q.Key, q.TimeCreated)
+		rfn := q.Key + "_" + strconv.Itoa(q.TimeCreated)
+		app.log.Printf("Result File Name: %s should be: %s", rfn, q.ResultContent)
 
-	res := []byte("8")
-	werr := ioutil.WriteFile("/go/bin/data/qTurHm/"+rfn, res, 0644)
-	if werr != nil {
-		app.log.Printf("Error writing result file /go/bin/data/qTurHm/%s: %v", rfn, werr)
+		res := []byte("8")
+		werr := ioutil.WriteFile("/go/bin/data/qTurHm/"+rfn, res, 0644)
+		if werr != nil {
+			app.log.Printf("Error writing result file /go/bin/data/qTurHm/%s: %v", rfn, werr)
+		}
 	}
 }
 

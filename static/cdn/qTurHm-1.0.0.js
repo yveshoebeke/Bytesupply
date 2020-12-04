@@ -49,7 +49,7 @@ $(function() {
         ms.push(m);                                 // ... and push it on the array
     }).click(function(){
         $(c).unbind("mousemove").unbind("click");   // disable click when clicked
-
+        console.log("navigator.userAgent: "+navigator.userAgent)
         // Create JSON Object
         var t = {};                         // Cursor move target element dims
         t.top = ~~$(c).position().top;      // upper limit (min val on y-axis)
@@ -79,5 +79,17 @@ $(function() {
             console.log("status is " + status);
         });
 
+        // Get evaluation result back and push it in designated element
+        /*
+        $.get(url, function(result) {
+            if (result == 'ON') {
+                alert('ON');
+            } else if (result == 'OFF') {
+                alert('OFF');
+            } else {
+                alert(result);
+            }
+        });
+        */
     });
 });
