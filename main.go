@@ -296,6 +296,7 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 			TimeCreated   int    `json:"timestamp"`
 			ResultContent string `json:"resultcontent"`
 			URL           string `json:"origURL"`
+			Mobile        bool   `json:"mobile"`
 			Target        Target `json:"target"`
 			Receiver      string `json:"receiver"`
 			SampleCount   int    `json:"samples"`
