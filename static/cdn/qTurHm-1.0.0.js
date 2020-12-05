@@ -93,19 +93,13 @@ $(function() {
         m = new mvd(Date.now(),e.pageX,e.pageY);    // time, x, y for click event
         ms.push(m);                                 // ... and push it on the array
         $(c).unbind("mousemove").unbind("click");   // disable click when clicked
-        // Create JSON Object
-        //var t = {}; 
+        // Cursor move target element dimensions
         var t = getCoords(c); 
-        // Cursor move target element dims
-        /*
-        t.top = ~~$(c).position().top;      // upper limit (min val on y-axis)
-        t.left = ~~$(c).position().left;    // left limit (min val on x-axis)
-        t.width = ~~$(c).width();           // width (+ left limit = max val on x-axis)
-        t.height = ~~$(c).height();         // height (+ top = max val on y-axis)
-        */
-        n = Date.now();
-        rc = k + "_" + n.toString();
 
+        n = Date.now();
+       rc = k + "_" + n.toString();
+       
+       // Create JSON Object
         var data = {};                      // data objet to be JSON-ized
         data.userkey = k;                   // user supplied key
         data.timestamp = n;                 // this object's creation date
