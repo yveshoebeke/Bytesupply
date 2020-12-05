@@ -47,7 +47,7 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 }
 // get target boundaries
 function getCoords(el) {
-    elem = document.getElementById(el);
+    elem = document.getElementById(el.slice(1));
     console.log("pjs:", { 
         top: elem.offsetTop, 
         left: elem.offsetLeft, 
