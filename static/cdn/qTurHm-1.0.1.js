@@ -51,8 +51,8 @@ function getCoords(el) {
     console.log("pjs:", { 
         top: elem.offsetTop, 
         left: elem.offsetLeft, 
-        bottom: elem.offsetTop + el.offsetHeight,
-        right: elem.offsetLeft + el.offsetWidth,
+        bottom: elem.offsetTop + elem.offsetHeight,
+        right: elem.offsetLeft + elem.offsetWidth,
     });
 
     var p = $(el).position();
