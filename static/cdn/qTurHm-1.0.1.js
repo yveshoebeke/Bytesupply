@@ -92,7 +92,7 @@ function mvd(t,x,y){
     this.y=y;   // y position
 }
 
-(function() {
+$(function() {
     $(c).mousemove(function(e){
         m = new mvd(Date.now(),e.pageX,e.pageY);    // harvest time, x, y for each move
         ms.push(m);                                 // ... and push it on the array
@@ -171,4 +171,4 @@ function mvd(t,x,y){
             $(c).parent().append("<input id=\""+r+"\" type=\"hidden\" value=\""+p.toString()+"\" />");
         };
     });
-})();
+});
