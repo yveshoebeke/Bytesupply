@@ -57,14 +57,13 @@ function getCoords(el) {
 }
 // Ananlyse x/y vs. boundary behavior
 function moveAnalysis(m, a){
-    console.log(a);
-    console.log(a.top, a.bottom, a.left, a.right)
+    console.log("Analysing...");
     var o = 0;
     var t = 0;
     var p = 0;
     m.forEach(function(i, v){
-        console.log(i,v.t,v.x,v.y);
         t = i + 1;
+        console.log(i,t,v.t,v.x,v.y);
         if(v.x < a.left || v.x > a.right) {
             o++;
         }
