@@ -53,8 +53,8 @@ function getCoords(el) {
         left: elem.offsetLeft, 
         bottom: elem.offsetTop + elem.offsetHeight,
         right: elem.offsetLeft + elem.offsetWidth,
-    });
-  }
+    }
+}
 // Ananlyse x/y vs. boundary behavior
 function moveAnalysis(m, a){
     console.log(a);
