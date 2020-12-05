@@ -47,11 +47,12 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 }
 // get target boundaries
 function getCoords(el) {
+    elem = document.getElementById(el);
     console.log("pjs:", { 
-        top: el.offsetTop, 
-        left: el.offsetLeft, 
-        bottom: el.offsetTop + el.offsetHeight,
-        right: el.offsetLeft + el.offsetWidth,
+        top: elem.offsetTop, 
+        left: elem.offsetLeft, 
+        bottom: elem.offsetTop + el.offsetHeight,
+        right: elem.offsetLeft + el.offsetWidth,
     });
 
     var p = $(el).position();
