@@ -47,25 +47,18 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 }
 // get target boundaries
 function getCoords(el) {
-    elem = document.getElementById(el.slice(1));
-    console.log("pjs:", { 
+    elem = document.getElementById(el.slice(1)); // remove slice when completely converted.
+    return { 
         top: elem.offsetTop, 
         left: elem.offsetLeft, 
         bottom: elem.offsetTop + elem.offsetHeight,
         right: elem.offsetLeft + elem.offsetWidth,
     });
-
-    var p = $(el).position();
-    return {
-      top: Math.floor(p.top),
-      left: Math.floor(p.left),
-      bottom: Math.ceil(p.top + $(el).innerHeight()),
-      right: Math.ceil(p.left + $(el).innerWidth()),
-    };
   }
 // Ananlyse x/y vs. boundary behavior
 function moveAnalysis(m, a){
     console.log(a);
+    console.log(a.top, a.bottom, a.left, a.right)
     var o = 0;
     var t = 0;
     var p = 0;
