@@ -160,9 +160,9 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 				_, _ = app.mfile.WriteString(fmt.Sprintf("  Company: %s\n", r.FormValue("contactCompany")))
 				_, _ = app.mfile.WriteString(fmt.Sprintf("    Email: %s\n", r.FormValue("contactEmail")))
 				_, _ = app.mfile.WriteString(fmt.Sprintf("    Phone: %s\n", r.FormValue("contactPhone")))
-				_, _ = app.mfile.WriteString(fmt.Sprintf("  Message:\n%s\n", r.FormValue("contactMessage")))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("  Message: %s\n", r.FormValue("contactMessage")))
 				_, _ = app.mfile.WriteString("----------------------------------------------------------------------\n")
-				_, _ = app.mfile.WriteString(fmt.Sprintf(" Response:\n%s\n", r.FormValue("g-recaptcha-response")))
+				_, _ = app.mfile.WriteString(fmt.Sprintf("   qTurHm: %s\n", r.FormValue("qTurHmPerception")))
 				_, _ = app.mfile.WriteString("======================================================================\n")
 			}
 		}
@@ -198,6 +198,10 @@ func (app *App) terms(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) privacy(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/privacy.html")
+}
+
+func (app *App) products(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, staticLocation+"/html/products.html")
 }
 
 func (app *App) test(w http.ResponseWriter, r *http.Request) {
@@ -409,20 +413,22 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticLocation))))
 
 	/* Handlers */
-	r.HandleFunc("/", app.homepage).Methods("GET")
-	r.HandleFunc("/bytesupply", app.bytesupply).Methods("GET")
-	r.HandleFunc("/staff", app.staff).Methods("GET")
-	r.HandleFunc("/history", app.history).Methods("GET")
-	r.HandleFunc("/contactus", app.contactus).Methods("GET", "POST")
-	r.HandleFunc("/search", app.search).Methods("GET", "POST")
-	r.HandleFunc("/expertise", app.expertise).Methods("GET")
-	r.HandleFunc("/terms", app.terms).Methods("GET")
-	r.HandleFunc("/privacy", app.privacy).Methods("GET")
-	r.HandleFunc("/getlog", app.getlog).Methods("GET")
-	r.HandleFunc("/getmsg", app.getmsg).Methods("GET")
+	r.HandleFunc("/", app.homepage).Methods(http.MethodGet)
+	r.HandleFunc("/bytesupply", app.bytesupply).Methods(http.MethodGet)
+	r.HandleFunc("/staff", app.staff).Methods(http.MethodGet)
+	r.HandleFunc("/history", app.history).Methods(http.MethodGet)
+	r.HandleFunc("/contactus", app.contactus).Methods(http.MethodGet, http.MethodPost)
+	r.HandleFunc("/search", app.search).Methods(http.MethodGet, http.MethodPost)
+	r.HandleFunc("/expertise", app.expertise).Methods(http.MethodGet)
+	r.HandleFunc("/terms", app.terms).Methods(http.MethodGet)
+	r.HandleFunc("/privacy", app.privacy).Methods(http.MethodGet)
+	r.HandleFunc("/products", app.products).Methods(http.MethodGet)
+	//r.HandleFunc("/products/{product:[a-zA-Z]+}").Methods(http.MethodGet)
+	r.HandleFunc("/getlog", app.getlog).Methods(http.MethodGet)
+	r.HandleFunc("/getmsg", app.getmsg).Methods(http.MethodGet)
 	r.HandleFunc("/request", app.request).Methods("POST")
-	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods("GET", "POST")
-	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.api).Methods("GET", "POST")
+	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods(http.MethodGet, http.MethodPost)
+	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.api).Methods(http.MethodGet, http.MethodPost)
 
 	/* Server setup and start */
 	BytesupplyServer := &http.Server{

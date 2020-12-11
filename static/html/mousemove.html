@@ -3,25 +3,26 @@
     <head>
         <title>Bytesupply!</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <!--script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script-->
-        <!--script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script-->
-        <!--script src="https://bytesupply.com/static/cdn/qTurHm-1.0.1.js?k=b1eb7d90cf6a8e36efa3d30232caa400140ec8c8" type="application/javascript"></script-->
-        <script src="https://bytesupply.com/static/cdn/qTurHm-1.0.1b.min.js?k=a6bd3f10339b2d39aaa6175484a38173c1061f4a" type="application/javascript"></script>
-        <!--link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"-->
-        <!--link rel="stylesheet" href="/static/css/bytesupply.css" /-->
-        <!--script src="/static/js/bytesupply.js"></script-->
+        <script src="http://localhost/static/cdn/qTurHm-1.0.1b.js?k=a6bd3f10339b2d39aaa6175484a38173c1061f4a&x=true" type="application/javascript"></script>
     </head>
 
     <body style="background-color:#ffffff">
         <h1>Mousemove</h1>
-            <p id="coords" style="border:1px solid red;float: left"></p>
-            <p><button id="qTurHm" class="btn btn-warning" style="margin-left:10px;">test-button</button></p>
-            <div>
-            <table id="moves" class="table table-striped">
-                <tr>
-                    <th>time</th><th>X</th><th>Y</th>
-                </tr>
-            </table>
-        </div>
+
+            <form>
+                <p>
+                    Name: <input type="text" name="name" value="">
+                </p>
+                <p>
+                    Age: <input type="text" name="age" value="">
+                </p>
+                    <input type="hidden" name="timestamp" value="12/09/2020">
+                <p>
+                    <span>This is some filler to move the input when resizing. This is some filler to move the input when resizing. This is some filler to move the input when resizing. This is some filler to move the input when resizing. This is some filler to move the input when resizing. This is some filler to move the input when resizing. This is some filler to move the input when resizing. This is some filler to move the input when resizing. </span><input id="qTurHm" type="submit" name="Submit" value="Add">
+                    <!--input id="qTurHm" type="submit" name="Submit" value="Add" onclick="alert('Adding person')"-->
+                    <!--button id="qTurHm" class="btn btn-warning" style="margin-left:10px;">test-button</button-->
+                </p>
+            </form>
+
     </body>
 </html>
