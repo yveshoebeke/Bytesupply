@@ -29,3 +29,9 @@ span#logoExplain {
   color: blue;
   font: size 90%;
 }
+
+script {
+  margin: 15px 10px 15px 10px;
+  background-color: #FFC300;
+  font-size: 75%;
+}
