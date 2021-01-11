@@ -1,4 +1,8 @@
-function byteShow(id, brand, graph) {
+// function byteShow(id, brand, graph) {
+function byteShow(){
+    const id = "#mybox"
+    const brand = "#brand"
+    const graph = "#bytegraph"
     const maxVal = 255
     const iterations = 800
     const maxX = document.querySelector(graph).getAttribute("width")
@@ -21,10 +25,15 @@ function byteShow(id, brand, graph) {
     // _______oOO(.)OOo________
     // ________________________
     // ________________________
-    // 3) Dim and remove the canvasses prior to deleting them.    
-    document.querySelector(id).fade(60, (interval * iterations) + 1500)
-    document.querySelector(brand).fade(40, (interval * iterations) + 1400)
-    document.querySelector(graph).fade(40, (interval * iterations) + 2000)
+    // 3) Dim and remove the canvasses prior to deleting them. Remove event listener.   
+    // document.querySelector(id).fadeBrand(60, (interval * iterations) + 1500)
+    // document.querySelector(brand).fadeBrand(40, (interval * iterations) + 1400)
+    // document.querySelector(graph).fadeBrand(40, (interval * iterations) + 2000)
+    // See notes below at EOF why Object.prototype.fadeBrand is not compatible.
+    fadeBrand(id, 60, (interval * iterations) + 1500)
+    fadeBrand(brand, 40, (interval * iterations) + 1400)
+    fadeBrand(graph, 40, (interval * iterations) + 2000)
+    setTimeout(document.removeEventListener("DOMContentLoaded", byteShow, true), (interval * iterations) + 2100)
     
     // 2) Accent brandname in blue
     setTimeout(function(){ document.querySelector(brand).style.color = "#0000FF" }, (interval * iterations) - 600)   
@@ -38,7 +47,6 @@ function byteShow(id, brand, graph) {
         setTimeout(function(){
             // Generate the number
             // Original was: let mybyte = (Math.floor((Math.random() * maxVal) + 1))
-            // let mybyte = (Math.floor((Math.random() * Math.abs(maxVal-(gX * (Math.random() * 1.5) + 0.5))) + 1))
             let mybyte = (Math.floor((Math.random() * Math.abs(maxVal-(gX / 1.4)))) + 1)
             // Make it a string with padding as neccessary
             let byteOut = convertToBinaryString(mybyte)
@@ -88,21 +96,30 @@ function byteShow(id, brand, graph) {
     } while(byterun++ <= iterations)
 }
 
-// function clicked() {
-//     alert("Clicked")
-// }
-
 // Start when DOM is loaded
-document.addEventListener("DOMContentLoaded", function() {
-    // document.querySelector('#mybox').addEventListener('click', clicked)
-    byteShow('#mybox', '#brand', '#bytegraph')
-})
+document.addEventListener("DOMContentLoaded", byteShow, true)
 
 // fade Obj given fade speed (ms) and execution delay (ms)
-Object.prototype.fade = function(speed, delay) {
+// ** Note: Object prototyping not compatible with bootstrap  :( **
+// Object.prototype.fadeBrand = function(speed, delay) {
+//     let dimmer = 1.0        
+//     for(i = speed; i <= (speed * 10) + speed; i += speed){
+//         var elem = this
+//         setTimeout(function() {
+//             elem.style.opacity = dimmer
+//             dimmer -= 0.1
+//         }, (delay + i))
+//         setTimeout(function() {
+//             elem.style.display = "none"
+//             elem.remove()
+//         }, delay + (speed * 10))
+//     }
+// }
+
+function fadeBrand(id, speed, delay) {
     let dimmer = 1.0        
+    var elem = document.querySelector(id)
     for(i = speed; i <= (speed * 10) + speed; i += speed){
-        var elem = this
         setTimeout(function() {
             elem.style.opacity = dimmer
             dimmer -= 0.1
