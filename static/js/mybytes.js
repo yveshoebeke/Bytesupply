@@ -22,9 +22,9 @@ function byteShow(id, brand, graph) {
     // ________________________
     // ________________________
     // 3) Dim and remove the canvasses prior to deleting them.    
-    document.querySelector(id).fade(40, (interval * iterations) + 1500)
-    document.querySelector(brand).fade(40, (interval * iterations) + 1800)
-    document.querySelector(graph).fade(40, (interval * iterations) + 2500)
+    document.querySelector(id).fade(60, (interval * iterations) + 1500)
+    document.querySelector(brand).fade(40, (interval * iterations) + 1400)
+    document.querySelector(graph).fade(40, (interval * iterations) + 2000)
     
     // 2) Accent brandname in blue
     setTimeout(function(){ document.querySelector(brand).style.color = "#0000FF" }, (interval * iterations) - 600)   
