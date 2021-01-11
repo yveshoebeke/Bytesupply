@@ -108,6 +108,10 @@ func (app *App) bytesupply(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/bytesupply.html")
 }
 
+func (app *App) company(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, staticLocation+"/html/company.html")
+}
+
 func (app *App) staff(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/staff.html")
 }
@@ -414,6 +418,7 @@ func main() {
 
 	/* Handlers */
 	r.HandleFunc("/", app.homepage).Methods(http.MethodGet)
+	r.HandleFunc("/company", app.company).Methods(http.MethodGet)
 	r.HandleFunc("/bytesupply", app.bytesupply).Methods(http.MethodGet)
 	r.HandleFunc("/staff", app.staff).Methods(http.MethodGet)
 	r.HandleFunc("/history", app.history).Methods(http.MethodGet)

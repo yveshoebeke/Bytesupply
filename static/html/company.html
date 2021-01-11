@@ -40,8 +40,8 @@
                                 About
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/company">Company</a>
-                                <a class="dropdown-item disabled" href="/staff">Staff</a>
+                                <a class="dropdown-item disabled" href="/company">Company</a>
+                                <a class="dropdown-item" href="/staff">Staff</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/history">History</a>
                                 </div>
@@ -64,7 +64,7 @@
                     </ul>
                     <form class="form-inline my-2 my-lg-0" action="/search" method="post">
                         <input class="form-control mr-sm-2" type="search" value="" name="searchKey" placeholder="Search" aria-label="Search">
-                        <input type="hidden" name="referer" value="/staff" />
+                        <input type="hidden" name="referer" value="/bytesupply" />
                         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                     </form>
                 </div>
@@ -81,40 +81,52 @@
 
             <div class="row" style="margin-top:15px">
                 <div class="hidden-sm col-3-md text-center" style="font-size:80%;padding-top:15px">
-                    <img src="/static/img/yves.jpg" class="rounded float-left" alt="Yves Hoebeke" width="200" height="200">
+                    <img src="/static/img/bits-thumbnail.png" class="rounded float-left" alt="Bytesupply" width="250" height="160">
                 </div>
                 <div class="col-9 text-left lang-en">
-                    <span class="first-word">Yves Hoebeke</span> is the founder of Bytesupply, LLC.
-                    <p>I graduated from the Royal Atheneaum in Ghent Belgium with a degree in Humanities and Science while simultaneously finishing my course in computer programming with IBM Belgium.</p>
-                    <p>And so a software engineering career was started. It encompassed military applications, implement image digitalization on mainframe adjuncts for an oil conglomerate, accounting and medical billing on mini-frames to today's technologies addressing a variety of solutions.</p>
-                    <p>I brought this company back to life (see <a href="/history" title="History">History</a>) to have hands-on involvement in the creation, including team building and management; development, implementation and maintenance of solutions needed by my customers.</p>
-                    <p>Server side software engineering in <a href="https://en.wikipedia.org/wiki/Go_(programming_language)" title="Go language" target="_blank" rel="noopener noreferrer">Go</a> is my passion.</p>
-                    <p class="font-italic">I am a solution looking for a problem.</p>
-                    <small>Yves Hoebeke is a software engineer with interests in Go, Docker, Kubernetes, Swift, Python, and Web Assembly. If you would like to contract him, please go to <a href="/contactus" title="Contact Us">"Contact Us"</a> page. Ref.:</small>
-                    <span>
-                        <a href="https://linkedin.com/in/yveshoebeke" title="LinkedIn" target="_blank" rel="noopener noreferrer"><small>LinkedIn</small></a>,&nbsp;
-                        <a href="https://github.com/yveshoebeke" title="GitHub" target="_blank" rel="noopener noreferrer"><small>GitHub</small></a>
-                    </span>
+                    <p><span class="first-word">The</span> company was incorporated in April of 2020.</p>
+                    <p>Bytesupply is a Delaware Limited Liability Corporation headquarterd in the Greenwich Connecticut area.</p>
+                    <p>The purpose of it is to develop software solutions for its clients. It will engage in the actual software development, 
+                    team building or being part of a team to accomplish the goals at hand.</p>
+                    <p>Bytesupply, LLC was founded by Yves Hoebeke (see <a href="/staff" title="Staff">Staff</a>).</p>
                 </div>
                 <div class="col-9 text-left lang-es">
-                    <span class="first-word">Yves Hoebeke</span> es el fundador de Bytesupply, LLC.
-                    <p>Me gradué del Royal Atheneaum en Gante Bélgica con una licenciatura en Humanidades y Ciencias mientras terminaba simultáneamente mi curso de programación de computadoras con IBM Bélgica.</p>
-                    <p>Y así se inició una carrera de ingeniería de software. Abarcaba aplicaciones militares, implementaba la digitalización de imágenes en adjuntos de mainframe para un conglomerado petrolero, contabilidad y facturación médica en mini-marcos para las tecnologías actuales que abordan una variedad de soluciones.</p>
-                    <p>Le devolví la vida a esta empresa (ver <a href="/history" title="History">History (Historia)</a>) para tener una participación práctica en la creación, incluida la creación y gestión de equipos; desarrollo, implementación y mantenimiento de las soluciones que necesitan mis clientes.</p>
-                    <p>La ingeniería de software del lado del servidor en el lenguaje <a href="https://en.wikipedia.org/wiki/Go_(programming_language)" title="Go language" target="_blank" rel="noopener noreferrer">Go</a> es mi pasión.</p>
-                    <p class="font-italic">Soy una solución buscando un problema.</p>
-                    <small>Yves Hoebeke es un ingeniero de software con intereses en Go, Docker, Kubernetes, Swift, Python y Web Assembly. Si desea contratarlo, vaya a la página de <a href="/contactus" title="Contact Us">"Contact Us"</a>. Ref.:</small>
-                    <span>
-                        <a href="https://linkedin.com/in/yveshoebeke" title="LinkedIn" target="_blank" rel="noopener noreferrer"><small>LinkedIn</small></a>,&nbsp;
-                        <a href="https://github.com/yveshoebeke" title="GitHub" target="_blank" rel="noopener noreferrer"><small>GitHub</small></a>
-                    </span>
+                    <p><span class="first-word">La</span> empresa se constituyó en abril de 2020.</p>
+                    <p>Bytesupply es una oficina central de Delaware Limited Liability Corporation en el área de Greenwich Connecticut.</p>
+                    <p>El propósito de la misma es desarrollar soluciones de software para sus clientes. Se involucrará en el desarrollo de software real, la creación de equipos o será parte de un equipo para lograr los objetivos en cuestión.</p>
+                    <p>Bytesupply, LLC fue fundada por Yves Hoebeke (ver <a href="/staff" title="Staff">Staff</a>).</p>
                 </div>
             </div>
-    
+             <div class="row" style="margin-top:20px;border-top:1px solid black">
+                <div class="col-12">
+                    <span class="lang-en">Participated in project developments with:&nbsp;&nbsp;</span>
+                    <span class="lang-es">Participó en el desarrollo del proyectos con:&nbsp;&nbsp;</span>
+                    <span id="logoExplain"></span>
+                    <div class="text-center">
+                        <img class="logo" src="/static/img/discovery_logo.jpeg" alt="Discovery Communication" title="Video stream delivery, Server Side Ad Insertion" height="120" />
+                        <img class="logo" src="/static/img/GE-logo.png" alt="GE" title="Intellectual Property Division processes, Data visualizations, SEC adherence" height="100" />
+                        <img class="logo" src="/static/img/ACCDS-logo.png" alt="Accuity Delivery Systems" title="Clinical Data Improvement (CDI)" height="100" />
+                        <img class="logo" src="/static/img/att-logo.jpeg" alt="AT&T" title="PBX implementation" height="110" />
+                        <img class="logo" src="/static/img/benchmark-logo.png" alt="Benchmark Educational Systems" title="Educational/School materials validation and publication" height="60" />
+                        <img class="logo" src="/static/img/etouches-logo.jpeg" alt="eTouches (Now: Aventri)" title="World-wide event planning" height="80" />
+                        <img class="logo" src="/static/img/medadherence-logo.png" alt="CircleLink Health (Was: Medadherence)" title="Remote partient health stats monitoring" height="80" />
+                        <img class="logo" src="/static/img/texder-logo.jpg" alt="Texder" title="SMS ad and event application" height="80" />
+                        <img class="logo" src="/static/img/americawest-logo.png" alt="America West Airlines (Now: AA)" title="Airline Operations - Flight planning, equipment routing" height="80" />
+                        <img class="logo" src="/static/img/alphamicro-logo.jpg" alt="Alpa Microsystems" title="Mini-frame system programming" height="55" />
+                        <img class="logo" src="/static/img/hookedonphonics-logo.png" alt="Hooked On Phonics" title="Call center data processing" height="80" />
+                        <img class="logo" src="/static/img/theshadestore-logo.png" alt="The Shade Store" title="Inventory Control" height="140" />
+                        <img class="logo" src="/static/img/pavelife-logo.jpg" alt="PaveLife" title="Cultural event ticketing outlet" height="100" />
+                        <img class="logo" src="/static/img/grinberg-logo.png" alt="Sherman Grinberg film Library" title="Inventory control" height="40" />
+                        <img class="logo" src="/static/img/pemex-logo.png" alt="Petroleos Mexicanos" title="Image scanning and display adjunct (to IBM 360) programming" height="100" />
+                    </div>
+                </div>
+            </div>
+
             <div class="row" style="margin-top:20px;font-size:90%;border-top:1px solid black">
-                <p>&copy; 2020 Bytesupply, LLC - All rights reserved.</p>
+                    <p>&copy; 2020 Bytesupply, <span onclick="window.location.replace('/getlog')">LLC</span> - All rights reserved.</p>
             </div>
 
         </div>
+
     </body>
 </html>
