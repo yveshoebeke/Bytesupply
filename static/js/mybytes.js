@@ -21,10 +21,10 @@ function byteShow(id, brand, graph) {
     // _______oOO(.)OOo________
     // ________________________
     // ________________________
-    // 3) Dim the canvasses prior to deleting them.    
+    // 3) Dim and remove the canvasses prior to deleting them.    
     document.querySelector(id).fade(40, (interval * iterations) + 1500)
-    document.querySelector(brand).fade(40, (interval * iterations) + 2000)
-    document.querySelector(graph).fade(40, (interval * iterations) + 3000)
+    document.querySelector(brand).fade(40, (interval * iterations) + 1800)
+    document.querySelector(graph).fade(40, (interval * iterations) + 2500)
     
     // 2) Accent brandname in blue
     setTimeout(function(){ document.querySelector(brand).style.color = "#0000FF" }, (interval * iterations) - 600)   
@@ -109,6 +109,7 @@ Object.prototype.fade = function(speed, delay) {
         }, (delay + i))
         setTimeout(function() {
             elem.style.display = "none"
+            elem.remove()
         }, delay + (speed * 10))
     }
 }
