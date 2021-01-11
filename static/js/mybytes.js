@@ -27,7 +27,7 @@ function byteShow(){
     // ________________________
     // ________________________
     if(isMobile) {
-        document.querySelector(brand).style.fontSize = "250%"
+        document.querySelector(brand).style.fontSize = "550%"
     }
 
     // 3) Dim and remove the canvasses prior to deleting them. Remove event listener.   
