@@ -1,6 +1,6 @@
 function byteShow(id, brand, graph){
     const maxVal = 255
-    const iterations = 800
+    const iterations = 600
     const maxX = document.querySelector(graph).getAttribute("width")
     const maxY = document.querySelector(graph).getAttribute("height")
     // Check userAgent to have an idea if we're used on a mobile platform.
@@ -27,7 +27,7 @@ function byteShow(id, brand, graph){
     // Adjust brand name for small (mobile) displays accomodation.
     if(isMobile) {
         document.querySelector(brand).style.fontSize = "600%"
-        iterations = 500
+        iterations = 400
     }
 
     // 3) Dim and remove the canvasses prior to deleting them. Remove event listener.   
@@ -146,7 +146,7 @@ function fadeBrand(id, speed, delay) {
 function convertToBinaryString(num) {
     let padding = "00000000"
     let strNum = num.toString(2)
-    if(bytelength < 8) {
+    if(strNum.length < 8) {
         return padding.substr(0, 8 - strNum.length) + strNum + " "
     }
     return strNum.substr(0, 8) + " "
