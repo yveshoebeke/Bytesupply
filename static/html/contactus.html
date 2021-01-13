@@ -29,7 +29,7 @@
         <div class="container">
 
             <nav class="navbar navbar-expand-lg navbar-light">
-                <a class="navbar-brand" href="/bytesupply"><h1 class="navbar-logo">BYTESUPPLY</h1></a>
+                <a class="navbar-brand" href="/home"><h1 class="navbar-logo">BYTESUPPLY</h1></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -90,32 +90,34 @@
                     <form id="contactForm" action="/contactus" method="POST">
                         <input id="validEntry" type="hidden" name="validEntry" value="false" />
                         <div class="form-group">
-                            <label for="contactName">Name<sup class="text-danger">(*)</sup></label>
-                            <input type="text" class="form-control mandatory" id="contactName" value="" name="contactName" aria-describedby="nameHelp" placeholder="Your name" onblur="validateMessageEntry($(this).attr('id'))" />
+                            <!--label for="contactName">Name<sup class="text-danger">(*)</sup></label-->
+                            <sup class="text-danger">(*)</sup>
+                            <input type="text" class="form-control mandatory" id="contactName" value="" name="contactName" aria-describedby="nameHelp" placeholder="Your Name" onblur="validateMessageEntry($(this).attr('id'))" />
                             <small id="contactNameHelp" class="d-none form-text text-danger">Enter a valid name, only alphanumeric and '&' ',' '.' allowed.</small>
                         </div>
                         <div class="form-group">
-                            <label for="contactCompany">Company</label>
-                            <input type="text" class="form-control" id="contactCompany" value="" name="contactCompany" aria-describedby="companyHelp" placeholder="Company name" onblur="validateMessageEntry($(this).attr('id'))" />
+                            <!--label for="contactCompany">Company</label-->
+                            <input type="text" class="form-control" id="contactCompany" value="" name="contactCompany" aria-describedby="companyHelp" placeholder="Company Name" onblur="validateMessageEntry($(this).attr('id'))" />
                             <small id="contactCompanyHelp" class="d-none form-text text-danger">Enter a valid company name, only alphanumeric and '&' ',' '.' allowed.</small>
                         </div>
                         <div class="form-group">
-                            <label for="contactEmail">Phone</label>
-                            <input type="tel" class="form-control" id="contactPhone" value="" name="contactPhone" aria-describedby="phoneHelp" placeholder="Phone number" onblur="validateMessageEntry($(this).attr('id'))" />
+                            <!--label for="contactEmail">Phone</label-->
+                            <input type="tel" class="form-control" id="contactPhone" value="" name="contactPhone" aria-describedby="phoneHelp" placeholder="Phone Number" onblur="validateMessageEntry($(this).attr('id'))" />
                             <small id="contactPhoneHelp" class="d-none form-text text-danger">Enter a valid phone number, 1234567890 (123)456-7890 123-456-7890 formats allowed.</small>
                         </div>
                         <div class="form-group">
-                            <label for="contactCompany">Email address<sup class="text-danger">(*)</sup></label>
-                            <input type="email" class="form-control mandatory" id="contactEmail" value="" name="contactEmail" aria-describedby="emailHelp" placeholder="Enter your email address" onblur="validateMessageEntry($(this).attr('id'))" />
+                            <!--label for="contactCompany">Email address<sup class="text-danger">(*)</sup></label-->
+                            <sup class="text-danger">(*)</sup>
+                            <input type="email" class="form-control mandatory" id="contactEmail" value="" name="contactEmail" aria-describedby="emailHelp" placeholder="Email Address" onblur="validateMessageEntry($(this).attr('id'))" />
                             <small id="contactEmailHelp" class="d-none form-text text-danger">Enter a valid email address like so: you@example.com</small>
                         </div>
                         <div class="form-group">
-                            <label for="contactCompany">Website</label>
-                            <input type="url" class="form-control" id="contactURL" value="" name="contactURL" aria-describedby="urlHelp" placeholder="Enter your Website URL" onblur="validateMessageEntry($(this).attr('id'))" />
+                            <!--label for="contactCompany">Website</label-->
+                            <input type="url" class="form-control" id="contactURL" value="" name="contactURL" aria-describedby="urlHelp" placeholder="Website URL" onblur="validateMessageEntry($(this).attr('id'))" />
                             <small id="contactURLHelp" class="d-none form-text text-danger">Enter a valid URL address like so: http(s)://example.com</small>
                         </div>
                         <div class="form-group">
-                            <label for="contactMessage">Message<sup class="text-danger">(*)</sup></label>
+                            <label for="contactMessage"><sup class="text-danger">(*)</sup>Message</label>
                             <small id="contactMessageHelp" class="d-none form-text text-danger">Enter text, only alphanumeric and '&' ',' '.' allowed.</small>
                             <textarea class="form-control mandatory" id="contactMessage" name="contactMessage" rows="4" onblur="validateMessageEntry($(this).attr('id'))"></textarea>
                         </div>

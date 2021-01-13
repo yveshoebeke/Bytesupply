@@ -28,7 +28,7 @@
         <div class="container">
 
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="/bytesupply"><h1 class="navbar-logo">BYTESUPPLY</h1></a>
+                <a class="navbar-brand" href="/home"><h1 class="navbar-logo">BYTESUPPLY</h1></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -88,37 +88,98 @@
                             <div class="card-header" id="qturhm">
                                 <h2 class="mb-0">
                                     <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        qTurHm (<strong>q</strong>uasi <strong>T</strong>uring <strong>H</strong>uman vs <strong>m</strong>achine evaluation)
+                                        qTurHm (<strong>q</strong>uasi <strong>Tur</strong>ing <strong>H</strong>uman / <strong>m</strong>achine ... evaluation)
                                     </button>
                                 </h2>
                             </div>
 
                             <div id="collapseOne" class="collapse" aria-labelledby="qturhm" data-parent="#productAccordion">
                                 <div class="card-body">
-                                    <p style="border:1px dotted gray;"><a href="" title="qTurHm">qTurHm</a></p>
-                                    <p>Collects cursor movement data over a clickable HTML element</p>
-                                    <p>and send the perception result to the server for evaluation.</p>
+                                    <img style="float:right; width:175px; height:224px; border:1px solid gray" src="/static/img/Turing_Test.png" alt="Turing Test" />
+                                    <h4><u>qTurHm</u></h4>
+                                    <p>Collects cursor movement data over a clickable HTML element (target element), such as a submit button.</p>
+                                    <p>Calculates and supplies the Perception Result for your app to store and/or evaluate.</p>
                                     <p></p>
-                                    <p>An int result code between 0 and 10 is returned indicating </p>
+                                    <p>This int result code is between 0 and 10, indicating:</p>
                                     <p></p>
-                                    <p>Perception result value scale:</p>
-                                    <p></p>
-                                    <p>perceived probability of above element was engaged by a humon or robot.</p>
+                                    <p>Perception result value scale; perceived probability that target element was engaged by a human.</p>
                                     <p>
                                         <pre>
-                                            <code>
                                                 0-1-2-3-4-5-6-7-8-9-10
                                                 ^&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^
                                                 Machine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Human
-                                            </code>
                                         </pre>
                                     </p>
-                                    <p>DOM header:</p><p><code>&lt;script src="https://bytesupply.com/static/cdn/qTurHm-1.0.1b.min.js?k=64a86...f54b&x=true" type="application/javascript"&gt;&lt;/script&gt;</code></p>
-                                    <p>sha-128:</p><p><code>64a86b06d7edc785481627c18c38198e6d4ef54b</code></p>
+                                    <hr />
+                                    <p><u>Insert this in your HTML header:</u></p><p><code>&nbsp;&lt;script src="https://bytesupply.com/static/cdn/qTurHm-1.0.1b.min.js?k={...}&x=true" type="application/javascript"&gt;&lt;/script&gt;&nbsp;</code></p>
+                                    <hr />
+                                    <p><u>sha128:</u>&nbsp;<code>&nbsp;64a86b06d7edc785481627c18c38198e6d4ef54b&nbsp;</code></p>
+                                    <hr />
+                                    <p><u>Parameters:</u></p>
+                                    <ul>
+                                        <li><code>&nbsp;k={Your User Key}&nbsp;</code>&nbsp;(Mandatory! For trials, use:&nbsp;<code>&nbsp;a6bd3f10339b2d39aaa6175484a38173c1061f4a&nbsp;</code>)
+                                            <ul>
+                                                <li>An invalid key will skip the evaluation. Code execution will not be affected.</li>
+                                            </ul>
+                                        </li>
+                                        <li><code>&nbsp;c={Target Element}&nbsp;</code>&nbsp;(Defaults to:&nbsp;<code>&nbsp;qTurHm&nbsp;</code>)
+                                            <ul>
+                                                <li>The DOM id of the element that will be engaged (clicked).</li>
+                                            </ul>
+                                        </li>
+                                        <li><code>&nbsp;r={Perception Result}&nbsp;</code>&nbsp;(Defaults to:&nbsp;<code>&nbsp;qTurHmPerception&nbsp;</code>)
+                                            <ul>
+                                                <li>The DOM id where the perception value (int) will be deposited.</li>
+                                                <li>This value will also be attached to the target element data store as <code>&nbsp;{targetId}.data.perception&nbsp;</code></li>
+                                                <li>In addition to the perception value, the quantity of the sampled data can be found in <code>&nbsp;{targetId}.data.samples&nbsp;</code></li>
+                                            </ul>
+                                        </li>
+                                        <li><code>&nbsp;f={true/false}&nbsp;</code>&nbsp;(Defaults to:&nbsp;<code>&nbsp;true&nbsp;</code>).
+                                            <ul>
+                                                <li>If true will append a hidden-type input node when given target element is part of a form.</li> 
+                                                <li>The id and name will be specified by the value of the <code>&nbsp;r&nbsp;</code> parameter.</li>
+                                                <li>If false will never generate the input node, however the above mentioned data store will persist.</li>
+                                            </ul>
+                                        </li>
+                                        <li><code>&nbsp;x={false/true}&nbsp;</code>&nbsp;(Defaults to:&nbsp;<code>&nbsp;false&nbsp;</code>)
+                                            <ul>
+                                                <li>Exposes the data detail used to evaluate the perception result in your console (<code>&nbsp;console.log&nbsp;</code>).</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    <hr />
+                                    <p><u>Algorithmic Process:</u></p>
+                                    <p>A Heuristic approach of evaluating available detectable user behavior actions is employed to come to an immediate solution not guaranteed to be optimal.</p>
+                                    <p>With that in mind, the following is considered to obtain the above mentioned perspective result when the target element is engaged:</p>
+                                    <p><small>The term <span  class="font-italic">"target element engagement"</span> refers to the action that will start the intended application process, such as a click to start a data submit.</small></p>
+                                    <ul>
+                                        <li>Device type (Input mechanism).</li>
+                                            <ul>
+                                                <li>Very low target element movement count (as low as 1, a screen push) is acceptable.</li>
+                                            </ul>
+                                        <li>Mouse movements.
+                                            <ul>
+                                                <li>Coordinates that entered the target element vs. target element boundaries.</li>
+                                                <li>Time lapsed between target element entry and target element engagement.</li>
+                                                <li>Coordinates at time of target element engagement.</li>
+                                            </ul>
+                                        </li>
+                                        <li>Target Element.
+                                            <ul>
+                                                <li>Consideration has been given that target boundaries can change between the start of mouse movements registration and target element engagement.</li>
+                                                <li>Each movement is evaluated against the boundary values present during the time of registration of such movement.</li>
+                                            </ul>
+                                        </li>
+                                        <li> ... more ... </li>
+                                    </ul>
+                                    <hr />
+                                    <p><u>Soon->Demo:</u>&nbsp;<a href="https://bytesupply.com/demo/qTurHm" target="_blank" rel="noopener noreferrer">qTurHm</a></p>
+                                    <hr />
+                                    <p><u>Source:</u>&nbsp;<a href="https://github.com/yveshoebeke/bytesupply/blob/master/static/cdn/qTurHm-1.0.1b.js" target="_blank" rel="noopener noreferrer">qTurHm-1.0.1c.js</a></p>
+                                    <hr />
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
 
                     <div class="row" style="margin-top:20px;font-size:90%;border-top:1px solid black">

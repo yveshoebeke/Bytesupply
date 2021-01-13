@@ -36,3 +36,9 @@ script {
   background-color: #FFC300;
   font-size: 75%;
 }
+
+code {
+  font-size: 80%;
+  background-color: rgb(121, 121, 121);
+  color: white;
+}

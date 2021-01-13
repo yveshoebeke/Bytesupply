@@ -1,9 +1,9 @@
 /*
-Bytesupply.com - Web Server Pages App
+	Bytesupply.com - Web Server Pages App
 	=====================================
 
 	Complete documentation and user guides are available here:
-	https://github.com/AccuityDeliverySystems/ACCDS-2.0/blob/master/README.md
+	https://https://github.com/yveshoebeke/bytesupply/blob/master/README.md
 
 	@author	yves.hoebeke@accds.com - 1011001.1110110.1100101.1110011
 
@@ -104,8 +104,8 @@ func (app *App) homepage(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/index.html")
 }
 
-func (app *App) bytesupply(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, staticLocation+"/html/bytesupply.html")
+func (app *App) home(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, staticLocation+"/html/home.html")
 }
 
 func (app *App) company(w http.ResponseWriter, r *http.Request) {
@@ -389,6 +389,7 @@ func main() {
 	}
 	defer mf.Close()
 
+	// log file set up
 	lf, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		fmt.Printf("Error opening logfile: %s -> %v", logFile, err)
@@ -419,7 +420,7 @@ func main() {
 	/* Handlers */
 	r.HandleFunc("/", app.homepage).Methods(http.MethodGet)
 	r.HandleFunc("/company", app.company).Methods(http.MethodGet)
-	r.HandleFunc("/bytesupply", app.bytesupply).Methods(http.MethodGet)
+	r.HandleFunc("/home", app.home).Methods(http.MethodGet)
 	r.HandleFunc("/staff", app.staff).Methods(http.MethodGet)
 	r.HandleFunc("/history", app.history).Methods(http.MethodGet)
 	r.HandleFunc("/contactus", app.contactus).Methods(http.MethodGet, http.MethodPost)
@@ -428,7 +429,6 @@ func main() {
 	r.HandleFunc("/terms", app.terms).Methods(http.MethodGet)
 	r.HandleFunc("/privacy", app.privacy).Methods(http.MethodGet)
 	r.HandleFunc("/products", app.products).Methods(http.MethodGet)
-	//r.HandleFunc("/products/{product:[a-zA-Z]+}").Methods(http.MethodGet)
 	r.HandleFunc("/getlog", app.getlog).Methods(http.MethodGet)
 	r.HandleFunc("/getmsg", app.getmsg).Methods(http.MethodGet)
 	r.HandleFunc("/request", app.request).Methods("POST")
