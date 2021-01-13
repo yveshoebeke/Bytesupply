@@ -1,8 +1,9 @@
 body {
-    /*width: 35em;*/
     margin: 0 auto;
     font-family: Tahoma, Verdana, Arial, sans-serif;
-    background-color: #FFFFFF;
+    background-image: url('/static/img/bytes-bg.png');
+    background-color: rgb(221, 237, 253);
+    background-blend-mode: lighten;
 }
 
 a:hover {
