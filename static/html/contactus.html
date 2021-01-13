@@ -25,10 +25,10 @@
         <script src="/static/js/bytesupply.js"></script>
     </head>
 
-    <body style="background-color:#ffffff">
+    <body>
         <div class="container">
 
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <nav class="navbar navbar-expand-lg navbar-light">
                 <a class="navbar-brand" href="/bytesupply"><h1 class="navbar-logo">BYTESUPPLY</h1></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -82,17 +82,15 @@
                     <img src="/static/img/contact-us.jpg" class="rounded float-left" alt="Yves Hoebeke" width="250" height="165">
                 </div>
                 <div class="col-9 text-left">
-                    <p><span class="first-word">Send</span> us a brief message<sup class="text-success">(**)</sup> with your contact information, containing a synopsis of what you and/or your organization like to accomplish, resolve or in general want to communicate to us.</p>
+                    <p><span class="first-word">Send</span> us a brief message with your contact information.</p>
                     <div style="border:1px dotted black; padding:10px;">
-                        <p class="text-danger font-weight-bold font-italic"><sup>(*)</sup>Required fields.</p>
-                        <p class="text-success font-italic"><sup>(**)</sup>No information will be disclosed unless explicit permission is obtained from you by us.</p>
-                        <p style="margin-bottom:0" class="text-primary font-italic"><sup>(note)</sup>Some forms can be obtained at the bottom of this page.</p>
+                        <sup class="text-danger">(*)</sup>Required fields.&nbsp;<sup>(note)</sup>Some forms can be obtained at the bottom of this page.</p>
                     </div>
                     <hr style="height:2px;color:black"/>
                     <form id="contactForm" action="/contactus" method="POST">
                         <input id="validEntry" type="hidden" name="validEntry" value="false" />
                         <div class="form-group">
-                            <label for="contactName">Name<sup class="font-weight-bold text-danger">(*)</sup></label>
+                            <label for="contactName">Name<sup class="text-danger">(*)</sup></label>
                             <input type="text" class="form-control mandatory" id="contactName" value="" name="contactName" aria-describedby="nameHelp" placeholder="Your name" onblur="validateMessageEntry($(this).attr('id'))" />
                             <small id="contactNameHelp" class="d-none form-text text-danger">Enter a valid name, only alphanumeric and '&' ',' '.' allowed.</small>
                         </div>
@@ -107,7 +105,7 @@
                             <small id="contactPhoneHelp" class="d-none form-text text-danger">Enter a valid phone number, 1234567890 (123)456-7890 123-456-7890 formats allowed.</small>
                         </div>
                         <div class="form-group">
-                            <label for="contactCompany">Email address<sup class="font-weight-bold text-danger">(*)</sup></label>
+                            <label for="contactCompany">Email address<sup class="text-danger">(*)</sup></label>
                             <input type="email" class="form-control mandatory" id="contactEmail" value="" name="contactEmail" aria-describedby="emailHelp" placeholder="Enter your email address" onblur="validateMessageEntry($(this).attr('id'))" />
                             <small id="contactEmailHelp" class="d-none form-text text-danger">Enter a valid email address like so: you@example.com</small>
                         </div>
@@ -117,7 +115,7 @@
                             <small id="contactURLHelp" class="d-none form-text text-danger">Enter a valid URL address like so: http(s)://example.com</small>
                         </div>
                         <div class="form-group">
-                            <label for="contactMessage">Message<sup class="font-weight-bold text-danger">(*)</sup></label>
+                            <label for="contactMessage">Message<sup class="text-danger">(*)</sup></label>
                             <small id="contactMessageHelp" class="d-none form-text text-danger">Enter text, only alphanumeric and '&' ',' '.' allowed.</small>
                             <textarea class="form-control mandatory" id="contactMessage" name="contactMessage" rows="4" onblur="validateMessageEntry($(this).attr('id'))"></textarea>
                         </div>
