@@ -4,3 +4,4 @@ Dockerfile
 log
 **/docs
 main
+.DS_Store
