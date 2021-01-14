@@ -45,7 +45,7 @@ if(BS_qTurHm_x == null) {
 if(BS_qTurHm_x) {console.log(BS_qTurHm_version,"k",BS_qTurHm_k,"c",BS_qTurHm_c,"r",BS_qTurHm_r,"f",BS_qTurHm_f,"x",BS_qTurHm_x);}
 // validate userkey
 function validateUserkey(k){
-    if(BS_qTurHm_k == "a6bd3f10339b2d39aaa6175484a38173c1061f4a"){
+    if(BS_qTurHm_k == "bfc19c0661eb3df98c20bb807b07002b16282f11"){
         return true;
     } else {
         return false;
@@ -223,11 +223,11 @@ document.addEventListener("DOMContentLoaded", function(){
         // Attach the event handlers ( --> check for previously added click event?)
         var cjs = document.getElementById(BS_qTurHm_c);
         // Capture mouse movement over target obj.
-        cjs.addEventListener('mousemove', BS_qTurHm_MouseMove);
+        cjs.addEventListener('mousemove', BS_qTurHm_MouseMove, true);
         // Reset move data array when leaving obj and not clicked.
-        cjs.addEventListener('mouseout', BS_qTurHm_MouseOut);
+        cjs.addEventListener('mouseout', BS_qTurHm_MouseOut, true);
         // Process move data when click occured.
-        cjs.addEventListener('click', BS_qTurHm_MouseClick);
+        cjs.addEventListener('click', BS_qTurHm_MouseClick, true);
     } else {
         console.error("qTurHm: userkey "+BS_qTurHm_k+" not valid - functionality not supported.");
     }
