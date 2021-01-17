@@ -205,7 +205,22 @@ func (app *App) privacy(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) products(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, staticLocation+"/html/products.html")
+	type Item struct {
+		ItemToShow string `json:"itemtoshow"`
+	}
+	item := Item{ItemToShow: "all"}
+	tmpl.ExecuteTemplate(w, "product.gotmpl.html", item)
+}
+
+func (app *App) product(w http.ResponseWriter, r *http.Request) {
+	type Item struct {
+		ItemToShow string `json:"itemtoshow"`
+	}
+	vars := mux.Vars(r)
+	itemtoshow := vars["item"]
+	item := Item{ItemToShow: itemtoshow}
+	app.log.Println("Item:", vars["item"])
+	tmpl.ExecuteTemplate(w, "product.gotmpl.html", item)
 }
 
 func (app *App) test(w http.ResponseWriter, r *http.Request) {
@@ -428,6 +443,7 @@ func main() {
 	r.HandleFunc("/expertise", app.expertise).Methods(http.MethodGet)
 	r.HandleFunc("/terms", app.terms).Methods(http.MethodGet)
 	r.HandleFunc("/privacy", app.privacy).Methods(http.MethodGet)
+	r.HandleFunc("/product/{item:[a-zA-Z]+}", app.product).Methods(http.MethodGet)
 	r.HandleFunc("/products", app.products).Methods(http.MethodGet)
 	r.HandleFunc("/getlog", app.getlog).Methods(http.MethodGet)
 	r.HandleFunc("/getmsg", app.getmsg).Methods(http.MethodGet)
