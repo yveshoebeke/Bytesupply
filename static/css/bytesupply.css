@@ -1,9 +1,15 @@
-body {
-    margin: 0 auto;
-    font-family: Tahoma, Verdana, Arial, sans-serif;
-    background-image: url('/static/img/bytes-bg.png');
-    background-color: rgb(221, 237, 253);
-    background-blend-mode: lighten;
+.desktopBody {
+  margin: 0 auto;
+  font-family: Tahoma, Verdana, Arial, sans-serif;
+  background-image: url('/static/img/bytes-bg.png');
+  background-color: rgb(221, 237, 253);
+  background-blend-mode: lighten;
+}
+
+.mobileBody {
+  margin: 0 auto;
+  font-family: Tahoma, Verdana, Arial, sans-serif;
+  background-color: seashell;
 }
 
 a:hover {
