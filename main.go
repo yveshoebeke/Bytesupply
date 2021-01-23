@@ -17,6 +17,7 @@ package main
 /* System libraries */
 import (
 	"bufio"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -31,10 +32,10 @@ import (
 
 	"bytesupply.com/googleapi"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	"gopkg.in/boj/redistore.v1"
 )
 
 var (
@@ -43,6 +44,11 @@ var (
 	logFile        = os.Getenv("BS_LOGFILE")
 	msgFile        = os.Getenv("BS_MSGFILE")
 	serverPort     = os.Getenv("BS_SERVER_PORT")
+	dbHost         = os.Getenv("BS_MYSQL_HOST")
+	dbPort         = os.Getenv("BS_MYSQL_PORT")
+	dbUser         = os.Getenv("BS_MYSQL_USERNAME")
+	dbPassword     = os.Getenv("BS_MYSQL_PASSWORD")
+	dbDatabase     = os.Getenv("BS_MYSQL_DB")
 
 	/* templating */
 	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templ/*"))
@@ -73,20 +79,12 @@ type Data struct {
 	Timestamp time.Time `json:"Timestamp"`
 }
 
-// AppDatabase - application db */
-type AppDatabase struct {
-	name string
-	//	db   *gorm.DB
-}
-
 // App - application structure */
 type App struct {
-	databases []AppDatabase
-	log       *log.Logger
-	mfile     *os.File
-	lfile     *os.File
-	store     *redistore.RediStore
-	user      User
+	log   *log.Logger
+	lfile *os.File
+	user  User
+	db    *sql.DB
 }
 
 // GetIP - IP address retriever */
@@ -154,20 +152,11 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if validToRecord {
-				// record data -> db table or -> txt file ... here ---> revisit.
-				_, err := app.mfile.WriteString(fmt.Sprintf("Timestamp: %s\n", time.Now().Format(time.RFC3339)))
+				sqlStatement := `INSERT INTO messages (user, name,company,email,phone,message) VALUES (?, ?, ?, ?, ?, ?)`
+				_, err := app.db.Exec(sqlStatement, app.user.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactMessage"))
 				if err != nil {
-					app.log.Printf("Error writing %v: %v", msgFile, err)
+					app.log.Println("ContactUs INSERT sql err:", err.Error())
 				}
-
-				_, _ = app.mfile.WriteString(fmt.Sprintf("     Name: %s\n", r.FormValue("contactName")))
-				_, _ = app.mfile.WriteString(fmt.Sprintf("  Company: %s\n", r.FormValue("contactCompany")))
-				_, _ = app.mfile.WriteString(fmt.Sprintf("    Email: %s\n", r.FormValue("contactEmail")))
-				_, _ = app.mfile.WriteString(fmt.Sprintf("    Phone: %s\n", r.FormValue("contactPhone")))
-				_, _ = app.mfile.WriteString(fmt.Sprintf("  Message: %s\n", r.FormValue("contactMessage")))
-				_, _ = app.mfile.WriteString("----------------------------------------------------------------------\n")
-				_, _ = app.mfile.WriteString(fmt.Sprintf("   qTurHm: %s\n", r.FormValue("qTurHmPerception")))
-				_, _ = app.mfile.WriteString("======================================================================\n")
 			}
 		}
 
@@ -397,13 +386,6 @@ func main() {
 	})
 	logger.SetLevel(log.InfoLevel)
 
-	// message file set up
-	mf, err := os.OpenFile(msgFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		fmt.Println("Error opening msgFile:", err)
-	}
-	defer mf.Close()
-
 	// log file set up
 	lf, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
@@ -414,11 +396,29 @@ func main() {
 	mw := io.MultiWriter(os.Stdout, lf)
 	logger.SetOutput(mw)
 
+	// mysql connectivity
+	dbConnectData := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPassword, dbHost, dbPort, dbDatabase)
+	db, err := sql.Open("mysql", dbConnectData)
+	if err != nil {
+		fmt.Println("db connect issue:", err.Error())
+	}
+	defer db.Close()
+
+	// Initial user data (before actual login)
+	user := User{
+		Username:  "WWW",
+		Password:  "",
+		Realname:  "Visitor",
+		Title:     "User",
+		LoginTime: time.Now(),
+	}
+
 	// Set app values
 	app := &App{
 		log:   logger,
 		lfile: lf,
-		mfile: mf,
+		user:  user,
+		db:    db,
 	}
 
 	app.log.Println("Starting service.")
@@ -466,7 +466,6 @@ func main() {
 	*         Launch the server!         *
 	**************************************
 	 */
-	fmt.Println("Starting server")
 	app.log.Fatal(BytesupplyServer.ListenAndServe())
 
 	/*
