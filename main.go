@@ -219,7 +219,7 @@ func (app *App) test(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) getlog(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<p style=\"color:blue;\"><a href=\"/\">Bytesupply</a></p><p>Access log</p>")
+	fmt.Fprintf(w, "<p style=\"color:blue;\"><a href=\"/home\">Bytesupply</a></p><p>Access log</p>")
 
 	logfile, err := os.Open(logFile)
 	if err != nil {
@@ -234,25 +234,6 @@ func (app *App) getlog(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Fprintf(w, "</ul>")
 		logfile.Close()
-	}
-}
-
-func (app *App) getmsg(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<p style=\"color:blue;\"><a href=\"/\">Bytesupply</a></p><p>Access messages</p>")
-
-	msgfile, err := os.Open(msgFile)
-	if err != nil {
-		fmt.Fprintf(w, "<p style=\"color:blue;\">%s failed to open: %s</p>", msgFile, err)
-	} else {
-		scanner := bufio.NewScanner(msgfile)
-		scanner.Split(bufio.ScanLines)
-
-		fmt.Fprintf(w, "<ul>")
-		for scanner.Scan() {
-			fmt.Fprintf(w, "<li>%s</li>", scanner.Text())
-		}
-		fmt.Fprintf(w, "</ul>")
-		msgfile.Close()
 	}
 }
 
@@ -446,7 +427,6 @@ func main() {
 	r.HandleFunc("/product/{item:[a-zA-Z]+}", app.product).Methods(http.MethodGet)
 	r.HandleFunc("/products", app.products).Methods(http.MethodGet)
 	r.HandleFunc("/getlog", app.getlog).Methods(http.MethodGet)
-	r.HandleFunc("/getmsg", app.getmsg).Methods(http.MethodGet)
 	r.HandleFunc("/request", app.request).Methods("POST")
 	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.api).Methods(http.MethodGet, http.MethodPost)
