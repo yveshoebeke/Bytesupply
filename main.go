@@ -152,8 +152,8 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if validToRecord {
-				sqlStatement := `INSERT INTO messages (user, name,company,email,phone,message) VALUES (?, ?, ?, ?, ?, ?)`
-				_, err := app.db.Exec(sqlStatement, app.user.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactMessage"))
+				sqlStatement := `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
+				_, err := app.db.Exec(sqlStatement, app.user.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactURL"), r.FormValue("contactMessage"))
 				if err != nil {
 					app.log.Println("ContactUs INSERT sql err:", err.Error())
 				}
