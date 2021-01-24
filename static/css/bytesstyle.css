@@ -26,21 +26,21 @@ div.brand {
   font-weight: 900;
   padding-top:135px;
   text-align: center;
-  opacity: 0.9;
+  opacity: 1.0;
   z-index: 65001;
 }
 
 span.mybits {
-  color: #15c539;
+  color: #a1fc40;
 }
 
 canvas#bytegraph {
   position: fixed;
-  bottom: 10px;
-  right: 15%;
-  width: 70%;
-  height: 80px;
-  background: rgba(35, 35, 35, 0.7);
+  bottom: 20%;
+  right: 10%;
+  width: 80%;
+  height: 120px;
+  background: rgba(35, 35, 35, 0.8);
   border: 1px solid #666;
   z-index: 65002;
   opacity: 1.0;
