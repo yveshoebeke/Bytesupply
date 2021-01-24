@@ -16,7 +16,6 @@ package main
 
 /* System libraries */
 import (
-	"bufio"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -30,7 +29,8 @@ import (
 	"text/template"
 	"time"
 
-	"bytesupply.com/googleapi"
+	googleapi "bytesupply.com/googleapi"
+	utilities "bytesupply.com/utilities"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
@@ -40,6 +40,7 @@ import (
 
 var (
 	/* Extract env variables */
+	getlog         = utilities.Getlog
 	staticLocation = os.Getenv("BS_STATIC_LOCATION")
 	logFile        = os.Getenv("BS_LOGFILE")
 	msgFile        = os.Getenv("BS_MSGFILE")
@@ -49,7 +50,10 @@ var (
 	dbUser         = os.Getenv("BS_MYSQL_USERNAME")
 	dbPassword     = os.Getenv("BS_MYSQL_PASSWORD")
 	dbDatabase     = os.Getenv("BS_MYSQL_DB")
-
+	/* sql statements */
+	sqlAddMessage = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
+	sqlAddUser    = `INSERT INTO users (name,title,password,company,email,phone,url,comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+	sqlGetUser    = ``
 	/* templating */
 	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templ/*"))
 	funcMap = template.FuncMap{
@@ -63,6 +67,8 @@ var (
 	}
 )
 
+// type getlog = utilities.Getlog
+
 // User - info */
 type User struct {
 	Username  string    `json:"username"`
@@ -70,13 +76,6 @@ type User struct {
 	Realname  string    `json:"realname"`
 	Title     string    `json:"title"`
 	LoginTime time.Time `json:"logintime"`
-}
-
-// Data - database structure */
-type Data struct {
-	ReqType   string    `json:"reqtype"`
-	ReqCmd    string    `json:"reqcmd"`
-	Timestamp time.Time `json:"Timestamp"`
 }
 
 // App - application structure */
@@ -87,14 +86,11 @@ type App struct {
 	db    *sql.DB
 }
 
-// GetIP - IP address retriever */
-func GetIP(r *http.Request) string {
-	forwarded := r.Header.Get("X-FORWARD-FOR")
-	if forwarded != "" {
-		return forwarded
-	}
-
-	return r.RemoteAddr
+// Data - database structure */
+type Data struct {
+	ReqType   string    `json:"reqtype"`
+	ReqCmd    string    `json:"reqcmd"`
+	Timestamp time.Time `json:"Timestamp"`
 }
 
 /* Routers */
@@ -152,8 +148,7 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if validToRecord {
-				sqlStatement := `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
-				_, err := app.db.Exec(sqlStatement, app.user.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactURL"), r.FormValue("contactMessage"))
+				_, err := app.db.Exec(sqlAddMessage, app.user.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactURL"), r.FormValue("contactMessage"))
 				if err != nil {
 					app.log.Println("ContactUs INSERT sql err:", err.Error())
 				}
@@ -218,24 +213,24 @@ func (app *App) test(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/"+vars["object"]+".html")
 }
 
-func (app *App) getlog(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<p style=\"color:blue;\"><a href=\"/home\">Bytesupply</a></p><p>Access log</p>")
+// func (app *App) getlog(w http.ResponseWriter, r *http.Request) {
+// 	fmt.Fprintf(w, "<p style=\"color:blue;\"><a href=\"/home\">Bytesupply</a></p><p>Access log</p>")
 
-	logfile, err := os.Open(logFile)
-	if err != nil {
-		fmt.Fprintf(w, "<p style=\"color:blue;\">%s failed to open: %s</p>", logFile, err)
-	} else {
-		scanner := bufio.NewScanner(logfile)
-		scanner.Split(bufio.ScanLines)
+// 	logfile, err := os.Open(logFile)
+// 	if err != nil {
+// 		fmt.Fprintf(w, "<p style=\"color:blue;\">%s failed to open: %s</p>", logFile, err)
+// 	} else {
+// 		scanner := bufio.NewScanner(logfile)
+// 		scanner.Split(bufio.ScanLines)
 
-		fmt.Fprintf(w, "<ul>")
-		for scanner.Scan() {
-			fmt.Fprintf(w, "<li>%s</li>", scanner.Text())
-		}
-		fmt.Fprintf(w, "</ul>")
-		logfile.Close()
-	}
-}
+// 		fmt.Fprintf(w, "<ul>")
+// 		for scanner.Scan() {
+// 			fmt.Fprintf(w, "<li>%s</li>", scanner.Text())
+// 		}
+// 		fmt.Fprintf(w, "</ul>")
+// 		logfile.Close()
+// 	}
+// }
 
 func (app *App) registerUser(r *http.Request) error {
 	app.user.Username = r.PostFormValue("username")
@@ -335,7 +330,7 @@ func (app *App) request(w http.ResponseWriter, r *http.Request) {
 /* Middleware */
 func (app *App) inMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		app.log.Printf("User: %s | URL: %s | Method: %s | IP: %s", app.user.Username, r.URL.Path, r.Method, GetIP(r))
+		app.log.Printf("User: %s | URL: %s | Method: %s | IP: %s", app.user.Username, r.URL.Path, r.Method, utilities.GetIP(r))
 		next.ServeHTTP(w, r)
 	})
 }
@@ -426,7 +421,7 @@ func main() {
 	r.HandleFunc("/privacy", app.privacy).Methods(http.MethodGet)
 	r.HandleFunc("/product/{item:[a-zA-Z]+}", app.product).Methods(http.MethodGet)
 	r.HandleFunc("/products", app.products).Methods(http.MethodGet)
-	r.HandleFunc("/getlog", app.getlog).Methods(http.MethodGet)
+	r.HandleFunc("/getlog", getlog).Methods(http.MethodGet)
 	r.HandleFunc("/request", app.request).Methods("POST")
 	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.api).Methods(http.MethodGet, http.MethodPost)
