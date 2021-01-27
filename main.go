@@ -51,9 +51,10 @@ var (
 	dbPassword     = os.Getenv("BS_MYSQL_PASSWORD")
 	dbDatabase     = os.Getenv("BS_MYSQL_DB")
 	/* sql statements */
-	sqlAddMessage = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
-	sqlAddUser    = `INSERT INTO users (name,title,password,company,email,phone,url,comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-	sqlGetUser    = ``
+	sqlAddMessage      = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
+	sqlAddUser         = `INSERT INTO users (name,password,company,email,phone,url) VALUES (?, ?, ?, ?, ?, ?)`
+	sqlUserLogin       = `SELECT name, password, title, lastlogin FROM users WHERE email = ?`
+	sqlUpdateLastlogin = `UPDATE users SET lastlogin=NOW() WHERE email=?`
 	/* templating */
 	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templ/*"))
 	funcMap = template.FuncMap{
@@ -75,6 +76,7 @@ type User struct {
 	Password  string    `json:"password"`
 	Realname  string    `json:"realname"`
 	Title     string    `json:"title"`
+	LastLogin string    `jason:"lastlogin"`
 	LoginTime time.Time `json:"logintime"`
 }
 
@@ -112,6 +114,71 @@ func (app *App) staff(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) history(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/history.html")
+}
+
+func (app *App) login(w http.ResponseWriter, r *http.Request) {
+	type Data struct {
+		Nothing string
+	}
+	if r.Method == http.MethodGet {
+		// Get - present form(s)
+		d := Data{Nothing: "Nothing"}
+		tmpl.ExecuteTemplate(w, "login.gotmpl.html", d)
+	} else if r.Method == http.MethodPost {
+		// Post - Check if Login or Register request
+		r.ParseForm()
+		if r.FormValue("submitLoginRegister") == "Login" {
+			var user User
+			// Execute the query
+			err := app.db.QueryRow(sqlUserLogin, r.FormValue("loginName")).Scan(&user.Realname, &user.Password, &user.Title, &user.LastLogin)
+			if err != nil {
+				app.log.Println("User login query failed:", err.Error()) // proper error handling instead of panic in your app
+			}
+			// Check password hashes
+			pwdMatch := utilities.ComparePasswords(user.Password, []byte(r.FormValue("loginPassword")))
+
+			// If matched update last login time and update app user data
+			if pwdMatch {
+				_, err := app.db.Exec(`UPDATE users SET lastlogin=NOW() WHERE email=?`, r.FormValue("loginName"))
+				if err != nil {
+					app.log.Println("Login lastlogin update sql err:", err.Error())
+					http.Redirect(w, r, "/login", http.StatusSeeOther)
+				}
+				// Register user into App
+				app.user.Username = r.FormValue("loginName")
+				app.user.Password = user.Password
+				app.user.Realname = user.Realname
+				app.user.Title = user.Title
+				app.user.LastLogin = user.LastLogin
+				app.user.LoginTime = time.Now()
+				app.log.Printf("User %s logged in", r.FormValue("loginName"))
+				http.Redirect(w, r, "/home", http.StatusSeeOther)
+			} else {
+				app.log.Printf("Login for %s with %s failed to match.", r.FormValue("loginName"), r.FormValue("loginPassword"))
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+			}
+		} else if r.FormValue("submitLoginRegister") == "Register" {
+			// Hash and Verify password
+			pwdGiven := utilities.HashAndSalt([]byte(r.FormValue("registerPassword")))
+			pwdMatch := utilities.ComparePasswords(pwdGiven, []byte(r.FormValue("registerVerifyPassword")))
+
+			if pwdMatch {
+				_, err := app.db.Exec(sqlAddUser, r.FormValue("registerName"), pwdGiven, r.FormValue("registerCompany"), r.FormValue("registerEmail"), r.FormValue("registerPhone"), r.FormValue("registerURL"))
+				if err != nil {
+					app.log.Println("Register INSERT sql err:", err.Error())
+					http.Redirect(w, r, "/home", http.StatusExpectationFailed)
+				}
+				app.log.Printf("User %s registered", r.FormValue("registerName"))
+				http.Redirect(w, r, "/home", http.StatusSeeOther)
+			} else {
+				app.log.Println("Passwords did not verify during registration")
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+			}
+		} else {
+			app.log.Println("Wrong login/register switch value")
+			http.Redirect(w, r, "/home", http.StatusBadRequest)
+		}
+	}
 }
 
 func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
@@ -211,36 +278,6 @@ func (app *App) test(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	app.log.Println("Object:", vars["object"])
 	http.ServeFile(w, r, staticLocation+"/html/"+vars["object"]+".html")
-}
-
-// func (app *App) getlog(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprintf(w, "<p style=\"color:blue;\"><a href=\"/home\">Bytesupply</a></p><p>Access log</p>")
-
-// 	logfile, err := os.Open(logFile)
-// 	if err != nil {
-// 		fmt.Fprintf(w, "<p style=\"color:blue;\">%s failed to open: %s</p>", logFile, err)
-// 	} else {
-// 		scanner := bufio.NewScanner(logfile)
-// 		scanner.Split(bufio.ScanLines)
-
-// 		fmt.Fprintf(w, "<ul>")
-// 		for scanner.Scan() {
-// 			fmt.Fprintf(w, "<li>%s</li>", scanner.Text())
-// 		}
-// 		fmt.Fprintf(w, "</ul>")
-// 		logfile.Close()
-// 	}
-// }
-
-func (app *App) registerUser(r *http.Request) error {
-	app.user.Username = r.PostFormValue("username")
-	app.user.Password = r.PostFormValue("password")
-	app.user.Realname = "Yves Hoebeke"
-	app.user.Title = "Owner"
-	app.user.LoginTime = time.Now()
-	app.log.Printf("Registering user %s as %s with username: %s and password: %s", app.user.Realname, app.user.Title, app.user.Username, app.user.Password)
-
-	return nil
 }
 
 func (app *App) api(w http.ResponseWriter, r *http.Request) {
@@ -411,6 +448,7 @@ func main() {
 	/* Handlers */
 	r.HandleFunc("/", app.homepage).Methods(http.MethodGet)
 	r.HandleFunc("/company", app.company).Methods(http.MethodGet)
+	r.HandleFunc("/login", app.login).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/home", app.home).Methods(http.MethodGet)
 	r.HandleFunc("/staff", app.staff).Methods(http.MethodGet)
 	r.HandleFunc("/history", app.history).Methods(http.MethodGet)
