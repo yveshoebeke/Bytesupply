@@ -86,7 +86,14 @@
                 <div class="col-2"></div>
                 <div class="col-3 text-center" style="border:2px solid rgb(161, 216, 230); border-radius:10px; padding:5px">
                     <h3>Login</h3>
-                    <form id="contactForm" action="/login" method="POST">
+                    <div class="signInFormErrors text-left">
+                        <ul>
+                            {{ range $error := .SigninErrors }}
+                            <li>{{ $error }}</li>
+                            {{ end }}
+                        </ul>
+                    </div>
+                    <form id="loginForm" action="/login" method="POST">
                         <input id="validEntry" type="hidden" name="validEntry" value="false" />
                         <div class="form-group">
                             <input type="text" class="form-control mandatory" id="loginName" value="" name="loginName" aria-describedby="loginNameHelp" placeholder="Your Email" onblur="validateMessageEntry($(this).attr('id'))" />
@@ -106,8 +113,15 @@
 
                 <div class="col-4" style="border:2px solid rgb(161, 216, 230); border-radius:10px; padding:5px">
                     <h3>Register</h3>
+                    <div class="signInFormErrors text-left">
+                        <ul>
+                            {{ range $error := .RegisterErrors }}
+                            <li>{{ $error }}</li>
+                            {{ end }}
+                        </ul>
+                    </div>
                     <p  class="text-danger"><small><sup>(*)</sup>Required fields.</small></p>
-                    <form id="contactForm" action="/login" method="POST">
+                    <form id="registerForm" action="/login" method="POST">
                         <input id="validEntry" type="hidden" name="validEntry" value="false" />
                         <div class="form-group">
                             <small><sup class="text-danger">(*)</sup></small>

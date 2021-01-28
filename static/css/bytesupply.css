@@ -31,6 +31,12 @@ img.logo {
   margin: 20px;
 }
 
+div.signInFormErrors {
+  color: red;
+  font-size: small;
+  text-align: left;
+}
+
 span#logoExplain {
   text-decoration-style: none;
   color: blue;
