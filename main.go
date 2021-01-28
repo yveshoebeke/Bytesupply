@@ -72,12 +72,12 @@ var (
 
 // User - info */
 type User struct {
-	Username  string    `json:"username"`
-	Password  string    `json:"password"`
-	Realname  string    `json:"realname"`
-	Title     string    `json:"title"`
-	LastLogin string    `jason:"lastlogin"`
-	LoginTime time.Time `json:"logintime"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Realname  string `json:"realname"`
+	Title     string `json:"title"`
+	LastLogin string `jason:"lastlogin"`
+	LoginTime string `json:"logintime"`
 }
 
 // App - application structure */
@@ -117,22 +117,32 @@ func (app *App) history(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) login(w http.ResponseWriter, r *http.Request) {
-	type Data struct {
-		Nothing string
+	type Login struct {
+		SigninErrors   []string
+		RegisterErrors []string
 	}
 	if r.Method == http.MethodGet {
 		// Get - present form(s)
-		d := Data{Nothing: "Nothing"}
-		tmpl.ExecuteTemplate(w, "login.gotmpl.html", d)
+		var login Login
+		// d := Data{Nothing: "Nothing"}
+		tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
 	} else if r.Method == http.MethodPost {
-		// Post - Check if Login or Register request
 		r.ParseForm()
+		var login Login
+		var user User
+		t := time.Now().Format(time.RFC3339)
+
 		if r.FormValue("submitLoginRegister") == "Login" {
-			var user User
-			// Execute the query
+			if !utilities.IsEmailAddress(r.FormValue("loginName"), true) {
+				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Login must be email."))
+				tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
+			}
+
 			err := app.db.QueryRow(sqlUserLogin, r.FormValue("loginName")).Scan(&user.Realname, &user.Password, &user.Title, &user.LastLogin)
 			if err != nil {
 				app.log.Println("User login query failed:", err.Error()) // proper error handling instead of panic in your app
+				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("'%s' is not registered.", r.FormValue("loginName")))
+				tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
 			}
 			// Check password hashes
 			pwdMatch := utilities.ComparePasswords(user.Password, []byte(r.FormValue("loginPassword")))
@@ -142,7 +152,8 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 				_, err := app.db.Exec(`UPDATE users SET lastlogin=NOW() WHERE email=?`, r.FormValue("loginName"))
 				if err != nil {
 					app.log.Println("Login lastlogin update sql err:", err.Error())
-					http.Redirect(w, r, "/login", http.StatusSeeOther)
+					login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Report SQL error: %s", err.Error()))
+					tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
 				}
 				// Register user into App
 				app.user.Username = r.FormValue("loginName")
@@ -150,29 +161,57 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 				app.user.Realname = user.Realname
 				app.user.Title = user.Title
 				app.user.LastLogin = user.LastLogin
-				app.user.LoginTime = time.Now()
+				app.user.LoginTime = t
 				app.log.Printf("User %s logged in", r.FormValue("loginName"))
 				http.Redirect(w, r, "/home", http.StatusSeeOther)
 			} else {
 				app.log.Printf("Login for %s with %s failed to match.", r.FormValue("loginName"), r.FormValue("loginPassword"))
-				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Wrong Rmail or Password."))
+				tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
 			}
 		} else if r.FormValue("submitLoginRegister") == "Register" {
 			// Hash and Verify password
 			pwdGiven := utilities.HashAndSalt([]byte(r.FormValue("registerPassword")))
 			pwdMatch := utilities.ComparePasswords(pwdGiven, []byte(r.FormValue("registerVerifyPassword")))
 
-			if pwdMatch {
+			// run through validation/vaccination filter function to be added to the utilities
+			if !utilities.IsEmailAddress(r.FormValue("registerEmail"), true) {
+				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid Email address."))
+			}
+			if !utilities.IsAlphaNumeric(r.FormValue("registerName"), true) {
+				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid Name entry."))
+			}
+			if !utilities.IsAlphaNumeric(r.FormValue("registerCompany"), false) {
+				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid Company entry."))
+			}
+			if !utilities.IsPhoneNumber(r.FormValue("registerPhone"), false) {
+				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid Phone number."))
+			}
+			if !utilities.IsURLAddress(r.FormValue("registerURL"), false) {
+				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid URL address."))
+			}
+			if !pwdMatch {
+				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Verify Passwords failed."))
+			}
+
+			if len(login.RegisterErrors) > 0 {
+				tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
+			} else {
 				_, err := app.db.Exec(sqlAddUser, r.FormValue("registerName"), pwdGiven, r.FormValue("registerCompany"), r.FormValue("registerEmail"), r.FormValue("registerPhone"), r.FormValue("registerURL"))
 				if err != nil {
 					app.log.Println("Register INSERT sql err:", err.Error())
 					http.Redirect(w, r, "/home", http.StatusExpectationFailed)
 				}
+
 				app.log.Printf("User %s registered", r.FormValue("registerName"))
+				app.user.Username = r.FormValue("registerEmail")
+				app.user.Password = pwdGiven
+				app.user.Realname = r.FormValue("registerName")
+				app.user.Title = "user"
+				app.user.LastLogin = t
+				app.user.LoginTime = t
+
 				http.Redirect(w, r, "/home", http.StatusSeeOther)
-			} else {
-				app.log.Println("Passwords did not verify during registration")
-				http.Redirect(w, r, "/login", http.StatusSeeOther)
 			}
 		} else {
 			app.log.Println("Wrong login/register switch value")
@@ -422,8 +461,8 @@ func main() {
 		Username:  "WWW",
 		Password:  "",
 		Realname:  "Visitor",
-		Title:     "User",
-		LoginTime: time.Now(),
+		Title:     "user",
+		LoginTime: time.Now().Format(time.RFC3339),
 	}
 
 	// Set app values
