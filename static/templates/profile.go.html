@@ -45,6 +45,17 @@
             <div class="row" style="margin-top:15px">
                 <h3>Profile</h3>
                 <div class="col-12 text-left">
+                    <h4>Login Profile</h4>
+                    <p>Logged in as: <span style="color:indianred">{{ .User.Username }}</span></p>
+                    <p>Name: <span style="color:indianred">{{ .User.Realname }}</span></p>
+                    <p>Title: <span style="color:indianred">{{ .User.Title }}</span></p>
+                    <p>Last logged in: <span style="color:indianred">{{ .User.LastLogin }}</span></p>
+                    <p>Logged in time: <span style="color:indianred">{{ .User.LoginTime }}</span></p>
+                </div>
+
+                <hr />
+
+                <div class="col-12 text-left">
                     <ul>
                         <li><a href="/logout">Logout</a></li>
                     </ul>

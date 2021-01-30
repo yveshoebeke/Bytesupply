@@ -124,6 +124,18 @@ func (app *App) profile(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "profile.go.html", app)
 }
 
+func (app *App) expertise(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, staticLocation+"/html/expertise.html")
+}
+
+func (app *App) terms(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, staticLocation+"/html/terms.html")
+}
+
+func (app *App) privacy(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, staticLocation+"/html/privacy.html")
+}
+
 func (app *App) logout(w http.ResponseWriter, r *http.Request) {
 	// Set app user to default values
 	app.User.Username = "WWW"
@@ -302,18 +314,6 @@ func (app *App) search(w http.ResponseWriter, r *http.Request) {
 	} else {
 		http.Redirect(w, r, r.FormValue("referer"), http.StatusSeeOther)
 	}
-}
-
-func (app *App) expertise(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, staticLocation+"/html/expertise.html")
-}
-
-func (app *App) terms(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, staticLocation+"/html/terms.html")
-}
-
-func (app *App) privacy(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, staticLocation+"/html/privacy.html")
 }
 
 func (app *App) products(w http.ResponseWriter, r *http.Request) {
