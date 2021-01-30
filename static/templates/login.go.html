@@ -47,7 +47,7 @@
                                 </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/expertise">Expertise</span></a>
+                            <a class="nav-link" href="/expertise">Expertise</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/contactus">Contact Us</a>
@@ -84,7 +84,7 @@
 
             <div class="row" style="margin-top:15px">
                 <div class="col-2"></div>
-                <div class="col-3 text-center" style="border:2px solid rgb(161, 216, 230); border-radius:10px; padding:5px">
+                <div class="col-3" style="border:2px solid rgb(161, 216, 230); border-radius:10px; padding:5px">
                     <h3>Login</h3>
                     <div class="signInFormErrors text-left">
                         <ul>
@@ -96,16 +96,16 @@
                     <form id="loginForm" action="/login" method="POST">
                         <input id="validEntry" type="hidden" name="validEntry" value="false" />
                         <div class="form-group">
-                            <input type="text" class="form-control mandatory" id="loginName" value="" name="loginName" aria-describedby="loginNameHelp" placeholder="Your Email" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="loginNameHelp" class="d-none form-text text-danger">Your Login (Email).</small>
+                            <input type="text" class="form-control mandatory" id="loginName" value="" name="loginName" placeholder="Your Email" />
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control mandatory" id="loginPassword" value="" name="loginPassword" aria-describedby="loginPasswordHelp" placeholder="Password" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="loginPasswordHelp" class="d-none form-text text-danger">Enter your Password.</small>
+                            <input type="text" class="form-control mandatory" id="loginPassword" value="" name="loginPassword" placeholder="Password" />
                         </div>
-                        <input id="contactSubmit" type="submit" class="btn btn-primary" name="submitLoginRegister" value="Login" />
-                        <button type="button" class="btn btn-secondary" onclick="window.location.replace('/home')">Cancel</button>
-                    </form>
+                        <div class="text-center">
+                            <input id="contactSubmit" type="submit" class="btn btn-primary" name="submitLoginRegister" value="Login" />
+                            <button type="button" class="btn btn-secondary" onclick="window.location.replace('/home')">Cancel</button>
+                        </div>
+                        </form>
                     <p class="text-danger" style="margin-top:20px"><small>Not registered? Fillout form to the right.</small></p>
                 </div>
 
@@ -125,35 +125,28 @@
                         <input id="validEntry" type="hidden" name="validEntry" value="false" />
                         <div class="form-group">
                             <small><sup class="text-danger">(*)</sup></small>
-                            <input type="text" class="form-control mandatory" id="registerName" value="" name="registerName" aria-describedby="registerNameHelp" placeholder="Your Name" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="registerNameHelp" class="d-none form-text text-danger">Enter your real name.</small>
+                            <input type="text" class="form-control mandatory" id="registerName" value="" name="registerName" aria-describedby="registerNameHelp" placeholder="Your Name" />
                         </div>
                         <div class="form-group">
                             <small><sup class="text-danger">(*)</small>
-                            <input type="text" class="form-control mandatory" id="registerEmail" value="" name="registerEmail" aria-describedby="registerEmailHelp" placeholder="Your Email (Will be your username)" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="registerEmailHelp" class="d-none form-text text-danger">Enter a valid Email Address.</small>
+                            <input type="text" class="form-control mandatory" id="registerEmail" value="" name="registerEmail" aria-describedby="registerEmailHelp" placeholder="Your Email (Will be your username)" />
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="registerPhone" value="" name="registerPhone" aria-describedby="registerPhoneHelp" placeholder="Your contact phone" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="registerPhoneHelp" class="d-none form-text text-danger">Enter a contact Phone Number.</small>
+                            <input type="text" class="form-control" id="registerPhone" value="" name="registerPhone" aria-describedby="registerPhoneHelp" placeholder="Your contact phone" />
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="registerCompany" value="" name="registerCompany" aria-describedby="registerCompanyHelp" placeholder="Company Name" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="registerCompanyHelp" class="d-none form-text text-danger">Enter a valid Company Name.</small>
+                            <input type="text" class="form-control" id="registerCompany" value="" name="registerCompany" aria-describedby="registerCompanyHelp" placeholder="Company Name" />
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="registerURL" value="" name="registerURL" aria-describedby="registerURLHelp" placeholder="Company URL" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="registerURLHelp" class="d-none form-text text-danger">Enter a valid Web URL Address.</small>
+                            <input type="text" class="form-control" id="registerURL" value="" name="registerURL" aria-describedby="registerURLHelp" placeholder="Company URL" />
                         </div>
                         <div class="form-group">
                             <small><sup class="text-danger">(*)</sup></small>
-                            <input type="text" class="form-control mandatory" id="registerPassword" value="" name="registerPassword" aria-describedby="registerPasswordHelp" placeholder="Password" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="registerPasswordHelp" class="d-none form-text text-danger">Enter your desired password.</small>
+                            <input type="text" class="form-control mandatory" id="registerPassword" value="" name="registerPassword" aria-describedby="registerPasswordHelp" placeholder="Password" />
                         </div>
                         <div class="form-group">
                             <small><sup class="text-danger">(*)</sup></small>
-                            <input type="text" class="form-control mandatory" id="registerVerifyPassword" value="" name="registerVerifyPassword" aria-describedby="registerVerifyPasswordHelp" placeholder="Verify Password" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="registerVerifyPasswordHelp" class="d-none form-text text-danger">Verify your Password.</small>
+                            <input type="text" class="form-control mandatory" id="registerVerifyPassword" value="" name="registerVerifyPassword" aria-describedby="registerVerifyPasswordHelp" placeholder="Verify Password" />
                         </div>
                         <div class="text-center">
                             <input id="contactSubmit" type="submit" class="btn btn-primary" name="submitLoginRegister" value="Register" />

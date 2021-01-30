@@ -56,7 +56,7 @@ var (
 	sqlUserLogin       = `SELECT name, password, title, lastlogin FROM users WHERE email = ?`
 	sqlUpdateLastlogin = `UPDATE users SET lastlogin=NOW() WHERE email=?`
 	/* templating */
-	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templ/*"))
+	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templates/*"))
 	funcMap = template.FuncMap{
 		"hasHTTP": func(myUrl string) string {
 			if strings.Contains(myUrl, "://") {
@@ -84,7 +84,7 @@ type User struct {
 type App struct {
 	log   *log.Logger
 	lfile *os.File
-	user  User
+	User  User
 	db    *sql.DB
 }
 
@@ -97,11 +97,11 @@ type Data struct {
 
 /* Routers */
 func (app *App) homepage(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, staticLocation+"/html/index.html")
+	tmpl.ExecuteTemplate(w, "index.go.html", app)
 }
 
 func (app *App) home(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, staticLocation+"/html/home.html")
+	tmpl.ExecuteTemplate(w, "home.go.html", app)
 }
 
 func (app *App) company(w http.ResponseWriter, r *http.Request) {
@@ -116,6 +116,26 @@ func (app *App) history(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/history.html")
 }
 
+func (app *App) admin(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "admin.go.html", app)
+}
+
+func (app *App) profile(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "profile.go.html", app)
+}
+
+func (app *App) logout(w http.ResponseWriter, r *http.Request) {
+	// Set app user to default values
+	app.User.Username = "WWW"
+	app.User.Password = "*"
+	app.User.Realname = "Visitor"
+	app.User.Title = "visitor"
+	app.User.LastLogin = time.Now().Format(time.RFC3339)
+	app.User.LoginTime = time.Now().Format(time.RFC3339)
+
+	tmpl.ExecuteTemplate(w, "home.go.html", app)
+}
+
 func (app *App) login(w http.ResponseWriter, r *http.Request) {
 	type Login struct {
 		SigninErrors   []string
@@ -125,7 +145,7 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 		// Get - present form(s)
 		var login Login
 		// d := Data{Nothing: "Nothing"}
-		tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
+		tmpl.ExecuteTemplate(w, "login.go.html", login)
 	} else if r.Method == http.MethodPost {
 		r.ParseForm()
 		var login Login
@@ -135,14 +155,16 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 		if r.FormValue("submitLoginRegister") == "Login" {
 			if !utilities.IsEmailAddress(r.FormValue("loginName"), true) {
 				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Login must be email."))
-				tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
+				tmpl.ExecuteTemplate(w, "login.go.html", login)
+				return
 			}
 
 			err := app.db.QueryRow(sqlUserLogin, r.FormValue("loginName")).Scan(&user.Realname, &user.Password, &user.Title, &user.LastLogin)
 			if err != nil {
 				app.log.Println("User login query failed:", err.Error()) // proper error handling instead of panic in your app
 				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("'%s' is not registered.", r.FormValue("loginName")))
-				tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
+				tmpl.ExecuteTemplate(w, "login.go.html", login)
+				return
 			}
 			// Check password hashes
 			pwdMatch := utilities.ComparePasswords(user.Password, []byte(r.FormValue("loginPassword")))
@@ -153,21 +175,21 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					app.log.Println("Login lastlogin update sql err:", err.Error())
 					login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Report SQL error: %s", err.Error()))
-					tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
+					tmpl.ExecuteTemplate(w, "login.go.html", login)
 				}
 				// Register user into App
-				app.user.Username = r.FormValue("loginName")
-				app.user.Password = user.Password
-				app.user.Realname = user.Realname
-				app.user.Title = user.Title
-				app.user.LastLogin = user.LastLogin
-				app.user.LoginTime = t
+				app.User.Username = r.FormValue("loginName")
+				app.User.Password = user.Password
+				app.User.Realname = user.Realname
+				app.User.Title = user.Title
+				app.User.LastLogin = user.LastLogin
+				app.User.LoginTime = t
 				app.log.Printf("User %s logged in", r.FormValue("loginName"))
 				http.Redirect(w, r, "/home", http.StatusSeeOther)
 			} else {
 				app.log.Printf("Login for %s with %s failed to match.", r.FormValue("loginName"), r.FormValue("loginPassword"))
 				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Wrong Rmail or Password."))
-				tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
+				tmpl.ExecuteTemplate(w, "login.go.html", login)
 			}
 		} else if r.FormValue("submitLoginRegister") == "Register" {
 			// Hash and Verify password
@@ -195,7 +217,7 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if len(login.RegisterErrors) > 0 {
-				tmpl.ExecuteTemplate(w, "login.gotmpl.html", login)
+				tmpl.ExecuteTemplate(w, "login.go.html", login)
 			} else {
 				_, err := app.db.Exec(sqlAddUser, r.FormValue("registerName"), pwdGiven, r.FormValue("registerCompany"), r.FormValue("registerEmail"), r.FormValue("registerPhone"), r.FormValue("registerURL"))
 				if err != nil {
@@ -204,12 +226,12 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 				}
 
 				app.log.Printf("User %s registered", r.FormValue("registerName"))
-				app.user.Username = r.FormValue("registerEmail")
-				app.user.Password = pwdGiven
-				app.user.Realname = r.FormValue("registerName")
-				app.user.Title = "user"
-				app.user.LastLogin = t
-				app.user.LoginTime = t
+				app.User.Username = r.FormValue("registerEmail")
+				app.User.Password = pwdGiven
+				app.User.Realname = r.FormValue("registerName")
+				app.User.Title = "user"
+				app.User.LastLogin = t
+				app.User.LoginTime = t
 
 				http.Redirect(w, r, "/home", http.StatusSeeOther)
 			}
@@ -254,7 +276,7 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if validToRecord {
-				_, err := app.db.Exec(sqlAddMessage, app.user.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactURL"), r.FormValue("contactMessage"))
+				_, err := app.db.Exec(sqlAddMessage, app.User.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactURL"), r.FormValue("contactMessage"))
 				if err != nil {
 					app.log.Println("ContactUs INSERT sql err:", err.Error())
 				}
@@ -262,7 +284,7 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 		}
 
 		msgStatus := MsgStatus{ValidToSend: validToRecord, Name: r.FormValue("contactName")}
-		tmpl.ExecuteTemplate(w, "contactussent.gotmpl.html", msgStatus)
+		tmpl.ExecuteTemplate(w, "contactussent.go.html", msgStatus)
 	}
 }
 
@@ -275,7 +297,7 @@ func (app *App) search(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			app.log.Println("Google API Err:", err)
 		} else {
-			tmpl.ExecuteTemplate(w, "search.gotmpl.html", searchResults)
+			tmpl.ExecuteTemplate(w, "search.go.html", searchResults)
 		}
 	} else {
 		http.Redirect(w, r, r.FormValue("referer"), http.StatusSeeOther)
@@ -299,7 +321,7 @@ func (app *App) products(w http.ResponseWriter, r *http.Request) {
 		ItemToShow string `json:"itemtoshow"`
 	}
 	item := Item{ItemToShow: "all"}
-	tmpl.ExecuteTemplate(w, "product.gotmpl.html", item)
+	tmpl.ExecuteTemplate(w, "product.go.html", item)
 }
 
 func (app *App) product(w http.ResponseWriter, r *http.Request) {
@@ -310,7 +332,7 @@ func (app *App) product(w http.ResponseWriter, r *http.Request) {
 	itemtoshow := vars["item"]
 	item := Item{ItemToShow: itemtoshow}
 	app.log.Println("Item:", vars["item"])
-	tmpl.ExecuteTemplate(w, "product.gotmpl.html", item)
+	tmpl.ExecuteTemplate(w, "product.go.html", item)
 }
 
 func (app *App) test(w http.ResponseWriter, r *http.Request) {
@@ -406,7 +428,7 @@ func (app *App) request(w http.ResponseWriter, r *http.Request) {
 /* Middleware */
 func (app *App) inMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		app.log.Printf("User: %s | URL: %s | Method: %s | IP: %s", app.user.Username, r.URL.Path, r.Method, utilities.GetIP(r))
+		app.log.Printf("User: %s | URL: %s | Method: %s | IP: %s", app.User.Username, r.URL.Path, r.Method, utilities.GetIP(r))
 		next.ServeHTTP(w, r)
 	})
 }
@@ -459,9 +481,10 @@ func main() {
 	// Initial user data (before actual login)
 	user := User{
 		Username:  "WWW",
-		Password:  "",
+		Password:  "*",
 		Realname:  "Visitor",
-		Title:     "user",
+		Title:     "visitor",
+		LastLogin: time.Now().Format(time.RFC3339),
 		LoginTime: time.Now().Format(time.RFC3339),
 	}
 
@@ -469,7 +492,7 @@ func main() {
 	app := &App{
 		log:   logger,
 		lfile: lf,
-		user:  user,
+		User:  user,
 		db:    db,
 	}
 
@@ -486,15 +509,18 @@ func main() {
 
 	/* Handlers */
 	r.HandleFunc("/", app.homepage).Methods(http.MethodGet)
+	r.HandleFunc("/home", app.home).Methods(http.MethodGet)
 	r.HandleFunc("/company", app.company).Methods(http.MethodGet)
 	r.HandleFunc("/login", app.login).Methods(http.MethodGet, http.MethodPost)
-	r.HandleFunc("/home", app.home).Methods(http.MethodGet)
+	r.HandleFunc("/logout", app.logout).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/staff", app.staff).Methods(http.MethodGet)
 	r.HandleFunc("/history", app.history).Methods(http.MethodGet)
 	r.HandleFunc("/contactus", app.contactus).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/search", app.search).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/expertise", app.expertise).Methods(http.MethodGet)
 	r.HandleFunc("/terms", app.terms).Methods(http.MethodGet)
+	r.HandleFunc("/admin", app.admin).Methods(http.MethodGet)
+	r.HandleFunc("/profile", app.profile).Methods(http.MethodGet)
 	r.HandleFunc("/privacy", app.privacy).Methods(http.MethodGet)
 	r.HandleFunc("/product/{item:[a-zA-Z]+}", app.product).Methods(http.MethodGet)
 	r.HandleFunc("/products", app.products).Methods(http.MethodGet)
