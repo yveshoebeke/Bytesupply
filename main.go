@@ -29,6 +29,7 @@ import (
 	"text/template"
 	"time"
 
+	app "bytesupply.com/app"
 	googleapi "bytesupply.com/googleapi"
 	utilities "bytesupply.com/utilities"
 
@@ -51,10 +52,15 @@ var (
 	dbPassword     = os.Getenv("BS_MYSQL_PASSWORD")
 	dbDatabase     = os.Getenv("BS_MYSQL_DB")
 	/* sql statements */
-	sqlAddMessage      = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
+	// Logins
 	sqlAddUser         = `INSERT INTO users (name,password,company,email,phone,url) VALUES (?, ?, ?, ?, ?, ?)`
 	sqlUserLogin       = `SELECT name, password, title, lastlogin FROM users WHERE email = ?`
 	sqlUpdateLastlogin = `UPDATE users SET lastlogin=NOW() WHERE email=?`
+	// Messages
+	sqlAddMessage             = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
+	sqlGetAllMessagesByStatus = `SELECT id, user, name, company, email, phone, url, message, status, qturhm, created FROM messages WHERE status LIKE ?`
+	sqlGetMessageContent      = `SELECT message FROM messages WHERE email=?`
+	sqlUpdateMessageStatus    = `UPDATE messages SET status=? WHERE email=?`
 	/* templating */
 	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templates/*"))
 	funcMap = template.FuncMap{
@@ -70,30 +76,8 @@ var (
 
 // type getlog = utilities.Getlog
 
-// User - info */
-type User struct {
-	Username  string `json:"username"`
-	Password  string `json:"password"`
-	Realname  string `json:"realname"`
-	Title     string `json:"title"`
-	LastLogin string `jason:"lastlogin"`
-	LoginTime string `json:"logintime"`
-}
-
-// App - application structure */
-type App struct {
-	log   *log.Logger
-	lfile *os.File
-	User  User
-	db    *sql.DB
-}
-
-// Data - database structure */
-type Data struct {
-	ReqType   string    `json:"reqtype"`
-	ReqCmd    string    `json:"reqcmd"`
-	Timestamp time.Time `json:"Timestamp"`
-}
+type App app.App
+type User app.User
 
 /* Routers */
 func (app *App) homepage(w http.ResponseWriter, r *http.Request) {
@@ -117,7 +101,11 @@ func (app *App) history(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) admin(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "admin.go.html", app)
+	if app.User.Title == "admin" {
+		tmpl.ExecuteTemplate(w, "admin.go.html", app)
+	} else {
+		http.Redirect(w, r, "/home", http.StatusSeeOther)
+	}
 }
 
 func (app *App) profile(w http.ResponseWriter, r *http.Request) {
@@ -134,6 +122,41 @@ func (app *App) terms(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) privacy(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/privacy.html")
+}
+
+func (app *App) getmessages(w http.ResponseWriter, r *http.Request) {
+	// MessageData -
+	type MessageData struct {
+		App      *App
+		Messages utilities.Messages
+	}
+
+	var mm utilities.Messages
+	var m utilities.Message
+
+	messages, err := app.DB.Query(sqlGetAllMessagesByStatus, "%")
+	if err != nil {
+		app.Log.Println("Message retrieval query failed:", err.Error())
+		fmt.Fprintf(w, "Message retrieval query failed: %v", err.Error())
+		return
+	}
+	defer messages.Close()
+	for messages.Next() {
+		err := messages.Scan(&m.ID, &m.User, &m.Name, &m.Company, &m.Email, &m.Phone, &m.URL, &m.Message, &m.Status, &m.Qturhm, &m.Created)
+		if err != nil {
+			app.Log.Println("Message retrieval scan failed:", err.Error())
+			fmt.Fprintf(w, "Message retrieval scan failed: %v", err.Error())
+			return
+		}
+		mm.Messages = append(mm.Messages, m)
+	}
+
+	data := MessageData{
+		App:      app,
+		Messages: mm,
+	}
+
+	tmpl.ExecuteTemplate(w, "showMessages.go.html", data)
 }
 
 func (app *App) logout(w http.ResponseWriter, r *http.Request) {
@@ -156,7 +179,6 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		// Get - present form(s)
 		var login Login
-		// d := Data{Nothing: "Nothing"}
 		tmpl.ExecuteTemplate(w, "login.go.html", login)
 	} else if r.Method == http.MethodPost {
 		r.ParseForm()
@@ -171,9 +193,9 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			err := app.db.QueryRow(sqlUserLogin, r.FormValue("loginName")).Scan(&user.Realname, &user.Password, &user.Title, &user.LastLogin)
+			err := app.DB.QueryRow(sqlUserLogin, r.FormValue("loginName")).Scan(&user.Realname, &user.Password, &user.Title, &user.LastLogin)
 			if err != nil {
-				app.log.Println("User login query failed:", err.Error()) // proper error handling instead of panic in your app
+				app.Log.Println("User login query failed:", err.Error()) // proper error handling instead of panic in your app
 				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("'%s' is not registered.", r.FormValue("loginName")))
 				tmpl.ExecuteTemplate(w, "login.go.html", login)
 				return
@@ -183,9 +205,9 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 
 			// If matched update last login time and update app user data
 			if pwdMatch {
-				_, err := app.db.Exec(`UPDATE users SET lastlogin=NOW() WHERE email=?`, r.FormValue("loginName"))
+				_, err := app.DB.Exec(`UPDATE users SET lastlogin=NOW() WHERE email=?`, r.FormValue("loginName"))
 				if err != nil {
-					app.log.Println("Login lastlogin update sql err:", err.Error())
+					app.Log.Println("Login lastlogin update sql err:", err.Error())
 					login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Report SQL error: %s", err.Error()))
 					tmpl.ExecuteTemplate(w, "login.go.html", login)
 				}
@@ -196,10 +218,10 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 				app.User.Title = user.Title
 				app.User.LastLogin = user.LastLogin
 				app.User.LoginTime = t
-				app.log.Printf("User %s logged in", r.FormValue("loginName"))
+				app.Log.Printf("User %s logged in", r.FormValue("loginName"))
 				http.Redirect(w, r, "/home", http.StatusSeeOther)
 			} else {
-				app.log.Printf("Login for %s with %s failed to match.", r.FormValue("loginName"), r.FormValue("loginPassword"))
+				app.Log.Printf("Login for %s with %s failed to match.", r.FormValue("loginName"), r.FormValue("loginPassword"))
 				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Wrong Rmail or Password."))
 				tmpl.ExecuteTemplate(w, "login.go.html", login)
 			}
@@ -231,13 +253,13 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 			if len(login.RegisterErrors) > 0 {
 				tmpl.ExecuteTemplate(w, "login.go.html", login)
 			} else {
-				_, err := app.db.Exec(sqlAddUser, r.FormValue("registerName"), pwdGiven, r.FormValue("registerCompany"), r.FormValue("registerEmail"), r.FormValue("registerPhone"), r.FormValue("registerURL"))
+				_, err := app.DB.Exec(sqlAddUser, r.FormValue("registerName"), pwdGiven, r.FormValue("registerCompany"), r.FormValue("registerEmail"), r.FormValue("registerPhone"), r.FormValue("registerURL"))
 				if err != nil {
-					app.log.Println("Register INSERT sql err:", err.Error())
+					app.Log.Println("Register INSERT sql err:", err.Error())
 					http.Redirect(w, r, "/home", http.StatusExpectationFailed)
 				}
 
-				app.log.Printf("User %s registered", r.FormValue("registerName"))
+				app.Log.Printf("User %s registered", r.FormValue("registerName"))
 				app.User.Username = r.FormValue("registerEmail")
 				app.User.Password = pwdGiven
 				app.User.Realname = r.FormValue("registerName")
@@ -248,7 +270,7 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/home", http.StatusSeeOther)
 			}
 		} else {
-			app.log.Println("Wrong login/register switch value")
+			app.Log.Println("Wrong login/register switch value")
 			http.Redirect(w, r, "/home", http.StatusBadRequest)
 		}
 	}
@@ -288,9 +310,9 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if validToRecord {
-				_, err := app.db.Exec(sqlAddMessage, app.User.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactURL"), r.FormValue("contactMessage"))
+				_, err := app.DB.Exec(sqlAddMessage, app.User.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactURL"), r.FormValue("contactMessage"))
 				if err != nil {
-					app.log.Println("ContactUs INSERT sql err:", err.Error())
+					app.Log.Println("ContactUs INSERT sql err:", err.Error())
 				}
 			}
 		}
@@ -307,7 +329,7 @@ func (app *App) search(w http.ResponseWriter, r *http.Request) {
 	if len(searchKey) != 0 {
 		searchResults, err := googleapi.GetSearchResults(searchKey)
 		if err != nil {
-			app.log.Println("Google API Err:", err)
+			app.Log.Println("Google API Err:", err)
 		} else {
 			tmpl.ExecuteTemplate(w, "search.go.html", searchResults)
 		}
@@ -331,13 +353,14 @@ func (app *App) product(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	itemtoshow := vars["item"]
 	item := Item{ItemToShow: itemtoshow}
-	app.log.Println("Item:", vars["item"])
+	app.Log.Println("Item:", vars["item"])
 	tmpl.ExecuteTemplate(w, "product.go.html", item)
 }
 
+/* TRIALS */
 func (app *App) test(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	app.log.Println("Object:", vars["object"])
+	app.Log.Println("Object:", vars["object"])
 	http.ServeFile(w, r, staticLocation+"/html/"+vars["object"]+".html")
 }
 
@@ -346,7 +369,7 @@ func (app *App) api(w http.ResponseWriter, r *http.Request) {
 	version := vars["version"]
 	request := vars["request"]
 
-	app.log.Println("@api with version:", version, "and request:", request)
+	app.Log.Println("@api with version:", version, "and request:", request)
 
 	switch version {
 	default:
@@ -394,27 +417,34 @@ func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
 		// Try to decode the request body into the struct.
 		err := json.NewDecoder(r.Body).Decode(&q)
 		if err != nil {
-			app.log.Println("API error (qTurHm):", err.Error())
+			app.Log.Println("API error (qTurHm):", err.Error())
 			return
 		}
 
-		app.log.Printf("%v", q)
-		app.log.Printf("Key: %s Time: %d", q.Key, q.TimeCreated)
+		app.Log.Printf("%v", q)
+		app.Log.Printf("Key: %s Time: %d", q.Key, q.TimeCreated)
 		rfn := q.Key + "_" + strconv.Itoa(q.TimeCreated)
-		app.log.Printf("Result File Name: %s should be: %s", rfn, q.ResultContent)
+		app.Log.Printf("Result File Name: %s should be: %s", rfn, q.ResultContent)
 
 		res := []byte("8")
 		werr := ioutil.WriteFile("/go/bin/data/qTurHm/"+rfn, res, 0644)
 		if werr != nil {
-			app.log.Printf("Error writing result file /go/bin/data/qTurHm/%s: %v", rfn, werr)
+			app.Log.Printf("Error writing result file /go/bin/data/qTurHm/%s: %v", rfn, werr)
 		}
 	}
 }
 
 func (app *App) request(w http.ResponseWriter, r *http.Request) {
+	// Data - database structure */
+	type Data struct {
+		ReqType   string    `json:"reqtype"`
+		ReqCmd    string    `json:"reqcmd"`
+		Timestamp time.Time `json:"Timestamp"`
+	}
+
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		app.log.Println("Error parsing Body:", err)
+		app.Log.Println("Error parsing Body:", err)
 	}
 	var data Data
 	json.Unmarshal(reqBody, &data)
@@ -422,13 +452,13 @@ func (app *App) request(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(data)
 
-	app.log.Printf("Request command received: %s", data.ReqType)
+	app.Log.Printf("Request command received: %s", data.ReqType)
 }
 
 /* Middleware */
 func (app *App) inMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		app.log.Printf("User: %s | URL: %s | Method: %s | IP: %s", app.User.Username, r.URL.Path, r.Method, utilities.GetIP(r))
+		app.Log.Printf("User: %s | URL: %s | Method: %s | IP: %s", app.User.Username, r.URL.Path, r.Method, utilities.GetIP(r))
 		next.ServeHTTP(w, r)
 	})
 }
@@ -479,7 +509,7 @@ func main() {
 	defer db.Close()
 
 	// Initial user data (before actual login)
-	user := User{
+	user := &app.User{
 		Username:  "WWW",
 		Password:  "*",
 		Realname:  "Visitor",
@@ -490,13 +520,13 @@ func main() {
 
 	// Set app values
 	app := &App{
-		log:   logger,
-		lfile: lf,
+		Log:   logger,
 		User:  user,
-		db:    db,
+		Lfile: lf,
+		DB:    db,
 	}
 
-	app.log.Println("Starting service.")
+	app.Log.Println("Starting service.")
 
 	/* Routers definitions */
 	r := mux.NewRouter()
@@ -525,6 +555,7 @@ func main() {
 	r.HandleFunc("/product/{item:[a-zA-Z]+}", app.product).Methods(http.MethodGet)
 	r.HandleFunc("/products", app.products).Methods(http.MethodGet)
 	r.HandleFunc("/getlog", getlog).Methods(http.MethodGet)
+	r.HandleFunc("/getmessages", app.getmessages).Methods(http.MethodGet)
 	r.HandleFunc("/request", app.request).Methods("POST")
 	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.api).Methods(http.MethodGet, http.MethodPost)
@@ -544,7 +575,7 @@ func main() {
 	*         Launch the server!         *
 	**************************************
 	 */
-	app.log.Fatal(BytesupplyServer.ListenAndServe())
+	app.Log.Fatal(BytesupplyServer.ListenAndServe())
 
 	/*
 		****************************************************
