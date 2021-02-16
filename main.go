@@ -58,9 +58,9 @@ var (
 	sqlUpdateLastlogin = `UPDATE users SET lastlogin=NOW() WHERE email=?`
 	// Messages
 	sqlAddMessage             = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
-	sqlGetAllMessagesByStatus = `SELECT id, user, name, company, email, phone, url, message, status, qturhm, created FROM messages WHERE status LIKE ?`
+	sqlGetAllMessagesByStatus = `SELECT id, user, name, company, email, phone, url, message, status, qturhm, created FROM messages WHERE status LIKE ? ORDER BY status ASC, created ASC`
 	sqlGetMessageContent      = `SELECT message FROM messages WHERE email=?`
-	sqlUpdateMessageStatus    = `UPDATE messages SET status=? WHERE email=?`
+	sqlUpdateMessageStatus    = `UPDATE messages SET status=? WHERE id=?`
 	/* templating */
 	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templates/*"))
 	funcMap = template.FuncMap{
@@ -74,9 +74,10 @@ var (
 	}
 )
 
-// type getlog = utilities.Getlog
-
+// App -> app.App
 type App app.App
+
+// User -> app.User
 type User app.User
 
 /* Routers */
@@ -141,6 +142,7 @@ func (app *App) getmessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer messages.Close()
+
 	for messages.Next() {
 		err := messages.Scan(&m.ID, &m.User, &m.Name, &m.Company, &m.Email, &m.Phone, &m.URL, &m.Message, &m.Status, &m.Qturhm, &m.Created)
 		if err != nil {
@@ -157,6 +159,18 @@ func (app *App) getmessages(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.ExecuteTemplate(w, "showMessages.go.html", data)
+
+	// Set unread (status=0) messages to message read (status=1)
+	for _, msg := range data.Messages.Messages {
+		if msg.Status == 0 {
+			_, err := app.DB.Exec(sqlUpdateMessageStatus, 1, msg.ID)
+			if err != nil {
+				app.Log.Println("Message status update failed:", err.Error())
+				fmt.Fprintf(w, "Message status update failed: %v", err.Error())
+				return
+			}
+		}
+	}
 }
 
 func (app *App) logout(w http.ResponseWriter, r *http.Request) {
