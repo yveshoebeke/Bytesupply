@@ -42,12 +42,12 @@
                 <h3>System Administration</h3>
                 <div class="col-12 text-left">
                     <h4>Login Profile</h4>
-                    <p>Logged in as: <span style="color:indianred">{{ .User.Username }}</span></p>
-                    <p>Password: <span style="color:indianred">{{ .User.Password }}</span></p>
-                    <p>Name: <span style="color:indianred">{{ .User.Realname }}</span></p>
-                    <p>Title: <span style="color:indianred">{{ .User.Title }}</span></p>
-                    <p>Last logged in: <span style="color:indianred">{{ .User.LastLogin }}</span></p>
-                    <p>Logged in time: <span style="color:indianred">{{ .User.LoginTime }}</span></p>
+                    <p>Logged in as: <span style="color:indianred">{{ .App.User.Username }}</span></p>
+                    <p>Password: <span style="color:indianred">{{ .App.User.Password }}</span></p>
+                    <p>Name: <span style="color:indianred">{{ .App.User.Realname }}</span></p>
+                    <p>Title: <span style="color:indianred">{{ .App.User.Title }}</span></p>
+                    <p>Last logged in: <span style="color:indianred">{{ .App.User.LastLogin }}</span></p>
+                    <p>Logged in time: <span style="color:indianred">{{ .App.User.LoginTime }}</span></p>
                 </div>
  
                 <hr />
@@ -57,7 +57,7 @@
                     <ul>
                         <li><a href="/logout">Logout</a></li>
                         <li><a href="/getlog">System log</a></li>
-                        <li><a href="/getmessages">Messages</a></li>
+                        <li><a href="/getmessages">Messages</a>&nbsp;[{{ .Count }}]</li>
                         <li><a href="/getusers"></a>Users</a></li>
                     </ul>
                 </div>
