@@ -61,6 +61,7 @@ var (
 	sqlGetAllMessagesByStatus = `SELECT id, user, name, company, email, phone, url, message, status, qturhm, created FROM messages WHERE status LIKE ? ORDER BY status ASC, created ASC`
 	sqlGetMessageContent      = `SELECT message FROM messages WHERE email=?`
 	sqlUpdateMessageStatus    = `UPDATE messages SET status=? WHERE id=?`
+	sqlCountUnreadMessages    = `SELECT COUNT(id) FROM messages WHERE status=0`
 	/* templating */
 	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templates/*"))
 	funcMap = template.FuncMap{
@@ -102,8 +103,26 @@ func (app *App) history(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) admin(w http.ResponseWriter, r *http.Request) {
+	type MessageData struct {
+		App   *App
+		Count int
+	}
+
+	var newCount int = 0
+
 	if app.User.Title == "admin" {
-		tmpl.ExecuteTemplate(w, "admin.go.html", app)
+		err := app.DB.QueryRow(sqlCountUnreadMessages).Scan(&newCount)
+		if err != nil {
+			app.Log.Println("Unread messages count failed:", err.Error())
+			// return
+		}
+
+		data := MessageData{
+			App:   app,
+			Count: newCount,
+		}
+
+		tmpl.ExecuteTemplate(w, "admin.go.html", data)
 	} else {
 		http.Redirect(w, r, "/home", http.StatusSeeOther)
 	}
