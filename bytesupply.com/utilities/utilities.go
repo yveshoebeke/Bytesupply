@@ -2,14 +2,14 @@ package utilities
 
 import (
 	"bufio"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"regexp"
-	"time"
+
+	app "bytesupply.com/app"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -21,21 +21,27 @@ var (
 	alphaNumericRegex = regexp.MustCompile("^[a-zA-Z0-9_,.!? ]*$")
 )
 
-// User - info */
-type User struct {
-	Username  string    `json:"username"`
-	Password  string    `json:"password"`
-	Realname  string    `json:"realname"`
-	Title     string    `json:"title"`
-	LoginTime time.Time `json:"logintime"`
+type App app.App
+type User app.User
+
+// Message -
+type Message struct {
+	ID      int    //INT AUTO_INCREMENT PRIMARY KEY,
+	User    string //VARCHAR(20) NOT NULL DEFAULT 'Unknown',
+	Name    string //VARCHAR(100) NOT NULL,
+	Company string //VARCHAR(100) DEFAULT '',
+	Email   string //VARCHAR(100) NOT NULL,
+	Phone   string //VARCHAR(20) DEFAULT '',
+	URL     string //VARCHAR(200) DEFAULT '',
+	Message string //TEXT NOT NULL,
+	Status  int    //INT DEFAULT 0,
+	Qturhm  int    //INT DEFAULT -1,
+	Created string //TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 }
 
-// App - application structure */
-type App struct {
-	log   *log.Logger
-	lfile *os.File
-	user  User
-	db    *sql.DB
+// Messages -
+type Messages struct {
+	Messages []Message
 }
 
 // Getlog - func (app *App) Getlog(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +64,13 @@ func Getlog(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GetIP - IP address retriever */
+// GetMessages -
+func (app *App) GetMessages(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "%T %v", app, app)
+	fmt.Fprintf(w, "From utilities.GetMessages -> User: %v DB: %v\r", nil, nil)
+}
+
+// GetIP - IP address retriever
 func GetIP(r *http.Request) string {
 	forwarded := r.Header.Get("X-FORWARD-FOR")
 	if forwarded != "" {
