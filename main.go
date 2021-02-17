@@ -53,9 +53,15 @@ var (
 	dbDatabase     = os.Getenv("BS_MYSQL_DB")
 	/* sql statements */
 	// Logins
-	sqlAddUser         = `INSERT INTO users (name,password,company,email,phone,url) VALUES (?, ?, ?, ?, ?, ?)`
-	sqlUserLogin       = `SELECT name, password, title, lastlogin FROM users WHERE email = ?`
-	sqlUpdateLastlogin = `UPDATE users SET lastlogin=NOW() WHERE email=?`
+	sqlUserLogin = `SELECT name, password, title, lastlogin FROM users WHERE email=? AND status=1`
+	// Users
+	sqlAddUser             = `INSERT INTO users (name,password,company,email,phone,url) VALUES (?, ?, ?, ?, ?, ?)`
+	sqlGetAllUsersByStatus = `SELECT name, title, password, company, email, phone, url, comment, picture, lastlogin, status, qturhm, created FROM users WHERE status LIKE ? ORDER BY status ASC, lastlogin ASC`
+	sqlUpdateLastlogin     = `UPDATE users SET lastlogin=NOW() WHERE email=?`
+	sqlUpdateUserStatus    = `UPDATE users SET status=? WHERE email=?`
+	sqlUpdateUserTitle     = `UPDATE users SET title=? WHERE email=?`
+	sqlUpdateUserComment   = `UPDATE users SET comment=? WHERE email=?`
+	sqlCountUsers          = `SELECT COUNT(email) FROM users`
 	// Messages
 	sqlAddMessage             = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	sqlGetAllMessagesByStatus = `SELECT id, user, name, company, email, phone, url, message, status, qturhm, created FROM messages WHERE status LIKE ? ORDER BY status ASC, created ASC`
@@ -104,25 +110,32 @@ func (app *App) history(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) admin(w http.ResponseWriter, r *http.Request) {
 	type MessageData struct {
-		App   *App
-		Count int
+		App          *App
+		UserCount    int
+		MessageCount int
 	}
 
 	data := MessageData{
-		App:   app,
-		Count: 0,
+		App:          app,
+		UserCount:    0,
+		MessageCount: 0,
 	}
 
 	if app.User.Title == "admin" {
-		err := app.DB.QueryRow(sqlCountUnreadMessages).Scan(&data.Count)
-		if err != nil {
-			app.Log.Println("Unread messages count failed:", err.Error())
+		messagecounterr := app.DB.QueryRow(sqlCountUnreadMessages).Scan(&data.MessageCount)
+		if messagecounterr != nil {
+			app.Log.Println("Unread messages count failed:", messagecounterr.Error())
+			// return
+		}
+		usercounterr := app.DB.QueryRow(sqlCountUsers).Scan(&data.UserCount)
+		if usercounterr != nil {
+			app.Log.Println("User count failed:", usercounterr.Error())
 			// return
 		}
 
 		tmpl.ExecuteTemplate(w, "admin.go.html", data)
 	} else {
-		http.Redirect(w, r, "/home", http.StatusSeeOther)
+		http.Redirect(w, r, "/home", http.StatusForbidden)
 	}
 }
 
@@ -142,7 +155,112 @@ func (app *App) privacy(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticLocation+"/html/privacy.html")
 }
 
+func (app *App) getusers(w http.ResponseWriter, r *http.Request) {
+	if app.User.Title != "admin" {
+		http.Redirect(w, r, "/home", http.StatusForbidden)
+		return
+	}
+	// MessageData -
+	type UserData struct {
+		App   *App
+		Users utilities.Users
+	}
+
+	var uu utilities.Users
+	var u utilities.UserRecord
+
+	users, err := app.DB.Query(sqlGetAllUsersByStatus, "%")
+	if err != nil {
+		app.Log.Println("User retrieval query failed:", err.Error())
+		fmt.Fprintf(w, "User retrieval query failed: %v", err.Error())
+		return
+	}
+	defer users.Close()
+
+	for users.Next() {
+		err := users.Scan(&u.Name, &u.Title, &u.Password, &u.Company, &u.Email, &u.Phone, &u.URL, &u.Comment, &u.Picture, &u.Lastlogin, &u.Status, &u.Qturhm, &u.Created)
+		if err != nil {
+			app.Log.Println("User retrieval scan failed:", err.Error())
+			fmt.Fprintf(w, "User retrieval scan failed: %v", err.Error())
+			return
+		}
+		uu.Users = append(uu.Users, u)
+	}
+
+	data := UserData{
+		App:   app,
+		Users: uu,
+	}
+
+	tmpl.ExecuteTemplate(w, "showUsers.go.html", data)
+}
+
+func (app *App) changeuserstatus(w http.ResponseWriter, r *http.Request) {
+	if app.User.Title != "admin" {
+		http.Redirect(w, r, "/home", http.StatusForbidden)
+		return
+	}
+	vars := mux.Vars(r)
+	email := vars["email"]
+	status := vars["status"]
+	referer := vars["referer"]
+
+	_, err := app.DB.Exec(sqlUpdateUserStatus, status, email)
+	if err != nil {
+		app.Log.Println("User status update failed:", err.Error())
+		return
+	}
+
+	http.Redirect(w, r, "/"+referer, http.StatusSeeOther)
+}
+
+func (app *App) changeusertitle(w http.ResponseWriter, r *http.Request) {
+	if app.User.Title != "admin" {
+		http.Redirect(w, r, "/home", http.StatusForbidden)
+		return
+	}
+	vars := mux.Vars(r)
+	email := vars["email"]
+	title := vars["title"]
+	referer := vars["referer"]
+
+	_, err := app.DB.Exec(sqlUpdateUserStatus, title, email)
+	if err != nil {
+		app.Log.Println("User title update failed:", err.Error())
+		return
+	}
+
+	http.Redirect(w, r, "/"+referer, http.StatusSeeOther)
+}
+
+func (app *App) updateusercomment(w http.ResponseWriter, r *http.Request) {
+	if app.User.Title != "admin" {
+		http.Redirect(w, r, "/home", http.StatusForbidden)
+		return
+	}
+	if r.Method == http.MethodGet {
+		http.Redirect(w, r, "/", http.StatusForbidden)
+	} else if r.Method == http.MethodPost {
+		r.ParseForm()
+		email := r.FormValue("email")
+		comment := r.FormValue("comment")
+		referer := r.FormValue("referer")
+
+		_, err := app.DB.Exec(sqlUpdateUserComment, comment, email)
+		if err != nil {
+			app.Log.Println("User comment update failed:", err.Error())
+			return
+		}
+
+		http.Redirect(w, r, "/"+referer, http.StatusSeeOther)
+	}
+}
+
 func (app *App) getmessages(w http.ResponseWriter, r *http.Request) {
+	if app.User.Title != "admin" {
+		http.Redirect(w, r, "/home", http.StatusForbidden)
+		return
+	}
 	// MessageData -
 	type MessageData struct {
 		App      *App
@@ -176,21 +294,13 @@ func (app *App) getmessages(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.ExecuteTemplate(w, "showMessages.go.html", data)
-
-	// Set unread (status=0) messages to message read (status=1)
-	// for _, msg := range data.Messages.Messages {
-	// 	if msg.Status == 0 {
-	// 		_, err := app.DB.Exec(sqlUpdateMessageStatus, 1, msg.ID)
-	// 		if err != nil {
-	// 			app.Log.Println("Message status update failed:", err.Error())
-	// 			fmt.Fprintf(w, "Message status update failed: %v", err.Error())
-	// 			return
-	// 		}
-	// 	}
-	// }
 }
 
 func (app *App) changemessagestatus(w http.ResponseWriter, r *http.Request) {
+	if app.User.Title != "admin" {
+		http.Redirect(w, r, "/home", http.StatusForbidden)
+		return
+	}
 	vars := mux.Vars(r)
 	id := vars["id"]
 	status := vars["status"]
@@ -603,6 +713,10 @@ func main() {
 	r.HandleFunc("/getlog", getlog).Methods(http.MethodGet)
 	r.HandleFunc("/getmessages", app.getmessages).Methods(http.MethodGet)
 	r.HandleFunc("/changemessagestatus/{id:[0-9]+}/{status:[0-9]}/{referer:[a-z]+}", app.changemessagestatus).Methods(http.MethodGet)
+	r.HandleFunc("/getusers", app.getusers).Methods(http.MethodGet)
+	r.HandleFunc("/changeuserstatus/{email}/{status:[0-9]}/{referer:[a-z]+}", app.changeuserstatus).Methods(http.MethodGet)
+	r.HandleFunc("/changeusertitle/{email}/{title:[0-9]}/{referer:[a-z]+}", app.changeusertitle).Methods(http.MethodGet)
+	r.HandleFunc("/updateusercomment", app.updateusercomment).Methods(http.MethodPost)
 	r.HandleFunc("/request", app.request).Methods("POST")
 	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.api).Methods(http.MethodGet, http.MethodPost)

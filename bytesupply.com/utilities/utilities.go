@@ -44,6 +44,28 @@ type Messages struct {
 	Messages []Message
 }
 
+// UserRecord -
+type UserRecord struct {
+	Name      string //VARCHAR(100) NOT NULL,
+	Title     string //VARCHAR(100) NOT NULL DEFAULT 'user',
+	Password  string //VARCHAR(100) NOT NULL,
+	Company   string //VARCHAR(100) DEFAULT '',
+	Email     string //VARCHAR(100) NOT NULL,
+	Phone     string //VARCHAR(20) DEFAULT '',
+	URL       string //VARCHAR(200) DEFAULT '',
+	Comment   string
+	Picture   string
+	Lastlogin string //TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	Status    int    //INT DEFAULT 1,
+	Qturhm    int    //INT DEFAULT -1,
+	Created   string //TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+}
+
+// Users -
+type Users struct {
+	Users []UserRecord
+}
+
 // Getlog - func (app *App) Getlog(w http.ResponseWriter, r *http.Request) {
 func Getlog(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<p style=\"color:blue;\"><a href=\"/home\">Bytesupply</a></p><p>Access log</p>")

@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS users (
 	email 		VARCHAR(100) NOT NULL,
 	phone 		VARCHAR(20) DEFAULT '',
 	url		VARCHAR(200) DEFAULT '',
-	comment 	TEXT,
+	comment 	VARCHAR(200) DEFAULT '',
+	picture VARCHAR(200) DEFAULT 'defaultuser.png'
 	lastlogin	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	status		INT DEFAULT 1,
 	qturhm 		INT DEFAULT -1,
