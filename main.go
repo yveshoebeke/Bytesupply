@@ -108,18 +108,16 @@ func (app *App) admin(w http.ResponseWriter, r *http.Request) {
 		Count int
 	}
 
-	var newCount int = 0
+	data := MessageData{
+		App:   app,
+		Count: 0,
+	}
 
 	if app.User.Title == "admin" {
-		err := app.DB.QueryRow(sqlCountUnreadMessages).Scan(&newCount)
+		err := app.DB.QueryRow(sqlCountUnreadMessages).Scan(&data.Count)
 		if err != nil {
 			app.Log.Println("Unread messages count failed:", err.Error())
 			// return
-		}
-
-		data := MessageData{
-			App:   app,
-			Count: newCount,
 		}
 
 		tmpl.ExecuteTemplate(w, "admin.go.html", data)
@@ -180,16 +178,31 @@ func (app *App) getmessages(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "showMessages.go.html", data)
 
 	// Set unread (status=0) messages to message read (status=1)
-	for _, msg := range data.Messages.Messages {
-		if msg.Status == 0 {
-			_, err := app.DB.Exec(sqlUpdateMessageStatus, 1, msg.ID)
-			if err != nil {
-				app.Log.Println("Message status update failed:", err.Error())
-				fmt.Fprintf(w, "Message status update failed: %v", err.Error())
-				return
-			}
-		}
+	// for _, msg := range data.Messages.Messages {
+	// 	if msg.Status == 0 {
+	// 		_, err := app.DB.Exec(sqlUpdateMessageStatus, 1, msg.ID)
+	// 		if err != nil {
+	// 			app.Log.Println("Message status update failed:", err.Error())
+	// 			fmt.Fprintf(w, "Message status update failed: %v", err.Error())
+	// 			return
+	// 		}
+	// 	}
+	// }
+}
+
+func (app *App) changemessagestatus(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	status := vars["status"]
+	referer := vars["referer"]
+
+	_, err := app.DB.Exec(sqlUpdateMessageStatus, status, id)
+	if err != nil {
+		app.Log.Println("Message status update failed:", err.Error())
+		return
 	}
+
+	http.Redirect(w, r, "/"+referer, http.StatusSeeOther)
 }
 
 func (app *App) logout(w http.ResponseWriter, r *http.Request) {
@@ -589,6 +602,7 @@ func main() {
 	r.HandleFunc("/products", app.products).Methods(http.MethodGet)
 	r.HandleFunc("/getlog", getlog).Methods(http.MethodGet)
 	r.HandleFunc("/getmessages", app.getmessages).Methods(http.MethodGet)
+	r.HandleFunc("/changemessagestatus/{id:[0-9]+}/{status:[0-9]}/{referer:[a-z]+}", app.changemessagestatus).Methods(http.MethodGet)
 	r.HandleFunc("/request", app.request).Methods("POST")
 	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods(http.MethodGet, http.MethodPost)
 	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.api).Methods(http.MethodGet, http.MethodPost)
