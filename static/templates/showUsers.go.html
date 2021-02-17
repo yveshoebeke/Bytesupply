@@ -50,9 +50,9 @@
                     {{ range $u := .Users.Users }}
                     <img style="float:right;border:1px solid black;margin:10px;" src="/static/img/profile/{{ $u.Picture }}" alt="{{ $u.Name }}" height="75" width="75" />
                     {{ if eq $.App.User.Username $u.Email }}
-                    <p class="text-danger">User: {{ $u.Name }} - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
+                    <p class="text-danger"><span class="font-weight-bold">{{ $u.Name }}</span> - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
                     {{ else }}
-                    <p class="text-info">User: {{ $u.Name }} - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
+                    <p class="text-info"><span class="font-weight-bold">{{ $u.Name }}</span> - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
                     {{ end }}
                     <p>Phone: {{ $u.Phone }} - Company: {{ $u.Company }} - URL: {{ $u.URL }}</p>
                     <p>Registered: {{ $u.Created }}</p>
