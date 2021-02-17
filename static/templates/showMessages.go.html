@@ -38,8 +38,14 @@
                     <span id="doy"></span><span id="tod" style="margin-left:5px"></span>
                 </div>
             </div>
+
             <div class="row" style="margin-top:15px">
-                <h3>System Administration - Messages</h3>
+                <div class="col-12 text-left">
+                    <h3><a href="/admin">System Administration</a> - Messages</h3>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:15px">
                 <div class="col-12 text-left">
                     {{ range $m := .Messages.Messages }}
                     <p>Message No {{ $m.ID }} on {{ $m.Created }} (User Id: {{ $m.User }})</p>

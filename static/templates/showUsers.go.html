@@ -38,40 +38,43 @@
                     <span id="doy"></span><span id="tod" style="margin-left:5px"></span>
                 </div>
             </div>
+
             <div class="row" style="margin-top:15px">
                 <div class="col-12 text-left">
-                    <h3>System Administration</h3>
+                    <h3><a href="/admin">System Administration</a> - Users</h3>
                 </div>
             </div>
 
             <div class="row" style="margin-top:15px">
                 <div class="col-12 text-left">
-                    <h4>Login Profile</h4>
-                    <p>Logged in as:&nbsp;{{ .App.User.Username }} - Name:&nbsp;{{ .App.User.Realname }} - Title:&nbsp;{{ .App.User.Title }}</p>
-                    <p>Password:&nbsp;{{ .App.User.Password }}</p>
-                    <p>Logged in time:&nbsp;{{ .App.User.LoginTime }} - Last logged in:&nbsp;{{ .App.User.LastLogin }}</p>
-                </div>
-            </div>
- 
-
-            <div class="row" style="margin-top:15px">
-                <div class="col-12 text-left">
-                    <h4>Actions</h4>
-                    <ul>
-                        <li><a href="/logout">Logout</a></li>
-                        <li><a href="/getlog">System log</a></li>
-                        <li><a href="/getmessages">Messages</a>&nbsp;
-                            {{ if eq .MessageCount 0 }}
-                            <img src="/static/img/green-led-light.png" alt="All read" height="10" width="12" />
-                            {{ else if gt .MessageCount 1 }}
-                            <img src="/static/img/red-led-light.png" alt="All read" height="10" width="10" /><small>&nbsp;X {{ .MessageCount }}</small>
-                            {{ else }}
-                            <img src="/static/img/red-led-light.png" alt="All read" height="10" width="10" />
-                            {{ end }}
-                            </li>
-                        <li><a href="/getusers">Users</a>&nbsp;<small>({{ .UserCount }})</small></li>
-                        <li><a href="/getmuxtraffic">MUX Traffic</a></li>
-                    </ul>
+                    {{ range $u := .Users.Users }}
+                    <img style="float:right;border:1px solid black;margin:10px;" src="/static/img/profile/{{ $u.Picture }}" alt="{{ $u.Name }}" height="75" width="75" />
+                    {{ if eq $.App.User.Username $u.Email }}
+                    <p class="text-danger">User: {{ $u.Name }} - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
+                    {{ else }}
+                    <p class="text-info">User: {{ $u.Name }} - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
+                    {{ end }}
+                    <p>Phone: {{ $u.Phone }} - Company: {{ $u.Company }} - URL: {{ $u.URL }}</p>
+                    <p>Registered: {{ $u.Created }}</p>
+                    <p>Last login: {{ $u.Lastlogin }}</p>
+                    <form action="/updateusercomment" method="post">
+                        <input type="hidden" name="email" value="{{ $u.Email }}" />
+                        <input type="hidden" name="referer" value="getusers" />
+                        <p>Comment: <input type="text" name="comment" value="{{ $u.Comment }}" />&nbsp;<button type="submit" class="btn btn-outline-info">Update</button></p>
+                    </form>                            
+                    <p>Change title:&nbsp;
+                        <a href="/changeusertitle/{{ $u.Email }}/user/getusers">User</a>&nbsp;
+                        <a href="/changeusertitle/{{ $u.Email }}/expert/getusers">Expert</a>&nbsp;
+                        <a href="/changeusertitle/{{ $u.Email }}/admin/getusers">Admin</a>
+                    </p>
+                    <p>Change status:&nbsp;
+                        <a href="/changeuserstatus/{{ $u.Email }}/1/getusers">Activate</a>&nbsp;
+                        <a href="/changeuserstatus/{{ $u.Email }}/2/getusers">Deactivate</a>&nbsp;
+                        <a href="/changeuserstatus/{{ $u.Email }}/8/getusers">Onhold</a>&nbsp;
+                        <a href="/changeuserstatus/{{ $u.Email }}/9/getusers">Suspend</a>
+                    </p>
+                    <hr />
+                    {{ end }}
                 </div>
             </div>
             
