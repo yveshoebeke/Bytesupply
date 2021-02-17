@@ -47,6 +47,13 @@
                     <p>Email: {{ $m.Email }} Phone: {{ $m.Phone }} URL: {{ $m.URL }}</p>
                     <p>Message: {{ $m.Message }}</p>
                     <p>Status: {{ $m.Status }} (qTurhm: {{ $m.Qturhm }})</p>
+                    {{ if eq $m.Status 9 }}
+                    <p class="text-right"><a href="/changemessagestatus/{{$m.ID}}/0/getmessages">Restore</a></p>
+                    {{ else if eq $m.Status 0 }}
+                    <p class="text-right"><a href="/changemessagestatus/{{$m.ID}}/1/getmessages">Read</a></p>
+                    {{ else }}
+                    <p class="text-right"><a href="/changemessagestatus/{{$m.ID}}/9/getmessages">Delete</a></p>
+                    {{ end }}
                     <hr />
                     {{ end }}
                 </div>

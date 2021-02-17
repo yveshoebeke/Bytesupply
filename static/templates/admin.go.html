@@ -57,7 +57,15 @@
                     <ul>
                         <li><a href="/logout">Logout</a></li>
                         <li><a href="/getlog">System log</a></li>
-                        <li><a href="/getmessages">Messages</a>&nbsp;[{{ .Count }}]</li>
+                        <li><a href="/getmessages">Messages</a>&nbsp;
+                            {{ if eq .Count 0 }}
+                            <img src="/static/img/green-led-light.png" alt="All read" height="10" width="12" />
+                            {{ else if gt .Count 1 }}
+                            <img src="/static/img/red-led-light.png" alt="All read" height="10" width="10" /><small>&nbsp;X {{ .Count }}</small>
+                            {{ else }}
+                            <img src="/static/img/red-led-light.png" alt="All read" height="10" width="10" />
+                            {{ end }}
+                            </li>
                         <li><a href="/getusers"></a>Users</a></li>
                     </ul>
                 </div>
