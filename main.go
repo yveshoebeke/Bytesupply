@@ -17,14 +17,11 @@ package main
 /* System libraries */
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"text/template"
 	"time"
@@ -58,10 +55,10 @@ var (
 	sqlAddUser             = `INSERT INTO users (name,password,company,email,phone,url,picture) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	sqlGetAllUsersByStatus = `SELECT name, title, password, company, email, phone, url, comment, picture, lastlogin, status, qturhm, created FROM users WHERE status LIKE ? ORDER BY status ASC, lastlogin ASC`
 	sqlUpdateLastlogin     = `UPDATE users SET lastlogin=NOW() WHERE email=?`
-	sqlUpdateUserStatus    = `UPDATE users SET status=? WHERE email=?`
-	sqlUpdateUserTitle     = `UPDATE users SET title=? WHERE email=?`
-	sqlUpdateUserComment   = `UPDATE users SET comment=? WHERE email=?`
-	sqlCountUsers          = `SELECT COUNT(email) FROM users`
+	sqlUpdateUser          = `UPDATE users SET %s=? WHERE email=?`
+	// sqlUpdateUserTitle     = `UPDATE users SET title=? WHERE email=?`
+	// sqlUpdateUserComment   = `UPDATE users SET comment=? WHERE email=?`
+	sqlCountUsers = `SELECT COUNT(email) FROM users`
 	// Messages
 	sqlAddMessage             = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	sqlGetAllMessagesByStatus = `SELECT id, user, name, company, email, phone, url, message, status, qturhm, created FROM messages WHERE status LIKE ? ORDER BY status ASC, created ASC`
@@ -77,6 +74,9 @@ var (
 			}
 
 			return "https://" + myUrl
+		},
+		"userStatus": func(myStatus int) string {
+			return utilities.AllowedUserStatusByInt[myStatus]
 		},
 	}
 )
@@ -152,22 +152,7 @@ func (app *App) user(w http.ResponseWriter, r *http.Request) {
 		MessageCount: 0,
 	}
 
-	if app.User.Title == "user" || app.User.Title == "expert" || app.User.Title == "admin" {
-		messagecounterr := app.DB.QueryRow(sqlCountUnreadMessages).Scan(&data.MessageCount)
-		if messagecounterr != nil {
-			app.Log.Println("Unread messages count failed:", messagecounterr.Error())
-			// return
-		}
-		usercounterr := app.DB.QueryRow(sqlCountUsers).Scan(&data.UserCount)
-		if usercounterr != nil {
-			app.Log.Println("User count failed:", usercounterr.Error())
-			// return
-		}
-
-		tmpl.ExecuteTemplate(w, "admin.go.html", data)
-	} else {
-		http.Redirect(w, r, "/home", http.StatusForbidden)
-	}
+	tmpl.ExecuteTemplate(w, "user.go.html", data)
 }
 
 func (app *App) profile(w http.ResponseWriter, r *http.Request) {
@@ -226,65 +211,53 @@ func (app *App) getusers(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "showUsers.go.html", data)
 }
 
-func (app *App) changeuserstatus(w http.ResponseWriter, r *http.Request) {
-	if app.User.Title != "admin" {
+func (app *App) updateuser(w http.ResponseWriter, r *http.Request) {
+	if app.User.Title != "admin" || r.Method != http.MethodPost {
 		http.Redirect(w, r, "/home", http.StatusForbidden)
 		return
 	}
-	vars := mux.Vars(r)
-	email := vars["email"]
-	status := vars["status"]
-	referer := vars["referer"]
 
-	_, err := app.DB.Exec(sqlUpdateUserStatus, status, email)
-	if err != nil {
-		app.Log.Println("User status update failed:", err.Error())
-		return
-	}
+	var sqlQuery string
+	var val interface{}
+	var ok bool
 
-	http.Redirect(w, r, "/"+referer, http.StatusSeeOther)
-}
+	r.ParseForm()
+	email := r.FormValue("email")
+	field := r.FormValue("field")
+	value := r.FormValue("value")
+	referer := r.FormValue("referer")
 
-func (app *App) changeusertitle(w http.ResponseWriter, r *http.Request) {
-	if app.User.Title != "admin" {
-		http.Redirect(w, r, "/home", http.StatusForbidden)
-		return
-	}
-	vars := mux.Vars(r)
-	email := vars["email"]
-	title := vars["title"]
-	referer := vars["referer"]
-
-	_, err := app.DB.Exec(sqlUpdateUserStatus, title, email)
-	if err != nil {
-		app.Log.Println("User title update failed:", err.Error())
-		return
-	}
-
-	http.Redirect(w, r, "/"+referer, http.StatusSeeOther)
-}
-
-func (app *App) updateusercomment(w http.ResponseWriter, r *http.Request) {
-	if app.User.Title != "admin" {
-		http.Redirect(w, r, "/home", http.StatusForbidden)
-		return
-	}
-	if r.Method == http.MethodGet {
-		http.Redirect(w, r, "/", http.StatusForbidden)
-	} else if r.Method == http.MethodPost {
-		r.ParseForm()
-		email := r.FormValue("email")
-		comment := r.FormValue("comment")
-		referer := r.FormValue("referer")
-
-		_, err := app.DB.Exec(sqlUpdateUserComment, comment, email)
-		if err != nil {
-			app.Log.Println("User comment update failed:", err.Error())
-			return
+	switch field {
+	case "status":
+		val, ok = utilities.AllowedUserStatus[value]
+		fmt.Printf("Status value -> %v %T\n", value, value)
+		if !ok {
+			app.Log.Printf("Wrong Status Value %s given for %s", value, email)
 		}
-
-		http.Redirect(w, r, "/"+referer, http.StatusSeeOther)
+		sqlQuery = fmt.Sprintf(sqlUpdateUser, field)
+	case "title":
+		val, ok = utilities.AllowedUserTitles[value]
+		fmt.Printf("Title value -> %v %T\n", value, value)
+		if !ok {
+			app.Log.Printf("Wrong Title Value %s given for %s", value, email)
+		}
+		sqlQuery = fmt.Sprintf(sqlUpdateUser, field)
+	case "comment":
+		val = value
+		sqlQuery = fmt.Sprintf(sqlUpdateUser, field)
+	default:
+		app.Log.Printf("Error changing Field: %s with Value: %s for User: %s", field, value, email)
 	}
+
+	fmt.Printf("--> Status value -> %v %T\n", val, val)
+
+	_, err := app.DB.Exec(sqlQuery, val, email)
+	if err != nil {
+		app.Log.Printf("User update for User %s failed: %v", email, err.Error())
+		return
+	}
+
+	http.Redirect(w, r, "/"+referer, http.StatusSeeOther)
 }
 
 func (app *App) getmessages(w http.ResponseWriter, r *http.Request) {
@@ -549,104 +522,6 @@ func (app *App) product(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "product.go.html", item)
 }
 
-/* TRIALS */
-func (app *App) test(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	app.Log.Println("Object:", vars["object"])
-	http.ServeFile(w, r, staticLocation+"/html/"+vars["object"]+".html")
-}
-
-func (app *App) api(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	version := vars["version"]
-	request := vars["request"]
-
-	app.Log.Println("@api with version:", version, "and request:", request)
-
-	switch version {
-	default:
-	case "v1":
-		switch request {
-		case "qTurHm":
-			app.qTurHm(w, r)
-		case "request":
-			app.request(w, r)
-		}
-	}
-}
-
-func (app *App) qTurHm(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		http.ServeFile(w, r, staticLocation+"/html/contactus.html")
-	} else if r.Method == http.MethodPost {
-		type Target struct {
-			Top    int `json:"top"`
-			Left   int `json:"left"`
-			Width  int `json:"width"`
-			Height int `json:"height"`
-		}
-
-		type Move struct {
-			T int `json:"t"`
-			X int `json:"x"`
-			Y int `json:"y"`
-		}
-
-		type QTurHm struct {
-			Key           string `json:"userkey"`
-			TimeCreated   int    `json:"timestamp"`
-			ResultContent string `json:"resultcontent"`
-			URL           string `json:"origURL"`
-			Mobile        bool   `json:"mobile"`
-			Target        Target `json:"target"`
-			Receiver      string `json:"receiver"`
-			SampleCount   int    `json:"samples"`
-			Moves         []Move `json:"moves"`
-		}
-
-		var q QTurHm
-
-		// Try to decode the request body into the struct.
-		err := json.NewDecoder(r.Body).Decode(&q)
-		if err != nil {
-			app.Log.Println("API error (qTurHm):", err.Error())
-			return
-		}
-
-		app.Log.Printf("%v", q)
-		app.Log.Printf("Key: %s Time: %d", q.Key, q.TimeCreated)
-		rfn := q.Key + "_" + strconv.Itoa(q.TimeCreated)
-		app.Log.Printf("Result File Name: %s should be: %s", rfn, q.ResultContent)
-
-		res := []byte("8")
-		werr := ioutil.WriteFile("/go/bin/data/qTurHm/"+rfn, res, 0644)
-		if werr != nil {
-			app.Log.Printf("Error writing result file /go/bin/data/qTurHm/%s: %v", rfn, werr)
-		}
-	}
-}
-
-func (app *App) request(w http.ResponseWriter, r *http.Request) {
-	// Data - database structure */
-	type Data struct {
-		ReqType   string    `json:"reqtype"`
-		ReqCmd    string    `json:"reqcmd"`
-		Timestamp time.Time `json:"Timestamp"`
-	}
-
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		app.Log.Println("Error parsing Body:", err)
-	}
-	var data Data
-	json.Unmarshal(reqBody, &data)
-	data.Timestamp = time.Now()
-
-	json.NewEncoder(w).Encode(data)
-
-	app.Log.Printf("Request command received: %s", data.ReqType)
-}
-
 /* Middleware */
 func (app *App) inMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -751,12 +626,10 @@ func main() {
 	r.HandleFunc("/getmessages", app.getmessages).Methods(http.MethodGet)
 	r.HandleFunc("/changemessagestatus/{id:[0-9]+}/{status:[0-9]}/{referer:[a-z]+}", app.changemessagestatus).Methods(http.MethodGet)
 	r.HandleFunc("/getusers", app.getusers).Methods(http.MethodGet)
-	r.HandleFunc("/changeuserstatus/{email}/{status:[0-9]}/{referer:[a-z]+}", app.changeuserstatus).Methods(http.MethodGet)
-	r.HandleFunc("/changeusertitle/{email}/{title:[0-9]}/{referer:[a-z]+}", app.changeusertitle).Methods(http.MethodGet)
-	r.HandleFunc("/updateusercomment", app.updateusercomment).Methods(http.MethodPost)
-	r.HandleFunc("/request", app.request).Methods("POST")
-	r.HandleFunc("/test/{object:[a-z]+}", app.test).Methods(http.MethodGet, http.MethodPost)
-	r.HandleFunc("/api/{version:[a-z0-9]+}/{request:[a-zA-Z]+}", app.api).Methods(http.MethodGet, http.MethodPost)
+	r.HandleFunc("/updateuser", app.updateuser).Methods(http.MethodPost)
+	// r.HandleFunc("/changeuser/{email}/{field:[a-z]+}/{value:[a-zA-Z0-9]+}/{referer:[a-z]+}", app.changeuserstatus).Methods(http.MethodGet)
+	// r.HandleFunc("/changeusertitle/{email}/{title:[0-9]}/{referer:[a-z]+}", app.changeusertitle).Methods(http.MethodGet)
+	// r.HandleFunc("/updateusercomment", app.updateusercomment).Methods(http.MethodPost)
 
 	/* Server setup and start */
 	BytesupplyServer := &http.Server{

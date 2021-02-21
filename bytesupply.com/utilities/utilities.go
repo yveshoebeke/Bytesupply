@@ -17,11 +17,27 @@ import (
 )
 
 var (
-	logFile             = os.Getenv("BS_LOGFILE")
-	emailRegex          = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-	phoneRegex          = regexp.MustCompile(`^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$`)
-	alphaNumericRegex   = regexp.MustCompile("^[a-zA-Z0-9_,.!? ]*$")
-	allowedImageFormats = map[string]string{
+	logFile           = os.Getenv("BS_LOGFILE")
+	emailRegex        = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	phoneRegex        = regexp.MustCompile(`^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$`)
+	alphaNumericRegex = regexp.MustCompile("^[a-zA-Z0-9_,.!? ]*$")
+	// AllowedUserTitles - .
+	AllowedUserTitles = map[string]string{
+		"User":   "user",
+		"Expert": "expert",
+		"Admin":  "admin",
+	}
+	// AllowedUserStatus - .
+	AllowedUserStatus = map[string]int{
+		"Active":     1,
+		"Deactivate": 2,
+		"Onhold":     8,
+		"Suspended":  9,
+	}
+	// AllowedUserStatusInt - .
+	AllowedUserStatusByInt = []string{"err0", "Active", "Deactivate", "err3", "err4", "err5", "err6", "err7", "Onhold", "Suspended"}
+	// AllowedImageFormats - .
+	AllowedImageFormats = map[string]string{
 		"image/png":  "png",
 		"image/jpeg": "jpg",
 		"image/gif":  "gif",
@@ -208,7 +224,7 @@ func UploadProfilePicture(r *http.Request) (string, error) {
 	}
 	defer file.Close()
 
-	extension, allowed := allowedImageFormats[handler.Header["Content-Type"][0]]
+	extension, allowed := AllowedImageFormats[handler.Header["Content-Type"][0]]
 	if !allowed {
 		return DefaultProfilePicture, fmt.Errorf("%s is not an allowed format", handler.Header["Content-Type"][0])
 	}
