@@ -50,28 +50,59 @@
                     {{ range $u := .Users.Users }}
                     <img style="float:right;border:1px solid black;margin:10px;" src="{{ $u.Picture }}" alt="{{ $u.Name }}" height="75" width="75" />
                     {{ if eq $.App.User.Username $u.Email }}
-                    <p class="text-danger"><span class="font-weight-bold">{{ $u.Name }}</span> - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
+                    <p class="text-danger"><span class="font-weight-bold">{{ $u.Name }}</span> - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ userStatus $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
                     {{ else }}
-                    <p class="text-info"><span class="font-weight-bold">{{ $u.Name }}</span> - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
+                    <p class="text-info"><span class="font-weight-bold">{{ $u.Name }}</span> - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ userStatus $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
                     {{ end }}
                     <p>Phone: {{ $u.Phone }} - Company: {{ $u.Company }} - URL: {{ $u.URL }}</p>
                     <p>Registered: {{ $u.Created }}</p>
                     <p>Last login: {{ $u.Lastlogin }}</p>
-                    <form action="/updateusercomment" method="post">
+                    <form action="/updateuser" method="post">
                         <input type="hidden" name="email" value="{{ $u.Email }}" />
                         <input type="hidden" name="referer" value="getusers" />
-                        <p>Comment: <input type="text" name="comment" size="80" value="{{ $u.Comment }}" />&nbsp;<button type="submit" class="btn btn-outline-info">Update</button></p>
+                        <input type="hidden" name="field" value="comment" />
+                        <p>Comment: <input type="text" name="value" size="80" value="{{ $u.Comment }}" />&nbsp;<button type="submit" class="btn btn-outline-info">Update</button></p>
                     </form>                            
                     <p>Change title:&nbsp;
-                        <a href="/changeusertitle/{{ $u.Email }}/user/getusers">User</a>&nbsp;
-                        <a href="/changeusertitle/{{ $u.Email }}/expert/getusers">Expert</a>&nbsp;
-                        <a href="/changeusertitle/{{ $u.Email }}/admin/getusers">Admin</a>
+                        <form action="/updateuser" method="post">
+                            <input type="hidden" name="email" value="{{ $u.Email }}" />
+                            <input type="hidden" name="referer" value="getusers" />
+                            <input type="hidden" name="field" value="title" />
+                            {{ if eq $u.Title "admin" }}
+                            <input type="submit" name="value" value="User" />
+                            <input type="submit" name="value" value="Expert" />
+                            {{ else if eq $u.Title "expert" }}
+                            <input type="submit" name="value" value="User" />
+                            <input type="submit" name="value" value="Admin" />
+                            {{ else }}
+                            <input type="submit" name="value" value="Expert" />
+                            <input type="submit" name="value" value="Admin" />
+                            {{ end }}
+                        </form>
                     </p>
                     <p>Change status:&nbsp;
-                        <a href="/changeuserstatus/{{ $u.Email }}/1/getusers">Activate</a>&nbsp;
-                        <a href="/changeuserstatus/{{ $u.Email }}/2/getusers">Deactivate</a>&nbsp;
-                        <a href="/changeuserstatus/{{ $u.Email }}/8/getusers">Onhold</a>&nbsp;
-                        <a href="/changeuserstatus/{{ $u.Email }}/9/getusers">Suspend</a>
+                        <form action="/updateuser" method="post">
+                            <input type="hidden" name="email" value="{{ $u.Email }}" />
+                            <input type="hidden" name="referer" value="getusers" />
+                            <input type="hidden" name="field" value="status" />
+                            {{ if eq $u.Status 1 }}
+                            <input type="submit" name="value" value="Deactivate" />
+                            <input type="submit" name="value" value="Onhold" />
+                            <input type="submit" name="value" value="Suspend" />
+                            {{ else if eq $u.Status 2 }}
+                            <input type="submit" name="value" value="Active" />
+                            <input type="submit" name="value" value="Onhold" />
+                            <input type="submit" name="value" value="Suspend" />
+                            {{ else if eq $u.Status 8 }}
+                            <input type="submit" name="value" value="Active" />
+                            <input type="submit" name="value" value="Deactivate" />
+                            <input type="submit" name="value" value="Suspend" />
+                            {{ else if eq $u.Status 9 }}
+                            <input type="submit" name="value" value="Active" />
+                            <input type="submit" name="value" value="Deactivate" />
+                            <input type="submit" name="value" value="Onhold" />
+                            {{ end }}
+                        </form>
                     </p>
                     <hr />
                     {{ end }}

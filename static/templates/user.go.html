@@ -25,7 +25,6 @@
     </head>
 
     <body class="desktopBody">
-        
         <div class="container" style="background-color:#ffffff">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <a class="navbar-brand" href="/home"><h1 class="navbar-logo">BYTESUPPLY</h1></a>
@@ -39,23 +38,28 @@
                     <span id="doy"></span><span id="tod" style="margin-left:5px"></span>
                 </div>
             </div>
-            
             <div class="row" style="margin-top:15px">
-                <h3>Profile</h3>
+                <div class="col-12 text-left">
+                    <h3>System Administration</h3>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:15px">
                 <div class="col-12 text-left">
                     <h4>Login Profile</h4>
-                    <p>Logged in as: <span style="color:indianred">{{ .User.Username }}</span></p>
-                    <p>Password: <span style="color:indianred">{{ .User.Password }}</span></p>
-                    <p>Title: <span style="color:indianred">{{ .User.Title }}</span></p>
-                    <p>Last logged in: <span style="color:indianred">{{ .User.LastLogin }}</span></p>
-                    <p>Logged in time: <span style="color:indianred">{{ .User.LoginTime }}</span></p>
+                    <p>Logged in as:&nbsp;{{ .App.User.Username }} - Name:&nbsp;{{ .App.User.Realname }} - Title:&nbsp;{{ .App.User.Title }}</p>
+                    <p>Password:&nbsp;{{ .App.User.Password }}</p>
+                    <p>Logged in time:&nbsp;{{ .App.User.LoginTime }} - Last logged in:&nbsp;{{ .App.User.LastLogin }}</p>
                 </div>
+            </div>
+ 
 
-                <hr />
-
+            <div class="row" style="margin-top:15px">
                 <div class="col-12 text-left">
+                    <h4>Actions</h4>
                     <ul>
                         <li><a href="/logout">Logout</a></li>
+                        <li><a href="/profile">Profile</a></li>
                     </ul>
                 </div>
             </div>
