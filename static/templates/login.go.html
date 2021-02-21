@@ -106,7 +106,7 @@
                             <button type="button" class="btn btn-secondary" onclick="window.location.replace('/home')">Cancel</button>
                         </div>
                         </form>
-                    <p class="text-danger" style="margin-top:20px"><small>Not registered? Fillout form to the right.</small></p>
+                    <p class="text-normal" style="margin-top:20px"><small style="border:1px solid red">Not registered? Fillout form to the right.</small></p>
                 </div>
 
                 <div class="col-1"></div>
@@ -121,7 +121,7 @@
                         </ul>
                     </div>
                     <p  class="text-danger"><small><sup>(*)</sup>Required fields.</small></p>
-                    <form id="registerForm" action="/login" method="POST">
+                    <form id="registerForm" action="/login" enctype="multipart/form-data" method="POST">
                         <input id="validEntry" type="hidden" name="validEntry" value="false" />
                         <div class="form-group">
                             <small><sup class="text-danger">(*)</sup></small>
@@ -147,6 +147,10 @@
                         <div class="form-group">
                             <small><sup class="text-danger">(*)</sup></small>
                             <input type="password" class="form-control mandatory" id="registerVerifyPassword" value="" name="registerVerifyPassword" aria-describedby="registerVerifyPasswordHelp" placeholder="Verify Password" />
+                        </div>
+                        <div class="form-group">
+                            <small>Optional profile picture:</small>
+                            <input type="file" class="form-control" value="" name="registerProfilePicture" placeholder="Profile Picture" />
                         </div>
                         <div class="text-center">
                             <input id="contactSubmit" type="submit" class="btn btn-primary" name="submitLoginRegister" value="Register" />
