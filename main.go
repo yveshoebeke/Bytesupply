@@ -55,7 +55,7 @@ var (
 	// Logins
 	sqlUserLogin = `SELECT name, password, title, lastlogin FROM users WHERE email=? AND status=1`
 	// Users
-	sqlAddUser             = `INSERT INTO users (name,password,company,email,phone,url) VALUES (?, ?, ?, ?, ?, ?)`
+	sqlAddUser             = `INSERT INTO users (name,password,company,email,phone,url,picture) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	sqlGetAllUsersByStatus = `SELECT name, title, password, company, email, phone, url, comment, picture, lastlogin, status, qturhm, created FROM users WHERE status LIKE ? ORDER BY status ASC, lastlogin ASC`
 	sqlUpdateLastlogin     = `UPDATE users SET lastlogin=NOW() WHERE email=?`
 	sqlUpdateUserStatus    = `UPDATE users SET status=? WHERE email=?`
@@ -122,6 +122,37 @@ func (app *App) admin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if app.User.Title == "admin" {
+		messagecounterr := app.DB.QueryRow(sqlCountUnreadMessages).Scan(&data.MessageCount)
+		if messagecounterr != nil {
+			app.Log.Println("Unread messages count failed:", messagecounterr.Error())
+			// return
+		}
+		usercounterr := app.DB.QueryRow(sqlCountUsers).Scan(&data.UserCount)
+		if usercounterr != nil {
+			app.Log.Println("User count failed:", usercounterr.Error())
+			// return
+		}
+
+		tmpl.ExecuteTemplate(w, "admin.go.html", data)
+	} else {
+		http.Redirect(w, r, "/home", http.StatusForbidden)
+	}
+}
+
+func (app *App) user(w http.ResponseWriter, r *http.Request) {
+	type MessageData struct {
+		App          *App
+		UserCount    int
+		MessageCount int
+	}
+
+	data := MessageData{
+		App:          app,
+		UserCount:    0,
+		MessageCount: 0,
+	}
+
+	if app.User.Title == "user" || app.User.Title == "expert" || app.User.Title == "admin" {
 		messagecounterr := app.DB.QueryRow(sqlCountUnreadMessages).Scan(&data.MessageCount)
 		if messagecounterr != nil {
 			app.Log.Println("Unread messages count failed:", messagecounterr.Error())
@@ -337,7 +368,8 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 		var login Login
 		tmpl.ExecuteTemplate(w, "login.go.html", login)
 	} else if r.Method == http.MethodPost {
-		r.ParseForm()
+		// r.ParseForm()
+		r.ParseMultipartForm(10 << 20)
 		var login Login
 		var user User
 		t := time.Now().Format(time.RFC3339)
@@ -405,11 +437,15 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 			if !pwdMatch {
 				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Verify Passwords failed."))
 			}
+			uploadFilename, uploadError := utilities.UploadProfilePicture(r)
+			if uploadError != nil {
+				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Picture upload failed: %s.", uploadError))
+			}
 
 			if len(login.RegisterErrors) > 0 {
 				tmpl.ExecuteTemplate(w, "login.go.html", login)
 			} else {
-				_, err := app.DB.Exec(sqlAddUser, r.FormValue("registerName"), pwdGiven, r.FormValue("registerCompany"), r.FormValue("registerEmail"), r.FormValue("registerPhone"), r.FormValue("registerURL"))
+				_, err := app.DB.Exec(sqlAddUser, r.FormValue("registerName"), pwdGiven, r.FormValue("registerCompany"), r.FormValue("registerEmail"), r.FormValue("registerPhone"), r.FormValue("registerURL"), uploadFilename)
 				if err != nil {
 					app.Log.Println("Register INSERT sql err:", err.Error())
 					http.Redirect(w, r, "/home", http.StatusExpectationFailed)
@@ -706,6 +742,7 @@ func main() {
 	r.HandleFunc("/expertise", app.expertise).Methods(http.MethodGet)
 	r.HandleFunc("/terms", app.terms).Methods(http.MethodGet)
 	r.HandleFunc("/admin", app.admin).Methods(http.MethodGet)
+	r.HandleFunc("/user", app.user).Methods(http.MethodGet)
 	r.HandleFunc("/profile", app.profile).Methods(http.MethodGet)
 	r.HandleFunc("/privacy", app.privacy).Methods(http.MethodGet)
 	r.HandleFunc("/product/{item:[a-zA-Z]+}", app.product).Methods(http.MethodGet)

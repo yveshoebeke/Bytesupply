@@ -2,7 +2,9 @@ package utilities
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -15,13 +17,25 @@ import (
 )
 
 var (
-	logFile           = os.Getenv("BS_LOGFILE")
-	emailRegex        = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-	phoneRegex        = regexp.MustCompile(`^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$`)
-	alphaNumericRegex = regexp.MustCompile("^[a-zA-Z0-9_,.!? ]*$")
+	logFile             = os.Getenv("BS_LOGFILE")
+	emailRegex          = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	phoneRegex          = regexp.MustCompile(`^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$`)
+	alphaNumericRegex   = regexp.MustCompile("^[a-zA-Z0-9_,.!? ]*$")
+	allowedImageFormats = map[string]string{
+		"image/png":  "png",
+		"image/jpeg": "jpg",
+		"image/gif":  "gif",
+	}
+	// ProfilePictureLocation - .
+	ProfilePictureLocation = "/static/img/profile"
+	// DefaultProfilePicture - .
+	DefaultProfilePicture = ProfilePictureLocation + "/" + "defaultuser.png"
 )
 
+// App - .
 type App app.App
+
+// User - .
 type User app.User
 
 // Message -
@@ -180,4 +194,43 @@ func IsAlphaNumeric(stringValue string, mandatory bool) bool {
 		return true
 	}
 	return alphaNumericRegex.MatchString(stringValue)
+}
+
+// UploadProfilePicture - .
+func UploadProfilePicture(r *http.Request) (string, error) {
+	file, handler, err := r.FormFile("myFile")
+	if errors.As(err, &http.ErrMissingFile) {
+		fmt.Println("upload - file not found (empty entry?)")
+		return DefaultProfilePicture, nil
+	}
+	if err != nil {
+		return DefaultProfilePicture, err
+	}
+	defer file.Close()
+
+	extension, allowed := allowedImageFormats[handler.Header["Content-Type"][0]]
+	if !allowed {
+		return DefaultProfilePicture, fmt.Errorf("%s is not an allowed format", handler.Header["Content-Type"][0])
+	}
+
+	// Create a temporary file within our temp-images directory that follows
+	// a particular naming pattern
+	tempFile, err := ioutil.TempFile(ProfilePictureLocation, fmt.Sprintf("upload-*.%s", extension))
+	if err != nil {
+		return DefaultProfilePicture, fmt.Errorf("Tempfile i/o -> %v", err)
+	}
+	defer tempFile.Close()
+
+	// read all of the contents of our uploaded file into a
+	// byte array
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return DefaultProfilePicture, fmt.Errorf("ReadAll i/o -> %v", err)
+	}
+	// write this byte array to our temporary file
+	tempFile.Write(fileBytes)
+
+	// return name for db record and that we have successfully uploaded our file!
+	return tempFile.Name(), nil
+
 }

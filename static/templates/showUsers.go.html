@@ -48,7 +48,7 @@
             <div class="row" style="margin-top:15px">
                 <div class="col-12 text-left">
                     {{ range $u := .Users.Users }}
-                    <img style="float:right;border:1px solid black;margin:10px;" src="/static/img/profile/{{ $u.Picture }}" alt="{{ $u.Name }}" height="75" width="75" />
+                    <img style="float:right;border:1px solid black;margin:10px;" src="{{ $u.Picture }}" alt="{{ $u.Name }}" height="75" width="75" />
                     {{ if eq $.App.User.Username $u.Email }}
                     <p class="text-danger"><span class="font-weight-bold">{{ $u.Name }}</span> - Login: {{ $u.Email }} - Level: {{ $u.Title }} - Status: {{ $u.Status }} (qTurhm: {{ $u.Qturhm }})</p>
                     {{ else }}
@@ -60,7 +60,7 @@
                     <form action="/updateusercomment" method="post">
                         <input type="hidden" name="email" value="{{ $u.Email }}" />
                         <input type="hidden" name="referer" value="getusers" />
-                        <p>Comment: <input type="text" name="comment" value="{{ $u.Comment }}" />&nbsp;<button type="submit" class="btn btn-outline-info">Update</button></p>
+                        <p>Comment: <input type="text" name="comment" size="80" value="{{ $u.Comment }}" />&nbsp;<button type="submit" class="btn btn-outline-info">Update</button></p>
                     </form>                            
                     <p>Change title:&nbsp;
                         <a href="/changeusertitle/{{ $u.Email }}/user/getusers">User</a>&nbsp;
