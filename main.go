@@ -56,9 +56,7 @@ var (
 	sqlGetAllUsersByStatus = `SELECT name, title, password, company, email, phone, url, comment, picture, lastlogin, status, qturhm, created FROM users WHERE status LIKE ? ORDER BY status ASC, lastlogin ASC`
 	sqlUpdateLastlogin     = `UPDATE users SET lastlogin=NOW() WHERE email=?`
 	sqlUpdateUser          = `UPDATE users SET %s=? WHERE email=?`
-	// sqlUpdateUserTitle     = `UPDATE users SET title=? WHERE email=?`
-	// sqlUpdateUserComment   = `UPDATE users SET comment=? WHERE email=?`
-	sqlCountUsers = `SELECT COUNT(email) FROM users`
+	sqlCountUsersByStatus  = `SELECT COUNT(email) FROM users WHERE status LIKE ?`
 	// Messages
 	sqlAddMessage             = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	sqlGetAllMessagesByStatus = `SELECT id, user, name, company, email, phone, url, message, status, qturhm, created FROM messages WHERE status LIKE ? ORDER BY status ASC, created ASC`
@@ -110,15 +108,17 @@ func (app *App) history(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) admin(w http.ResponseWriter, r *http.Request) {
 	type MessageData struct {
-		App          *App
-		UserCount    int
-		MessageCount int
+		App             *App
+		TotalUserCount  int
+		ActiveUserCount int
+		MessageCount    int
 	}
 
 	data := MessageData{
-		App:          app,
-		UserCount:    0,
-		MessageCount: 0,
+		App:             app,
+		TotalUserCount:  0,
+		ActiveUserCount: 0,
+		MessageCount:    0,
 	}
 
 	if app.User.Title == "admin" {
@@ -127,9 +127,16 @@ func (app *App) admin(w http.ResponseWriter, r *http.Request) {
 			app.Log.Println("Unread messages count failed:", messagecounterr.Error())
 			// return
 		}
-		usercounterr := app.DB.QueryRow(sqlCountUsers).Scan(&data.UserCount)
-		if usercounterr != nil {
-			app.Log.Println("User count failed:", usercounterr.Error())
+
+		totalusercounterr := app.DB.QueryRow(sqlCountUsersByStatus, "%").Scan(&data.TotalUserCount)
+		if totalusercounterr != nil {
+			app.Log.Println("Total User Count failed:", totalusercounterr.Error())
+			// return
+		}
+
+		activeusercounterr := app.DB.QueryRow(sqlCountUsersByStatus, "1").Scan(&data.ActiveUserCount)
+		if activeusercounterr != nil {
+			app.Log.Println("Active User Count failed:", activeusercounterr.Error())
 			// return
 		}
 
