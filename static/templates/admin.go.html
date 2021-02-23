@@ -69,7 +69,7 @@
                             <img src="/static/img/red-led-light.png" alt="All read" height="10" width="10" />
                             {{ end }}
                             </li>
-                        <li><a href="/getusers">Users</a>&nbsp;<small>({{ .UserCount }})</small></li>
+                        <li><a href="/getusers">Users</a>&nbsp;<small>(Active: {{ .ActiveUserCount }}, Total: {{ .TotalUserCount }})</small></li>
                         <li><a href="/getmuxtraffic">MUX Traffic</a></li>
                     </ul>
                 </div>
