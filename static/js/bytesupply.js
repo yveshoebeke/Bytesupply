@@ -18,6 +18,14 @@ $(document).ready(function() {
         $("#logoExplain").text("");
     });
 
+    // Set session space
+    // name -> username
+    window.sessionStorage;
+
+
+
+
+    // Remove after revamping --> see register/login logic
     $("#contactForm").submit(function() {
         var name = $("#contactName").val();
         var company = $("#contactCompany").val();
@@ -53,6 +61,8 @@ $(document).ready(function() {
             });
         });    
     });
+    // ^^^ Remove after revamping --> see register/login logic
+
 
 });
 
@@ -117,5 +127,33 @@ function setLang(langId) {
     $("."+oldLangId).hide(function() {$("."+langId).show()});
 }
 
+let Register = class {
+    constructor(userName, realName, title, loginTime, lastLogin) {
+        this.userName = userName
+        this.realName = realName
+        this.title = title
+        this.loginTime = loginTime
+        this.lastLogin = lastLogin
+    }
+
+    // Register user in sessionStorage
+    setSessionLoginData(){
+        sessionStorage.setItem("userName", this.userName)
+        sessionStorage.setItem("realName", this.realName)
+        sessionStorage.setItem("title", this.title)
+        sessionStorage.setItem("loginTime", this.loginTime)
+        sessionStorage.setItem("lastLogin", this.lastLogin)
+    }
+}
+
+// Get register data element
+function getLoginElement(key) {
+    return sessionStorage.getItem(key);
+}
+
+// Remove registration
+function unsetLoginData(){
+    sessionStorage.clear();
+}
 /*
 */
