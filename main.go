@@ -380,14 +380,26 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 					tmpl.ExecuteTemplate(w, "login.go.html", login)
 				}
 				// Register user into App
+				u := utilities.User{}
+				u.Username = r.FormValue("loginName")
+				u.Password = user.Password
+				u.Realname = user.Realname
+				u.Title = user.Title
+				u.LastLogin = user.LastLogin
+				u.LoginTime = t
+
 				app.User.Username = r.FormValue("loginName")
 				app.User.Password = user.Password
 				app.User.Realname = user.Realname
 				app.User.Title = user.Title
 				app.User.LastLogin = user.LastLogin
 				app.User.LoginTime = t
+
 				app.Log.Printf("User %s logged in", r.FormValue("loginName"))
-				http.Redirect(w, r, "/home", http.StatusSeeOther)
+				fmt.Println(u)
+				// http.Redirect(w, r, "/home", http.StatusSeeOther)
+				tmpl.ExecuteTemplate(w, "welcome.go.html", u)
+
 			} else {
 				app.Log.Printf("Login for %s with %s failed to match.", r.FormValue("loginName"), r.FormValue("loginPassword"))
 				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Wrong Rmail or Password."))

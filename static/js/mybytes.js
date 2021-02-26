@@ -31,19 +31,13 @@ function byteShow(id, brand, graph){
     }
 
     // 3) Dim and remove the canvasses prior to deleting them. Remove event listener.   
-    // Was: ...
-    // document.querySelector(id).fadeBrand(60, (interval * iterations) + 1500)
-    // document.querySelector(brand).fadeBrand(40, (interval * iterations) + 1400)
-    // document.querySelector(graph).fadeBrand(40, (interval * iterations) + 2000)
-    // Bud: ...
-    // See notes below at ~EOF (function fadeBrand), why Object.prototype.fadeBrand is not compatible.
-    fadeBrand(id, 60, (interval * iterations) + 1500)
+    fadeBrand(id, 60, ((interval/4) * iterations) + 5500)
     fadeBrand(brand, 40, (interval * iterations) + 1400)
-    fadeBrand(graph, 40, (interval * iterations) + 2000)
+    fadeBrand(graph, 40, (interval * iterations) + 1600)
     setTimeout(document.removeEventListener("DOMContentLoaded", byteShow, true), (interval * iterations) + 2100)
     
     // 2) Accent brandname in blue
-    setTimeout(function(){ document.querySelector(brand).style.color = "#0000FF" }, (interval * iterations) - 600)   
+    setTimeout(function(){ document.querySelector(brand).style.color = "#0000FF" }, (interval * iterations) - 1500)   
 
     // 1) Heart of the beast:
     //  a. Generate an int 0->255
