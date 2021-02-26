@@ -20,7 +20,7 @@ https://bytesupply.com/
 ### Future enhancements:
 
 - ~~Search~~
-- User registration and login (Sessions to be implemented)
+- ~~User registration and login (Sessions to be implemented)~~
 
 ### Architecture
 
