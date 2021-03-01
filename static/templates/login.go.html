@@ -85,7 +85,6 @@
             <div class="row" style="margin-top:15px">
                 <div class="col-2"></div>
                 <div class="col-3" style="border:2px solid rgb(161, 216, 230); border-radius:10px; padding:5px">
-                    <h3>Login</h3>
                     <div class="signInFormErrors text-left">
                         <ul>
                             {{ range $error := .SigninErrors }}
@@ -93,18 +92,21 @@
                             {{ end }}
                         </ul>
                     </div>
-                    <form id="loginForm" action="/login" method="POST">
-                        <input id="validEntry" type="hidden" name="validEntry" value="false" />
-                        <div class="form-group">
-                            <input type="text" class="form-control mandatory" id="loginName" value="" name="loginName" placeholder="Your Email" />
-                        </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control mandatory" id="loginPassword" value="" name="loginPassword" placeholder="Password" />
-                        </div>
-                        <div class="text-center">
-                            <input id="contactSubmit" type="submit" class="btn btn-primary" name="submitLoginRegister" value="Login" />
-                            <button type="button" class="btn btn-secondary" onclick="window.location.replace('/home')">Cancel</button>
-                        </div>
+                    <form id="loginForm" action="/login" method="POST" autocomplete="off">
+                        <fieldset>
+                            <legend>Login</legend>
+                            <input id="validEntry" type="hidden" name="validEntry" value="false" />
+                            <div class="form-group">
+                                <input type="text" class="form-control mandatory" id="loginName" value="" name="loginName" placeholder="Your Email" />
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control mandatory" id="loginPassword" value="" name="loginPassword" placeholder="Password" />
+                            </div>
+                            <div class="text-center">
+                                <input id="contactSubmit" type="submit" class="btn btn-primary" name="submitLoginRegister" value="Login" />
+                                <button type="button" class="btn btn-secondary" onclick="window.location.replace('/home')">Cancel</button>
+                            </div>
+                    </fieldset>
                     </form>
                     <hr />
                     <p class="text-center" style="margin-top:20px">
@@ -117,7 +119,6 @@
                 <div class="col-1"></div>
 
                 <div class="col-4" style="border:2px solid rgb(161, 216, 230); border-radius:10px; padding:5px">
-                    <h3>Register</h3>
                     <div class="signInFormErrors text-left">
                         <ul>
                             {{ range $error := .RegisterErrors }}
@@ -125,42 +126,40 @@
                             {{ end }}
                         </ul>
                     </div>
-                    <p  class="text-danger"><small><sup>(*)</sup>Required fields.</small></p>
-                    <form id="registerForm" action="/login" enctype="multipart/form-data" method="POST">
-                        <input id="validEntry" type="hidden" name="validEntry" value="false" />
-                        <div class="form-group">
-                            <small><sup class="text-danger">(*)</sup></small>
-                            <input type="text" class="form-control mandatory" id="registerName" value="" name="registerName" aria-describedby="registerNameHelp" placeholder="Your Name" />
-                        </div>
-                        <div class="form-group">
-                            <small><sup class="text-danger">(*)</small>
-                            <input type="text" class="form-control mandatory" id="registerEmail" value="" name="registerEmail" aria-describedby="registerEmailHelp" placeholder="Your Email (Will be your username)" />
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="registerPhone" value="" name="registerPhone" aria-describedby="registerPhoneHelp" placeholder="Your contact phone" />
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="registerCompany" value="" name="registerCompany" aria-describedby="registerCompanyHelp" placeholder="Company Name" />
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="registerURL" value="" name="registerURL" aria-describedby="registerURLHelp" placeholder="Company URL" />
-                        </div>
-                        <div class="form-group">
-                            <small><sup class="text-danger">(*)</sup></small>
-                            <input type="password" class="form-control mandatory" id="registerPassword" value="" name="registerPassword" aria-describedby="registerPasswordHelp" placeholder="Password" />
-                        </div>
-                        <div class="form-group">
-                            <small><sup class="text-danger">(*)</sup></small>
-                            <input type="password" class="form-control mandatory" id="registerVerifyPassword" value="" name="registerVerifyPassword" aria-describedby="registerVerifyPasswordHelp" placeholder="Verify Password" />
-                        </div>
-                        <div class="form-group">
-                            <small>Optional profile picture:</small>
-                            <input type="file" class="form-control" value="" name="registerProfilePicture" placeholder="Profile Picture" />
-                        </div>
-                        <div class="text-center">
-                            <input id="contactSubmit" type="submit" class="btn btn-primary" name="submitLoginRegister" value="Register" />
-                            <button type="button" class="btn btn-secondary" onclick="window.location.replace('/home')">Cancel</button>
-                        </div>
+                    <form id="registerForm" action="/login" enctype="multipart/form-data" method="POST" autocomplete="off">
+                        <fieldset>
+                            <legend>Register</legend>
+                            <input id="validEntry" type="hidden" name="validEntry" value="false" />
+                            <div class="form-group">
+                                <input type="text" class="form-control mandatory" id="registerName" value="" name="registerName" aria-describedby="registerNameHelp" placeholder="Your Name" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control mandatory" id="registerEmail" value="" name="registerEmail" aria-describedby="registerEmailHelp" placeholder="Your Email (Will be your username)" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="registerPhone" value="" name="registerPhone" aria-describedby="registerPhoneHelp" placeholder="Your contact phone" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="registerCompany" value="" name="registerCompany" aria-describedby="registerCompanyHelp" placeholder="Company Name" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="registerURL" value="" name="registerURL" aria-describedby="registerURLHelp" placeholder="Company URL" />
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control mandatory" id="registerPassword" value="" name="registerPassword" aria-describedby="registerPasswordHelp" placeholder="Password" />
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control mandatory" id="registerVerifyPassword" value="" name="registerVerifyPassword" aria-describedby="registerVerifyPasswordHelp" placeholder="Verify Password" />
+                            </div>
+                            <div class="form-group">
+                                <small>Optional profile picture:</small>
+                                <input type="file" class="form-control" value="" name="registerProfilePicture" placeholder="Profile Picture" />
+                            </div>
+                            <div class="text-center">
+                                <input id="contactSubmit" type="submit" class="btn btn-primary" name="submitLoginRegister" value="Register" />
+                                <button type="button" class="btn btn-secondary" onclick="window.location.replace('/home')">Cancel</button>
+                            </div>
+                        </fieldset>
                     </form>
                 </div>
 
