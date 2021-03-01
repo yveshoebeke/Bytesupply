@@ -402,7 +402,7 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 
 			} else {
 				app.Log.Printf("Login for %s with %s failed to match.", r.FormValue("loginName"), r.FormValue("loginPassword"))
-				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Wrong Rmail or Password."))
+				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Wrong Email or Password."))
 				tmpl.ExecuteTemplate(w, "login.go.html", login)
 			}
 		} else if r.FormValue("submitLoginRegister") == "Register" {
@@ -461,8 +461,12 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
+	type Contact struct {
+		Errors []string
+	}
 	if r.Method == http.MethodGet {
-		http.ServeFile(w, r, staticLocation+"/html/contactus.html")
+		var contact Contact
+		tmpl.ExecuteTemplate(w, "contactus.go.html", contact)
 	} else if r.Method == http.MethodPost {
 		// process contact us info
 		type MsgStatus struct {
@@ -470,39 +474,39 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 			Name        string `json:"name"`
 		}
 
+		var contact Contact
 		r.ParseForm()
 
-		var validToRecord = false
-
-		if r.FormValue("validEntry") == "false" {
-			validToRecord = false
-		} else {
-			validToRecord = true
-			// Validate (name, email and message are mandatory)
-			for varName, varValue := range r.Form {
-				switch varName {
-				case "contactName":
-				case "contactEmail":
-				case "contactMessage":
-					if len(varValue[0]) == 0 {
-						validToRecord = false
-					}
-					break
-				default:
-					break
-				}
-			}
-
-			if validToRecord {
-				_, err := app.DB.Exec(sqlAddMessage, app.User.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactURL"), r.FormValue("contactMessage"))
-				if err != nil {
-					app.Log.Println("ContactUs INSERT sql err:", err.Error())
-				}
-			}
+		if !utilities.IsAlphaNumeric(r.FormValue("contactName"), true) || len(r.FormValue("contactName")) < 3 {
+			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid (Mandatory) Name entry."))
+		}
+		if !utilities.IsAlphaNumeric(r.FormValue("contactCompany"), false) {
+			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid Company entry."))
+		}
+		if !utilities.IsPhoneNumber(r.FormValue("contactPhone"), false) {
+			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid Phone number."))
+		}
+		if !utilities.IsEmailAddress(r.FormValue("contactEmail"), true) {
+			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid (Mandatory) Email address."))
+		}
+		if !utilities.IsURLAddress(r.FormValue("contactURL"), false) {
+			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid URL address."))
+		}
+		if !utilities.IsAlphaNumeric(r.FormValue("contactMessage"), true) || len(r.FormValue("contactMessage")) < 3 {
+			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid (Mandatory) Message entry."))
 		}
 
-		msgStatus := MsgStatus{ValidToSend: validToRecord, Name: r.FormValue("contactName")}
-		tmpl.ExecuteTemplate(w, "contactussent.go.html", msgStatus)
+		if len(contact.Errors) > 0 {
+			tmpl.ExecuteTemplate(w, "contactus.go.html", contact)
+		} else {
+			_, err := app.DB.Exec(sqlAddMessage, app.User.Username, r.FormValue("contactName"), r.FormValue("contactCompany"), r.FormValue("contactEmail"), r.FormValue("contactPhone"), r.FormValue("contactURL"), r.FormValue("contactMessage"))
+			if err != nil {
+				app.Log.Println("ContactUs INSERT sql err:", err.Error())
+			}
+
+			msgStatus := MsgStatus{ValidToSend: true, Name: r.FormValue("contactName")}
+			tmpl.ExecuteTemplate(w, "contactussent.go.html", msgStatus)
+		}
 	}
 }
 
