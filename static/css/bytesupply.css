@@ -27,6 +27,15 @@ span.first-word {
     color: blue;
 }
 
+textarea.mandatory, input.mandatory {
+  border: 1px solid red;
+  background-color: #ffd1b3;
+}
+
+legend {
+  color: blue;
+}
+
 img.logo {
   margin: 20px;
 }

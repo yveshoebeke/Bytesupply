@@ -85,47 +85,42 @@
                     <img src="/static/img/contact-us.jpg" class="rounded float-left" alt="Yves Hoebeke" width="250" height="165">
                 </div>
                 <div class="col-9 text-left" style="margin-left:15px; padding:10px; background: rgba(250, 249, 249, 0.6); border-radius:15px;">
-                    <p><span class="first-word">Send</span> us a brief message with your contact information.</p>
+                    <!-- <p><span class="first-word">Send</span> us a brief message with your contact information.</p>
                     <div style="border:1px dotted black; padding:10px;">
                         <sup class="text-danger">(*)</sup>Required fields.&nbsp;<sup>(note)</sup>Some forms can be obtained at the bottom of this page.</p>
-                    </div>
-                    <hr style="height:2px;color:black"/>
+                    </div> 
+                    <hr style="height:2px;color:black"/>-->
                     <form id="contactForm" action="/contactus" method="POST">
-                        <input id="validEntry" type="hidden" name="validEntry" value="false" />
-                        <div class="form-group">
-                            <!--label for="contactName">Name<sup class="text-danger">(*)</sup></label-->
-                            <sup class="text-danger">(*)</sup>
-                            <input type="text" class="form-control mandatory" id="contactName" value="" name="contactName" aria-describedby="nameHelp" placeholder="Your Name" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="contactNameHelp" class="d-none form-text text-danger">Enter a valid name, only alphanumeric and '&' ',' '.' allowed.</small>
-                        </div>
-                        <div class="form-group">
-                            <!--label for="contactCompany">Company</label-->
-                            <input type="text" class="form-control" id="contactCompany" value="" name="contactCompany" aria-describedby="companyHelp" placeholder="Company Name" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="contactCompanyHelp" class="d-none form-text text-danger">Enter a valid company name, only alphanumeric and '&' ',' '.' allowed.</small>
-                        </div>
-                        <div class="form-group">
-                            <!--label for="contactEmail">Phone</label-->
-                            <input type="tel" class="form-control" id="contactPhone" value="" name="contactPhone" aria-describedby="phoneHelp" placeholder="Phone Number" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="contactPhoneHelp" class="d-none form-text text-danger">Enter a valid phone number, 1234567890 (123)456-7890 123-456-7890 formats allowed.</small>
-                        </div>
-                        <div class="form-group">
-                            <!--label for="contactCompany">Email address<sup class="text-danger">(*)</sup></label-->
-                            <sup class="text-danger">(*)</sup>
-                            <input type="email" class="form-control mandatory" id="contactEmail" value="" name="contactEmail" aria-describedby="emailHelp" placeholder="Email Address" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="contactEmailHelp" class="d-none form-text text-danger">Enter a valid email address like so: you@example.com</small>
-                        </div>
-                        <div class="form-group">
-                            <!--label for="contactCompany">Website</label-->
-                            <input type="url" class="form-control" id="contactURL" value="" name="contactURL" aria-describedby="urlHelp" placeholder="Website URL" onblur="validateMessageEntry($(this).attr('id'))" />
-                            <small id="contactURLHelp" class="d-none form-text text-danger">Enter a valid URL address like so: http(s)://example.com</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="contactMessage"><sup class="text-danger">(*)</sup>Message</label>
-                            <small id="contactMessageHelp" class="d-none form-text text-danger">Enter text, only alphanumeric and '&' ',' '.' allowed.</small>
-                            <textarea class="form-control mandatory" id="contactMessage" name="contactMessage" rows="4" onblur="validateMessageEntry($(this).attr('id'))"></textarea>
-                        </div>
-                        <button id="contactSubmit" type="submit" class="btn btn-primary">Send</button>
-                        <button type="button" class="btn btn-secondary" onclick="window.location.replace('/home')">Cancel</button>
+                        <fieldset>
+                            <legend>Contact Us</legend>
+                            <input id="validEntry" type="hidden" name="validEntry" value="false" />
+                            <div class="form-group">
+                                <input type="text" class="form-control mandatory" id="contactName" value="" name="contactName" aria-describedby="nameHelp" placeholder="Your Name" onblur="validateMessageEntry($(this).attr('id'))" />
+                                <small id="contactNameHelp" class="d-none form-text text-danger">Enter a valid name, only alphanumeric and '&' ',' '.' allowed.</small>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="contactCompany" value="" name="contactCompany" aria-describedby="companyHelp" placeholder="Company Name" onblur="validateMessageEntry($(this).attr('id'))" />
+                                <small id="contactCompanyHelp" class="d-none form-text text-danger">Enter a valid company name, only alphanumeric and '&' ',' '.' allowed.</small>
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" class="form-control" id="contactPhone" value="" name="contactPhone" aria-describedby="phoneHelp" placeholder="Phone Number" onblur="validateMessageEntry($(this).attr('id'))" />
+                                <small id="contactPhoneHelp" class="d-none form-text text-danger">Enter a valid phone number, 1234567890 (123)456-7890 123-456-7890 formats allowed.</small>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control mandatory" id="contactEmail" value="" name="contactEmail" aria-describedby="emailHelp" placeholder="Email Address" onblur="validateMessageEntry($(this).attr('id'))" />
+                                <small id="contactEmailHelp" class="d-none form-text text-danger">Enter a valid email address like so: you@example.com</small>
+                            </div>
+                            <div class="form-group">
+                                <input type="url" class="form-control" id="contactURL" value="" name="contactURL" aria-describedby="urlHelp" placeholder="Website URL" onblur="validateMessageEntry($(this).attr('id'))" />
+                                <small id="contactURLHelp" class="d-none form-text text-danger">Enter a valid URL address like so: http(s)://example.com</small>
+                            </div>
+                            <div class="form-group">
+                                <small id="contactMessageHelp" class="d-none form-text text-danger">Enter text, only alphanumeric and '&' ',' '.' allowed.</small>
+                                <textarea class="form-control mandatory" id="contactMessage" name="contactMessage" rows="4" onblur="validateMessageEntry($(this).attr('id'))"></textarea>
+                            </div>
+                            <button id="contactSubmit" type="submit" class="btn btn-primary">Send</button>
+                            <button type="button" class="btn btn-secondary" onclick="window.location.replace('/home')">Cancel</button>
+                        </fieldset>
                     </form>
                  </div>
             </div>
