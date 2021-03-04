@@ -12,28 +12,31 @@
   background-color: seashell;
 }
 
+a {
+  color:rgb(9, 9, 176);
+}
 a:hover {
-  color:red;
+  color:#ff503c;;
 }
 
 h1.navbar-logo {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    color :blue;
+    color :rgb(36, 36, 210);
 }
 
 span.first-word {
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    /* font-family: Georgia, 'Times New Roman', Times, serif; */
     font-size: 200%;
-    color: blue;
+    color: rgb(9, 9, 176);
 }
 
 textarea.mandatory, input.mandatory {
-  border: 1px solid red;
-  background-color: #ffd1b3;
+  border: 1px solid #ff503c;;
+  background-color: #ffb7a7;
 }
 
 legend {
-  color: blue;
+  color: rgb(9, 9, 176);
 }
 
 img.logo {
@@ -48,7 +51,8 @@ div.signInFormErrors {
 
 span#logoExplain {
   text-decoration-style: none;
-  color: blue;
+  color:#ff503c;
+  background-color: rgb(9, 9, 176);
   font: size 90%;
 }
 
