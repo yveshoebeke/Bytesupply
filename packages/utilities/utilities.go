@@ -11,7 +11,7 @@ import (
 	"os"
 	"regexp"
 
-	app "bytesupply.com/app"
+	app "bytesupply.com/packages/app"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -233,7 +233,7 @@ func UploadProfilePicture(r *http.Request) (string, error) {
 	// a particular naming pattern
 	tempFile, err := ioutil.TempFile(ProfilePictureLocation, fmt.Sprintf("upload-*.%s", extension))
 	if err != nil {
-		return DefaultProfilePicture, fmt.Errorf("Tempfile i/o -> %v", err)
+		return DefaultProfilePicture, fmt.Errorf("tempfile i/o -> %v", err)
 	}
 	defer tempFile.Close()
 
