@@ -2,6 +2,7 @@ Makefile
 Dockerfile
 *.yml
 log
-**/docs
+/docs
 main
+start
 .DS_Store

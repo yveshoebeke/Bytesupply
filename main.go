@@ -26,9 +26,11 @@ import (
 	"text/template"
 	"time"
 
-	app "bytesupply.com/app"
-	googleapi "bytesupply.com/googleapi"
-	utilities "bytesupply.com/utilities"
+	googleapi "bytesupply.com/packages/googleapi"
+
+	app "bytesupply.com/packages/app"
+
+	utilities "bytesupply.com/packages/utilities"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
@@ -64,7 +66,7 @@ var (
 	sqlUpdateMessageStatus    = `UPDATE messages SET status=? WHERE id=?`
 	sqlCountUnreadMessages    = `SELECT COUNT(id) FROM messages WHERE status=0`
 	/* templating */
-	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob(staticLocation + "/templates/*"))
+	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob("html/*"))
 	funcMap = template.FuncMap{
 		"hasHTTP": func(myUrl string) string {
 			if strings.Contains(myUrl, "://") {
