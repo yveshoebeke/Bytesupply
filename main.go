@@ -26,11 +26,9 @@ import (
 	"text/template"
 	"time"
 
-	googleapi "bytesupply.com/packages/googleapi"
-
-	app "bytesupply.com/packages/app"
-
-	utilities "bytesupply.com/packages/utilities"
+	"bytesupply.com/packages/app"
+	"bytesupply.com/packages/googleapi"
+	"bytesupply.com/packages/utilities"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
@@ -43,30 +41,30 @@ var (
 	getlog         = utilities.Getlog
 	staticLocation = os.Getenv("BS_STATIC_LOCATION")
 	logFile        = os.Getenv("BS_LOGFILE")
-	msgFile        = os.Getenv("BS_MSGFILE")
-	serverPort     = os.Getenv("BS_SERVER_PORT")
-	dbHost         = os.Getenv("BS_MYSQL_HOST")
-	dbPort         = os.Getenv("BS_MYSQL_PORT")
-	dbUser         = os.Getenv("BS_MYSQL_USERNAME")
-	dbPassword     = os.Getenv("BS_MYSQL_PASSWORD")
-	dbDatabase     = os.Getenv("BS_MYSQL_DB")
+	// msgFile        = os.Getenv("BS_MSGFILE")
+	serverPort = os.Getenv("BS_SERVER_PORT")
+	dbHost     = os.Getenv("BS_MYSQL_HOST")
+	dbPort     = os.Getenv("BS_MYSQL_PORT")
+	dbUser     = os.Getenv("BS_MYSQL_USERNAME")
+	dbPassword = os.Getenv("BS_MYSQL_PASSWORD")
+	dbDatabase = os.Getenv("BS_MYSQL_DB")
 	/* sql statements */
 	// Logins
 	sqlUserLogin = `SELECT name, password, title, lastlogin FROM users WHERE email=? AND status=1`
 	// Users
 	sqlAddUser             = `INSERT INTO users (name,password,company,email,phone,url,picture) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	sqlGetAllUsersByStatus = `SELECT name, title, password, company, email, phone, url, comment, picture, lastlogin, status, qturhm, created FROM users WHERE status LIKE ? ORDER BY status ASC, lastlogin ASC`
-	sqlUpdateLastlogin     = `UPDATE users SET lastlogin=NOW() WHERE email=?`
-	sqlUpdateUser          = `UPDATE users SET %s=? WHERE email=?`
-	sqlCountUsersByStatus  = `SELECT COUNT(email) FROM users WHERE status LIKE ?`
+	// sqlUpdateLastlogin     = `UPDATE users SET lastlogin=NOW() WHERE email=?`
+	sqlUpdateUser         = `UPDATE users SET %s=? WHERE email=?`
+	sqlCountUsersByStatus = `SELECT COUNT(email) FROM users WHERE status LIKE ?`
 	// Messages
 	sqlAddMessage             = `INSERT INTO messages (user,name,company,email,phone,url,message) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	sqlGetAllMessagesByStatus = `SELECT id, user, name, company, email, phone, url, message, status, qturhm, created FROM messages WHERE status LIKE ? ORDER BY status ASC, created ASC`
-	sqlGetMessageContent      = `SELECT message FROM messages WHERE email=?`
-	sqlUpdateMessageStatus    = `UPDATE messages SET status=? WHERE id=?`
-	sqlCountUnreadMessages    = `SELECT COUNT(id) FROM messages WHERE status=0`
+	// sqlGetMessageContent      = `SELECT message FROM messages WHERE email=?`
+	sqlUpdateMessageStatus = `UPDATE messages SET status=? WHERE id=?`
+	sqlCountUnreadMessages = `SELECT COUNT(id) FROM messages WHERE status=0`
 	/* templating */
-	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob("html/*"))
+	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob("static/html/*"))
 	funcMap = template.FuncMap{
 		"hasHTTP": func(myUrl string) string {
 			if strings.Contains(myUrl, "://") {
@@ -358,7 +356,7 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 
 		if r.FormValue("submitLoginRegister") == "Login" {
 			if !utilities.IsEmailAddress(r.FormValue("loginName"), true) {
-				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Login must be email."))
+				login.RegisterErrors = append(login.RegisterErrors, "Login must be email.")
 				tmpl.ExecuteTemplate(w, "login.go.html", login)
 				return
 			}
@@ -404,7 +402,7 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 
 			} else {
 				app.Log.Printf("Login for %s with %s failed to match.", r.FormValue("loginName"), r.FormValue("loginPassword"))
-				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Wrong Email or Password."))
+				login.SigninErrors = append(login.SigninErrors, "Wrong Email or Password.")
 				tmpl.ExecuteTemplate(w, "login.go.html", login)
 			}
 		} else if r.FormValue("submitLoginRegister") == "Register" {
@@ -414,22 +412,22 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 
 			// run through validation/vaccination filter function to be added to the utilities
 			if !utilities.IsEmailAddress(r.FormValue("registerEmail"), true) {
-				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid Email address."))
+				login.RegisterErrors = append(login.RegisterErrors, "Invalid Email address.")
 			}
 			if !utilities.IsAlphaNumeric(r.FormValue("registerName"), true) {
-				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid Name entry."))
+				login.RegisterErrors = append(login.RegisterErrors, "Invalid Name entry.")
 			}
 			if !utilities.IsAlphaNumeric(r.FormValue("registerCompany"), false) {
-				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid Company entry."))
+				login.RegisterErrors = append(login.RegisterErrors, "Invalid Company entry.")
 			}
 			if !utilities.IsPhoneNumber(r.FormValue("registerPhone"), false) {
-				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid Phone number."))
+				login.RegisterErrors = append(login.RegisterErrors, "Invalid Phone number.")
 			}
 			if !utilities.IsURLAddress(r.FormValue("registerURL"), false) {
-				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Invalid URL address."))
+				login.RegisterErrors = append(login.RegisterErrors, "Invalid URL address.")
 			}
 			if !pwdMatch {
-				login.RegisterErrors = append(login.RegisterErrors, fmt.Sprintf("Verify Passwords failed."))
+				login.RegisterErrors = append(login.RegisterErrors, "Verify Passwords failed.")
 			}
 			uploadFilename, uploadError := utilities.UploadProfilePicture(r)
 			if uploadError != nil {
@@ -480,22 +478,22 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
 		if !utilities.IsAlphaNumeric(r.FormValue("contactName"), true) || len(r.FormValue("contactName")) < 3 {
-			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid (Mandatory) Name entry."))
+			contact.Errors = append(contact.Errors, "Invalid (Mandatory) Name entry.")
 		}
 		if !utilities.IsAlphaNumeric(r.FormValue("contactCompany"), false) {
-			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid Company entry."))
+			contact.Errors = append(contact.Errors, "Invalid Company entry.")
 		}
 		if !utilities.IsPhoneNumber(r.FormValue("contactPhone"), false) {
-			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid Phone number."))
+			contact.Errors = append(contact.Errors, "Invalid Phone number.")
 		}
 		if !utilities.IsEmailAddress(r.FormValue("contactEmail"), true) {
-			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid (Mandatory) Email address."))
+			contact.Errors = append(contact.Errors, "Invalid (Mandatory) Email address.")
 		}
 		if !utilities.IsURLAddress(r.FormValue("contactURL"), false) {
-			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid URL address."))
+			contact.Errors = append(contact.Errors, "Invalid URL address.")
 		}
 		if !utilities.IsAlphaNumeric(r.FormValue("contactMessage"), true) || len(r.FormValue("contactMessage")) < 3 {
-			contact.Errors = append(contact.Errors, fmt.Sprintf("Invalid (Mandatory) Message entry."))
+			contact.Errors = append(contact.Errors, "Invalid (Mandatory) Message entry.")
 		}
 
 		if len(contact.Errors) > 0 {
