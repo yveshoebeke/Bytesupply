@@ -64,7 +64,7 @@ var (
 	sqlUpdateMessageStatus = `UPDATE messages SET status=? WHERE id=?`
 	sqlCountUnreadMessages = `SELECT COUNT(id) FROM messages WHERE status=0`
 	/* templating */
-	tmpl    = template.Must(template.New("").Funcs(funcMap).ParseGlob("/go/bin/static/templates/*"))
+	tmpl    = template.Must(template.New("main").Funcs(funcMap).ParseGlob("/go/bin/static/templates/*.html"))
 	funcMap = template.FuncMap{
 		"hasHTTP": func(myUrl string) string {
 			if strings.Contains(myUrl, "://") {
