@@ -67,20 +67,20 @@ var (
 	/* templating */
 	// tmpl = template.Must(template.ParseFiles(app.TemplateLocation + "home.go.html"))
 	// tmpl.Execute(w, homePageData)
-	tmpl    = template.Must(template.New("main").Funcs(funcMap).ParseGlob("templates/*.html"))
-	funcMap = template.FuncMap{
-		"hasHTTP": func(myUrl string) string {
-			if strings.Contains(myUrl, "://") {
-				return myUrl
-			}
+// 	tmpl    = template.Must(template.New("main").Funcs(funcMap).ParseGlob("templates/*.html"))
+// 	funcMap = template.FuncMap{
+// 		"hasHTTP": func(myUrl string) string {
+// 			if strings.Contains(myUrl, "://") {
+// 				return myUrl
+// 			}
 
-			return "https://" + myUrl
-		},
-		"userStatus": func(myStatus int) string {
-			return utilities.AllowedUserStatusByInt[myStatus]
-		},
-	}
-)
+// 			return "https://" + myUrl
+// 		},
+// 		"userStatus": func(myStatus int) string {
+// 			return utilities.AllowedUserStatusByInt[myStatus]
+// 		},
+// 	}
+// )
 
 // App -> app.App
 type App app.App
