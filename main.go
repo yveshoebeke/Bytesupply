@@ -38,9 +38,10 @@ import (
 
 var (
 	/* Extract env variables */
-	getlog         = utilities.Getlog
-	staticLocation = os.Getenv("BS_STATIC_LOCATION")
-	logFile        = os.Getenv("BS_LOGFILE")
+	getlog           = utilities.Getlog
+	staticLocation   = os.Getenv("BS_STATIC_LOCATION")
+	templateLocation = os.Getenv("BS_TEMPLATE_LOCATION")
+	logFile          = os.Getenv("BS_LOGFILE")
 	// msgFile        = os.Getenv("BS_MSGFILE")
 	serverPort = os.Getenv("BS_SERVER_PORT")
 	dbHost     = os.Getenv("BS_MYSQL_HOST")
@@ -89,11 +90,15 @@ type User app.User
 
 /* Routers */
 func (app *App) homepage(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "index.go.html", app)
+	tmpl = template.Must(template.ParseFiles(templateLocation + "index.go.html"))
+	tmpl.Execute(w, app)
+	// tmpl.ExecuteTemplate(w, "index.go.html", app)
 }
 
 func (app *App) home(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "home.go.html", app)
+	tmpl = template.Must(template.ParseFiles(templateLocation + "home.go.html"))
+	tmpl.Execute(w, app)
+	// tmpl.ExecuteTemplate(w, "home.go.html", app)
 }
 
 func (app *App) company(w http.ResponseWriter, r *http.Request) {
@@ -142,7 +147,9 @@ func (app *App) admin(w http.ResponseWriter, r *http.Request) {
 			// return
 		}
 
-		tmpl.ExecuteTemplate(w, "admin.go.html", data)
+		tmpl = template.Must(template.ParseFiles(templateLocation + "admin.go.html"))
+		tmpl.Execute(w, data)
+		// tmpl.ExecuteTemplate(w, "admin.go.html", data)
 	} else {
 		http.Redirect(w, r, "/home", http.StatusForbidden)
 	}
@@ -161,11 +168,15 @@ func (app *App) user(w http.ResponseWriter, r *http.Request) {
 		MessageCount: 0,
 	}
 
-	tmpl.ExecuteTemplate(w, "user.go.html", data)
+	tmpl = template.Must(template.ParseFiles(templateLocation + "user.go.html"))
+	tmpl.Execute(w, data)
+	// tmpl.ExecuteTemplate(w, "user.go.html", data)
 }
 
 func (app *App) profile(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "profile.go.html", app)
+	tmpl = template.Must(template.ParseFiles(templateLocation + "profile.go.html"))
+	tmpl.Execute(w, app)
+	// tmpl.ExecuteTemplate(w, "profile.go.html", app)
 }
 
 func (app *App) expertise(w http.ResponseWriter, r *http.Request) {
@@ -217,7 +228,9 @@ func (app *App) getusers(w http.ResponseWriter, r *http.Request) {
 		Users: uu,
 	}
 
-	tmpl.ExecuteTemplate(w, "showUsers.go.html", data)
+	tmpl = template.Must(template.ParseFiles(templateLocation + "showUsers.go.html"))
+	tmpl.Execute(w, data)
+	// tmpl.ExecuteTemplate(w, "showUsers.go.html", data)
 }
 
 func (app *App) updateuser(w http.ResponseWriter, r *http.Request) {
@@ -306,7 +319,9 @@ func (app *App) getmessages(w http.ResponseWriter, r *http.Request) {
 		Messages: mm,
 	}
 
-	tmpl.ExecuteTemplate(w, "showMessages.go.html", data)
+	tmpl = template.Must(template.ParseFiles(templateLocation + "showMessages.go.html"))
+	tmpl.Execute(w, data)
+	// tmpl.ExecuteTemplate(w, "showMessages.go.html", data)
 }
 
 func (app *App) changemessagestatus(w http.ResponseWriter, r *http.Request) {
@@ -337,7 +352,9 @@ func (app *App) logout(w http.ResponseWriter, r *http.Request) {
 	app.User.LastLogin = time.Now().Format(time.RFC3339)
 	app.User.LoginTime = time.Now().Format(time.RFC3339)
 
-	tmpl.ExecuteTemplate(w, "home.go.html", app)
+	tmpl = template.Must(template.ParseFiles(templateLocation + "home.go.html"))
+	tmpl.Execute(w, app)
+	// tmpl.ExecuteTemplate(w, "home.go.html", app)
 }
 
 func (app *App) login(w http.ResponseWriter, r *http.Request) {
@@ -348,7 +365,9 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		// Get - present form(s)
 		var login Login
-		tmpl.ExecuteTemplate(w, "login.go.html", login)
+		tmpl = template.Must(template.ParseFiles(templateLocation + "login.go.html"))
+		tmpl.Execute(w, login)
+		// tmpl.ExecuteTemplate(w, "login.go.html", login)
 	} else if r.Method == http.MethodPost {
 		// r.ParseForm()
 		r.ParseMultipartForm(10 << 20)
@@ -359,7 +378,9 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 		if r.FormValue("submitLoginRegister") == "Login" {
 			if !utilities.IsEmailAddress(r.FormValue("loginName"), true) {
 				login.RegisterErrors = append(login.RegisterErrors, "Login must be email.")
-				tmpl.ExecuteTemplate(w, "login.go.html", login)
+				tmpl = template.Must(template.ParseFiles(templateLocation + "login.go.html"))
+				tmpl.Execute(w, login)
+				// tmpl.ExecuteTemplate(w, "login.go.html", login)
 				return
 			}
 
@@ -367,7 +388,9 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				app.Log.Println("User login query failed:", err.Error()) // proper error handling instead of panic in your app
 				login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("'%s' is not registered.", r.FormValue("loginName")))
-				tmpl.ExecuteTemplate(w, "login.go.html", login)
+				tmpl = template.Must(template.ParseFiles(templateLocation + "login.go.html"))
+				tmpl.Execute(w, login)
+				// tmpl.ExecuteTemplate(w, "login.go.html", login)
 				return
 			}
 			// Check password hashes
@@ -379,7 +402,9 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					app.Log.Println("Login lastlogin update sql err:", err.Error())
 					login.SigninErrors = append(login.SigninErrors, fmt.Sprintf("Report SQL error: %s", err.Error()))
-					tmpl.ExecuteTemplate(w, "login.go.html", login)
+					tmpl = template.Must(template.ParseFiles(templateLocation + "login.go.html"))
+					tmpl.Execute(w, login)
+					// tmpl.ExecuteTemplate(w, "login.go.html", login)
 				}
 				// Register user into App
 				u := utilities.User{}
@@ -400,11 +425,14 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 				app.Log.Printf("User %s logged in", r.FormValue("loginName"))
 				fmt.Println(u)
 				// http.Redirect(w, r, "/home", http.StatusSeeOther)
-				tmpl.ExecuteTemplate(w, "welcome.go.html", u)
-
+				tmpl = template.Must(template.ParseFiles(templateLocation + "welcome.go.html"))
+				tmpl.Execute(w, u)
+				// tmpl.ExecuteTemplate(w, "welcome.go.html", u)
 			} else {
 				app.Log.Printf("Login for %s with %s failed to match.", r.FormValue("loginName"), r.FormValue("loginPassword"))
 				login.SigninErrors = append(login.SigninErrors, "Wrong Email or Password.")
+				tmpl = template.Must(template.ParseFiles(templateLocation + "login.go.html"))
+				tmpl.Execute(w, login)
 				tmpl.ExecuteTemplate(w, "login.go.html", login)
 			}
 		} else if r.FormValue("submitLoginRegister") == "Register" {
@@ -437,7 +465,9 @@ func (app *App) login(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if len(login.RegisterErrors) > 0 {
-				tmpl.ExecuteTemplate(w, "login.go.html", login)
+				tmpl = template.Must(template.ParseFiles(templateLocation + "login.go.html"))
+				tmpl.Execute(w, login)
+				// tmpl.ExecuteTemplate(w, "login.go.html", login)
 			} else {
 				_, err := app.DB.Exec(sqlAddUser, r.FormValue("registerName"), pwdGiven, r.FormValue("registerCompany"), r.FormValue("registerEmail"), r.FormValue("registerPhone"), r.FormValue("registerURL"), uploadFilename)
 				if err != nil {
@@ -468,7 +498,9 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == http.MethodGet {
 		var contact Contact
-		tmpl.ExecuteTemplate(w, "contactus.go.html", contact)
+		tmpl = template.Must(template.ParseFiles(templateLocation + "contactus.go.html"))
+		tmpl.Execute(w, contact)
+		// tmpl.ExecuteTemplate(w, "contactus.go.html", contact)
 	} else if r.Method == http.MethodPost {
 		// process contact us info
 		type MsgStatus struct {
@@ -507,7 +539,9 @@ func (app *App) contactus(w http.ResponseWriter, r *http.Request) {
 			}
 
 			msgStatus := MsgStatus{ValidToSend: true, Name: r.FormValue("contactName")}
-			tmpl.ExecuteTemplate(w, "contactussent.go.html", msgStatus)
+			tmpl = template.Must(template.ParseFiles(templateLocation + "contactussent.go.html"))
+			tmpl.Execute(w, msgStatus)
+			// tmpl.ExecuteTemplate(w, "contactussent.go.html", msgStatus)
 		}
 	}
 }
@@ -521,7 +555,9 @@ func (app *App) search(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			app.Log.Println("Google API Err:", err)
 		} else {
-			tmpl.ExecuteTemplate(w, "search.go.html", searchResults)
+			tmpl = template.Must(template.ParseFiles(templateLocation + "search.go.html"))
+			tmpl.Execute(w, searchResults)
+			// tmpl.ExecuteTemplate(w, "search.go.html", searchResults)
 		}
 	} else {
 		http.Redirect(w, r, r.FormValue("referer"), http.StatusSeeOther)
@@ -544,7 +580,9 @@ func (app *App) product(w http.ResponseWriter, r *http.Request) {
 	itemtoshow := vars["item"]
 	item := Item{ItemToShow: itemtoshow}
 	app.Log.Println("Item:", vars["item"])
-	tmpl.ExecuteTemplate(w, "product.go.html", item)
+	tmpl = template.Must(template.ParseFiles(templateLocation + "product.go.html"))
+	tmpl.Execute(w, item)
+	// tmpl.ExecuteTemplate(w, "product.go.html", item)
 }
 
 /* Middleware */
