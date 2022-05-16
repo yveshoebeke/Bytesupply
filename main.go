@@ -22,7 +22,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"strings"
 	"text/template"
 	"time"
 
@@ -65,6 +64,7 @@ var (
 	sqlUpdateMessageStatus = `UPDATE messages SET status=? WHERE id=?`
 	sqlCountUnreadMessages = `SELECT COUNT(id) FROM messages WHERE status=0`
 	/* templating */
+	tmpl *template.Template
 	// tmpl = template.Must(template.ParseFiles(app.TemplateLocation + "home.go.html"))
 	// tmpl.Execute(w, homePageData)
 // 	tmpl    = template.Must(template.New("main").Funcs(funcMap).ParseGlob("templates/*.html"))
@@ -80,7 +80,7 @@ var (
 // 			return utilities.AllowedUserStatusByInt[myStatus]
 // 		},
 // 	}
-// )
+)
 
 // App -> app.App
 type App app.App
