@@ -64,7 +64,7 @@ func main() {
 	r.Use(malcolm)
 
 	/* Allow static content */
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(router.StaticLocation))))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(router.STATICLOCATION))))
 
 	/* Handlers --> Router */
 	r.HandleFunc("/", router.Homepage).Methods(http.MethodGet)
