@@ -19,9 +19,9 @@ import (
 	"os"
 	"time"
 
-	"bytesupply.com/packages/app"
-	"bytesupply.com/packages/router"
-	"bytesupply.com/packages/utilities"
+	"github.com/yveshoebeke/Bytesupply/packages/app"
+	"github.com/yveshoebeke/Bytesupply/packages/router"
+	"github.com/yveshoebeke/Bytesupply/packages/utilities"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"

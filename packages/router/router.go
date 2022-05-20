@@ -7,12 +7,12 @@ import (
 	"net/url"
 	"strings"
 
-	"bytesupply.com/packages/app"
-	"bytesupply.com/packages/googleapi"
-	"bytesupply.com/packages/messages"
-	"bytesupply.com/packages/users"
-	"bytesupply.com/packages/utilities"
 	"github.com/gorilla/mux"
+	"github.com/yveshoebeke/Bytesupply/packages/app"
+	"github.com/yveshoebeke/Bytesupply/packages/googleapi"
+	"github.com/yveshoebeke/Bytesupply/packages/messages"
+	"github.com/yveshoebeke/Bytesupply/packages/users"
+	"github.com/yveshoebeke/Bytesupply/packages/utilities"
 )
 
 const (

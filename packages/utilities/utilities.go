@@ -11,7 +11,7 @@ import (
 	"os"
 	"regexp"
 
-	"bytesupply.com/packages/app"
+	"github.com/yveshoebeke/Bytesupply/packages/app"
 
 	"golang.org/x/crypto/bcrypt"
 )
