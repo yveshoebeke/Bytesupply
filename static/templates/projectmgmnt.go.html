@@ -1,0 +1,28 @@
+{{ define "projectmgmnt" }}
+
+<div class="accordion" id="projectManagementAccordion">
+    <div class="card">
+        <div class="card-header" id="projectManagement">
+            <h2 class="mb-0">
+                <button class="btn btn-light collapsed" type="button" data-toggle="collapse" data-target="#collapsePROJECT" aria-expanded="false" aria-controls="collapsePROJECT">
+                    <strong>P</strong>roject <strong>M</strong>anagement
+                </button>
+            </h2>
+        </div>
+        {{ if eq .ItemToShow "projectmanagement" }}
+        <div id="collapsePROJECT" class="collapse show" aria-labelledby="projectManagement" data-parent="#projectManagementAccordion">
+        {{ else }}
+        <div id="collapsePROJECT" class="collapse" aria-labelledby="projectManagement" data-parent="#projectManagementAccordion">
+        {{ end }}
+            <div class="card-body">
+                <img style="float:right; width:175px; height:112px;" src="/static/img/projectmanagement.jpg" alt="Project Management" />
+                <h4><u>Project Management</u></h4>
+                <p>Project Management consists of the responsibility for overseeing the successful completion of projects in information technology. Although specific tasks will depend on the client and their current project, it will generally encompass ownership of the responsibility for the creation, organization, execution and completion of specific projects. This includes managing relevant employees, setting deadlines, communicating with company executives about the state of the project, ensuring projects stay on track and on budget, and adjusting if necessary to meet new requirements.</p>   
+                <p>Typically involves the management six different aspects of projects: scope, schedule, finance, risk, quality and resources.</p>
+                <p>( ... )</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ end }}

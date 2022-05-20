@@ -108,5 +108,4 @@ func GetSearchResults(searchKey string) (APIResult, error) {
 	}
 
 	return googleapi, nil
-
 }

@@ -11,7 +11,7 @@ import (
 	"os"
 	"regexp"
 
-	app "bytesupply.com/packages/app"
+	"bytesupply.com/packages/app"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -128,6 +128,7 @@ func GetIP(r *http.Request) string {
 	if forwarded != "" {
 		return forwarded
 	}
+
 	return r.RemoteAddr
 }
 
@@ -142,6 +143,7 @@ func HashAndSalt(pwd []byte) string {
 	if err != nil {
 		log.Println(err)
 	}
+
 	return string(hash)
 }
 
@@ -165,6 +167,7 @@ func IsEmailAddress(emailAddress string, mandatory bool) bool {
 	if len(emailAddress) < 3 && len(emailAddress) > 254 {
 		return false
 	}
+
 	return emailRegex.MatchString(emailAddress)
 }
 
@@ -182,6 +185,7 @@ func IsPhoneNumber(phoneNumber string, mandatory bool) bool {
 	if !mandatory && len(phoneNumber) == 0 {
 		return true
 	}
+
 	return phoneRegex.MatchString(phoneNumber)
 }
 
@@ -209,6 +213,7 @@ func IsAlphaNumeric(stringValue string, mandatory bool) bool {
 	if !mandatory && len(stringValue) == 0 {
 		return true
 	}
+
 	return alphaNumericRegex.MatchString(stringValue)
 }
 
@@ -248,5 +253,4 @@ func UploadProfilePicture(r *http.Request) (string, error) {
 
 	// return name for db record and that we have successfully uploaded our file!
 	return tempFile.Name(), nil
-
 }
