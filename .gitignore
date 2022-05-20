@@ -1,6 +1,8 @@
 Makefile
 Dockerfile
 *.yml
+go-app-compose-local.yml
+go-app-compose.yml
 log
 /docs
 main

@@ -1,0 +1,29 @@
+{{ define "starlencoin" }}
+
+<div class="accordion" id="starlenCoinAccordion">
+    <div class="card">
+        <div class="card-header" id="starlenCoin">
+            <h2 class="mb-0">
+                <button class="btn btn-light collapsed" type="button" data-toggle="collapse" data-target="#collapseSTARLENCOIN" aria-expanded="false" aria-controls="collapseSTARLENCOIN">
+                    <strong>S</strong>tarlencoin&nbsp;<strong>B</strong>lockchain&nbsp;&nbsp;<span style="background:red; border-radius:4px; color:white">&nbsp;BETA&nbsp;</span>
+                </button>
+            </h2>
+        </div>
+        {{ if eq .ItemToShow "starlencoin" }}
+        <div id="collapseSTARLENCOIN" class="collapse show" aria-labelledby="starlenCoin" data-parent="#starlenCoinAccordion">
+        {{ else }}
+        <div id="collapseSTARLENCOIN" class="collapse" aria-labelledby="starlenCoin" data-parent="#starlenCoinAccordion">
+        {{ end }}
+            <div class="card-body">
+                <img style="float:right; width:171px; height:152px;" src="/static/img/blockchain.png" alt="Blockchain" />
+                <h4><u>StarlenCoin Blockchain</u></h4>
+                <p>(Blockchain intro description here).</p>
+                <p>( ... )</p>
+                <p><u>Sample (utility::merkletree):</u>&nbsp;<a href="https://github.com/yveshoebeke/StarlenCoin/blob/master/packages/utils/merkletree.go" target="_blank" rel="noopener noreferrer">utility/merkletree.go</a></p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ end }}

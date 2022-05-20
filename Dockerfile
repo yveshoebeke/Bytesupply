@@ -3,17 +3,20 @@ RUN apk --no-cache add gcc g++ make git
 WORKDIR /go/src/app
 COPY . .
 RUN go get ./...
-RUN GOOS=linux go build -ldflags="-s -w" -o ./bin/bytesupply-app ./main.go
-RUN mkdir ./bin/log
-#RUN mkdir -p ./bin/data/qTurHm/
-COPY ./static/ ./bin/static/
-COPY ./templates/ ./bin/templates/
-COPY ./sitemap.xml ./bin/sitemap.xml
-COPY ./robots.txt ./bin/robots.txt
-RUN ["chmod", "+x", "/bin"]
+RUN GOOS=linux go build -ldflags="-s -w" -o /go/bin/bytesupply-app ./main.go
+RUN mkdir /go/bin/log
+RUN ["touch", "/go/bin/log/bytesupply.log"]
+RUN ["chmod", "a+w", "/go/bin/log/bytesupply.log"]
+RUN mkdir -p /go/bin/data/qTurHm/
+RUN mkdir -p /go/bin/data/messages/
+COPY ./static/ /go/bin/static/
+COPY ./sitemap.xml /go/bin/sitemap.xml
+COPY ./robots.txt /go/bin/robots.txt
+RUN ["chmod", "+x", "/go/bin"]
 FROM alpine:3.9
 RUN apk --no-cache add ca-certificates
 WORKDIR /usr/bin
-COPY --from=build /go/src/app/bin /go/bin
+FROM build 
+WORKDIR /go/bin
 EXPOSE 80
-ENTRYPOINT /go/bin/bytesupply-app --port 80
+ENTRYPOINT bytesupply-app --port 80

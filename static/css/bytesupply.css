@@ -32,7 +32,7 @@ span.first-word {
 
 textarea.mandatory, input.mandatory {
   border: 1px solid #ff503c;;
-  background-color: #ffb7a7;
+  /* background-color: #ffb7a7; */
 }
 
 legend {
@@ -52,7 +52,7 @@ div.signInFormErrors {
 span#logoExplain {
   text-decoration-style: none;
   color:#ff503c;
-  background-color: rgb(9, 9, 176);
+  /* background-color: rgb(9, 9, 176); */
   font: size 90%;
 }
 
