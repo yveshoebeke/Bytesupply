@@ -1,4 +1,4 @@
-module bytesupply.com
+module github.com/yveshoebeke/Bytesupply
 
 go 1.18
 
@@ -11,6 +11,6 @@ require (
 )
 
 require (
-	github.com/felixge/httpsnoop v1.0.3 // indirect
-	golang.org/x/sys v0.0.0-20220519141025-dcacdad47464 // indirect
+	github.com/felixge/httpsnoop v1.0.1 // indirect
+	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
 )

@@ -5,10 +5,10 @@ import (
 	"html/template"
 	"net/http"
 
-	"bytesupply.com/packages/app"
-	"bytesupply.com/packages/dbsql"
-	"bytesupply.com/packages/utilities"
 	"github.com/gorilla/mux"
+	"github.com/yveshoebeke/Bytesupply/packages/app"
+	"github.com/yveshoebeke/Bytesupply/packages/dbsql"
+	"github.com/yveshoebeke/Bytesupply/packages/utilities"
 )
 
 type Contact struct {

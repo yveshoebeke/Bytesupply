@@ -6,10 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"bytesupply.com/packages/app"
-	"bytesupply.com/packages/dbsql"
-
-	"bytesupply.com/packages/utilities"
+	"github.com/yveshoebeke/Bytesupply/packages/app"
+	"github.com/yveshoebeke/Bytesupply/packages/dbsql"
+	"github.com/yveshoebeke/Bytesupply/packages/utilities"
 )
 
 type Login struct {
