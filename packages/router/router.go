@@ -16,13 +16,13 @@ import (
 )
 
 const (
-	StaticLocation = "./static/"
-	TemplatePath   = "./static/templates/*.go.html"
+	STATICLOCATION = "./static/"
+	TEMPLATEPATH   = "./static/templates/*.go.html"
 )
 
 var (
 	/* templating */
-	tmpl    = template.Must(template.New("main").Funcs(funcMap).ParseGlob(TemplatePath))
+	tmpl    = template.Must(template.New("main").Funcs(funcMap).ParseGlob(TEMPLATEPATH))
 	funcMap = template.FuncMap{
 		"hasHTTP": func(myUrl string) string {
 			if strings.Contains(myUrl, "://") {
@@ -52,34 +52,34 @@ func Home(w http.ResponseWriter, r *http.Request) {
 //------------------------------------------------------------
 // About -> Company
 func Company(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, StaticLocation+"html/company.html")
+	http.ServeFile(w, r, STATICLOCATION+"html/company.html")
 }
 
 // About -> Staff
 func Staff(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, StaticLocation+"html/staff.html")
+	http.ServeFile(w, r, STATICLOCATION+"html/staff.html")
 }
 
 // About -> History
 func History(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, StaticLocation+"html/history.html")
+	http.ServeFile(w, r, STATICLOCATION+"html/history.html")
 }
 
 //------------------------------------------------------------
 // Expertise synopsis page.
 func Expertise(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, StaticLocation+"html/expertise.html")
+	http.ServeFile(w, r, STATICLOCATION+"html/expertise.html")
 }
 
 //------------------------------------------------------------
 // Policies -> Terms and conditions.
 func Terms(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, StaticLocation+"html/terms.html")
+	http.ServeFile(w, r, STATICLOCATION+"html/terms.html")
 }
 
 // Policies -> Privacy page.
 func Privacy(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, StaticLocation+"html/privacy.html")
+	http.ServeFile(w, r, STATICLOCATION+"html/privacy.html")
 }
 
 //------------------------------------------------------------

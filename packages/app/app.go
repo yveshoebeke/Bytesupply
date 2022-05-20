@@ -12,11 +12,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	StaticLocation = "./static/"
-	TemplatePath   = "./static/templates/*.go.html"
-)
-
 var (
 	LogF                                           *os.File
 	AppStruct                                      *App
