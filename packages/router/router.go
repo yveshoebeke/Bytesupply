@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gorilla/mux"
 	"github.com/yveshoebeke/Bytesupply/packages/app"
 	"github.com/yveshoebeke/Bytesupply/packages/googleapi"
 	"github.com/yveshoebeke/Bytesupply/packages/messages"
@@ -22,7 +21,8 @@ const (
 
 var (
 	/* templating */
-	tmpl    = template.Must(template.New("main").Funcs(funcMap).ParseGlob(TEMPLATEPATH))
+	// tmpl = template.Must(template.New("main").Funcs(funcMap).ParseGlob(TEMPLATEPATH))
+	tmpl    = template.Must(template.New("main").Option("missingkey=default").Funcs(funcMap).ParseGlob(TEMPLATEPATH))
 	funcMap = template.FuncMap{
 		"hasHTTP": func(myUrl string) string {
 			if strings.Contains(myUrl, "://") {
@@ -39,13 +39,11 @@ var (
 
 // Index page.
 func Homepage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(app.AppStruct)
 	tmpl.ExecuteTemplate(w, "index.go.html", app.AppStruct)
 }
 
 // Home page.
 func Home(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(app.AppStruct)
 	tmpl.ExecuteTemplate(w, "home.go.html", app.AppStruct)
 }
 
@@ -85,23 +83,20 @@ func Privacy(w http.ResponseWriter, r *http.Request) {
 //------------------------------------------------------------
 // Show Product accordions.
 func Products(w http.ResponseWriter, r *http.Request) {
-	type Item struct {
-		ItemToShow string `json:"itemtoshow"`
-	}
-	item := Item{ItemToShow: "all"}
-	tmpl.ExecuteTemplate(w, "product.go.html", item)
+	tmpl.ExecuteTemplate(w, "product.go.html", app.AppStruct)
 }
 
 // Same as above but open specific product accordion.
 func Product(w http.ResponseWriter, r *http.Request) {
-	type Item struct {
-		ItemToShow string `json:"itemtoshow"`
-	}
-	vars := mux.Vars(r)
-	itemtoshow := vars["item"]
-	item := Item{ItemToShow: itemtoshow}
-	app.AppStruct.Log.Println("Item:", vars["item"])
-	tmpl.ExecuteTemplate(w, "product.go.html", item)
+	// type Item struct {
+	// 	ItemToShow string `json:"itemtoshow"`
+	// }
+	// vars := mux.Vars(r)
+	// itemtoshow := vars["item"]
+	// item := Item{ItemToShow: itemtoshow}
+	// app.AppStruct.Log.Println("Item:", vars["item"])
+	// tmpl.ExecuteTemplate(w, "product.go.html", item)
+	tmpl.ExecuteTemplate(w, "product.go.html", app.AppStruct)
 }
 
 //------------------------------------------------------------
