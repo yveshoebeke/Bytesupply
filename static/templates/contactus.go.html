@@ -28,8 +28,52 @@
     <body class="desktopBody">
         <div class="container">
 
-            {{ template "navbar" }}
-
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="/home"><h1 class="navbar-logo">BYTESUPPLY</h1></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                About
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/company">Company</a>
+                                <a class="dropdown-item" href="/staff">Staff</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/history">History</a>
+                                </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/expertise">Expertise</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="/contactus">Contact Us</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Policies
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/terms">Terms & Conditions</a>
+                                <a class="dropdown-item" href="/privacy">Privacy Policy</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/products">Products</a>
+                        </li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0" action="/search" method="post">
+                        <input class="form-control mr-sm-2" type="search" value="" name="searchKey" placeholder="Search" aria-label="Search">
+                        <input type="hidden" name="referer" value="/" />
+                        <button class="btn btn-outline-success my-2 my-sm-0 disabled" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
+            
             <div class="row" style="border-bottom:1px solid black">
                 <div class="offset-9 col-3 text-right font-weight-light" style="font-size:80%;padding-top:4px">
                     <span id="doy"></span><span id="tod" style="margin-left:5px"></span>
@@ -41,11 +85,6 @@
                     <img src="/static/img/contact-us.jpg" class="rounded float-left" alt="Yves Hoebeke" width="250" height="165">
                 </div>
                 <div class="col-9 text-left" style="margin-left:15px; padding:10px; background: rgba(250, 249, 249, 0.6); border-radius:15px; box-shadow: 10px 10px 5px grey">
-                    <!-- <p><span class="first-word">Send</span> us a brief message with your contact information.</p>
-                    <div style="border:1px dotted black; padding:10px;">
-                        <sup class="text-danger">(*)</sup>Required fields.&nbsp;<sup>(note)</sup>Some forms can be obtained at the bottom of this page.</p>
-                    </div> 
-                    <hr style="height:2px;color:black"/>-->
                     <div class="signInFormErrors text-left">
                         <ul>
                             {{ range $error := .Errors }}
@@ -72,6 +111,7 @@
                                 <input type="url" class="form-control" id="contactURL" value="" name="contactURL" placeholder="Website URL" />
                             </div>
                             <div class="form-group">
+                                <small>Message:</small>
                                 <textarea class="form-control mandatory" id="contactMessage" name="contactMessage" rows="4"></textarea>
                             </div>
                             <button id="contactSubmit" type="submit" class="btn btn-primary">Send</button>
