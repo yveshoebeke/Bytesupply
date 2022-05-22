@@ -1,7 +1,14 @@
 {{ define "footer" }}
 
 <div class="row" style="margin-top:20px;font-size:90%;border-top:1px solid black">
-    <p style="width:100%;">&copy; 2022 Bytesupply, LLC - All rights reserved.<span style="float:right;">v1.3.7</span></p>
+    <p style="width:100%;">
+        &copy; 2022 Bytesupply, LLC - All rights reserved.
+        <span style="float:right;">
+            <img id="check-messages" src="/static/img/red-led-light.png" alt="All read" height="10" width="10" />            
+            <img id="messages-checked" src="/static/img/green-led-light.png" alt="All read" height="10" width="10" />            
+            v1.3.7
+        </span>
+    </p>
 </div>
 
 {{ end }}

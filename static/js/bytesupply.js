@@ -18,10 +18,30 @@ $(document).ready(function() {
         $("#logoExplain").text("");
     });
 
+    // check message count and if > 0 show red led
+    checkMessages()
+
     // Set session space
     // name -> username
     window.sessionStorage;
 });
+
+function checkMessages() {
+    $.get("/countunreadmessages",(count) => {
+        if(parseInt(count) > 0) {
+            $("#messages-checked").hide();
+            $("#check-messages").show();
+        } else {
+            $("#check-messages").hide();
+            $("#messages-checked").show();
+        }
+
+        setTimeout( () => {
+            $("#check-messages").fadeOut("slow");
+            $("#messages-checked").fadeOut("slow");
+        }, 2000)
+    })
+}
 
 function setLang(langId) {
     if (langId == "lang-es") {

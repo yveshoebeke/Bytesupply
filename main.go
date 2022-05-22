@@ -92,6 +92,7 @@ func main() {
 
 	r.HandleFunc("/getmessages", router.Getmessages).Methods(http.MethodGet)
 	r.HandleFunc("/changemessagestatus/{id:[0-9]+}/{status:[0-9]}/{referer:[a-z]+}", router.Changemessagestatus).Methods(http.MethodGet)
+	r.HandleFunc("/countunreadmessages", router.CountUnreadMessages).Methods(http.MethodGet)
 
 	r.HandleFunc("/user", router.User).Methods(http.MethodGet)
 	r.HandleFunc("/getusers", router.Getusers).Methods(http.MethodGet)

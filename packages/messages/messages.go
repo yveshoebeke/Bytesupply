@@ -102,3 +102,17 @@ func ChangeMessageStatusProcess(r *http.Request) (string, error) {
 
 	return referer, nil
 }
+
+type MessageCount struct {
+	Count int `json:"count"`
+}
+
+func CountMessages() (MessageCount, error) {
+	var mc MessageCount
+	messagecounterr := app.AppStruct.DB.QueryRow(dbsql.CountUnreadMessages).Scan(&mc.Count)
+	if messagecounterr != nil {
+		return mc, messagecounterr
+	}
+
+	return mc, nil
+}
