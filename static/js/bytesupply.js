@@ -19,29 +19,30 @@ $(document).ready(function() {
     });
 
     // check message count and if > 0 show red led
-    checkMessages()
+    $("#messages-checked").hide();
+    $("#check-messages").hide();
+    getMessageStatus()   
 
     // Set session space
-    // name -> username
     window.sessionStorage;
 });
 
-function checkMessages() {
+function getMessageStatus() {
+    if(window.location.href.split("/").pop() != "home") {
+        return
+    }
+
     $.get("/countunreadmessages",(data) => {
         const dataObj = JSON.parse(data)
+        statusId = "#messages-checked"
         if(dataObj.count > 0) {
-            $("#messages-checked").hide();
-            $("#check-messages").show();
-        } else {
-            $("#check-messages").hide();
-            $("#messages-checked").show();
+            statusId = "#check-messages"
         }
-
+        $(statusId).show() 
         setTimeout( () => {
-            $("#check-messages").fadeOut("slow");
-            $("#messages-checked").fadeOut("slow");
+            $(statusId).fadeOut("slow");
         }, 2000)
-    })
+    })    
 }
 
 function setLang(langId) {
