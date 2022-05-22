@@ -1,6 +1,7 @@
 package router
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -147,13 +148,13 @@ func CountUnreadMessages(w http.ResponseWriter, r *http.Request) {
 		app.AppStruct.Log.Println("Unread messages count error:", err.Error())
 	}
 
-	// json.NewEncoder(w).Encode(mc)
+	json.NewEncoder(w).Encode(mc)
 	// jmc, err := json.Marshal(mc)
 	// if err != nil {
 	// 	app.AppStruct.Log.Println("marshall error:", err.Error())
 	// }
 
-	fmt.Fprintf(w, "%d", mc.Count)
+	// fmt.Fprintf(w, "%d", mc.Count)
 	// w.Write([]byte{mc.Count})
 }
 

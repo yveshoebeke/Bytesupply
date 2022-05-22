@@ -27,8 +27,9 @@ $(document).ready(function() {
 });
 
 function checkMessages() {
-    $.get("/countunreadmessages",(count) => {
-        if(parseInt(count) > 0) {
+    $.get("/countunreadmessages",(data) => {
+        const dataObj = JSON.parse(data)
+        if(dataObj.count > 0) {
             $("#messages-checked").hide();
             $("#check-messages").show();
         } else {
