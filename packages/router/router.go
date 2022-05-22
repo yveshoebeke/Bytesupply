@@ -141,6 +141,22 @@ func Changemessagestatus(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/"+referer, http.StatusSeeOther)
 }
 
+func CountUnreadMessages(w http.ResponseWriter, r *http.Request) {
+	mc, err := messages.CountMessages()
+	if err != nil {
+		app.AppStruct.Log.Println("Unread messages count error:", err.Error())
+	}
+
+	// json.NewEncoder(w).Encode(mc)
+	// jmc, err := json.Marshal(mc)
+	// if err != nil {
+	// 	app.AppStruct.Log.Println("marshall error:", err.Error())
+	// }
+
+	fmt.Fprintf(w, "%d", mc.Count)
+	// w.Write([]byte{mc.Count})
+}
+
 //------------------------------------------------------------
 // Logout.
 func Logout(w http.ResponseWriter, r *http.Request) {
