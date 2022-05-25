@@ -67,3 +67,23 @@ code {
   background-color: rgb(121, 121, 121);
   color: white;
 }
+
+div.text-box-top {
+  padding:10px; 
+  background: rgba(250, 249, 249, 0.6); 
+  border-radius:15px; 
+  box-shadow: 10px 10px 5px grey;
+}
+div.text-box-bottom {
+  padding:10px 55px 20px 10px; 
+  background: rgba(250, 249, 249, 0.6); 
+  border-radius:15px; 
+  box-shadow: 10px 10px 5px grey;
+}
+div.text-box-about {
+  margin-left:15px;
+  padding:10px; 
+  background: rgba(250, 249, 249, 0.6); 
+  border-radius:15px; 
+  box-shadow: 10px 10px 5px grey;
+}
