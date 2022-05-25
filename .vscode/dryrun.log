@@ -1,6 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory `/Users/yves/Projects/Bytesupply'
-make: Leaving directory `/Users/yves/Projects/Bytesupply'
- 
-Makefile:18: *** missing separator (did you mean TAB instead of 8 spaces?).  Stop.
-
